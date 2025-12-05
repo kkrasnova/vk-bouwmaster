@@ -529,28 +529,50 @@ export default function AdminPage() {
     const formData = new FormData();
     formData.append('file', file);
 
+    console.log('Начало загрузки файла:', {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      sizeMB: (file.size / 1024 / 1024).toFixed(2) + 'MB'
+    });
+
     try {
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
 
+      console.log('Ответ сервера:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      });
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Неизвестная ошибка' }));
+        console.error('Ошибка сервера:', errorData);
         throw new Error(errorData.error || `Ошибка сервера: ${response.status}`);
       }
 
       const data = await response.json();
+      console.log('Данные ответа:', data);
+      
       if (data.success && data.url) {
-        console.log('Файл успешно загружен:', data.url);
+        console.log('✅ Файл успешно загружен:', {
+          url: data.url,
+          fileName: data.fileName,
+          size: data.size,
+          type: data.type
+        });
         return data.url;
       } else {
+        console.error('Ошибка в ответе:', data);
         throw new Error(data.error || 'Ошибка загрузки: файл не сохранён');
       }
     } catch (error: any) {
-      console.error('Ошибка загрузки файла:', error);
+      console.error('❌ Ошибка загрузки файла:', error);
       const errorMessage = error.message || 'Ошибка при загрузке файла';
-      alert(`Ошибка при загрузке файла: ${errorMessage}\n\nПроверьте консоль браузера для деталей.`);
+      alert(`❌ Ошибка при загрузке файла: ${errorMessage}\n\nПроверьте консоль браузера (F12) для деталей.`);
       return null;
     }
   };
@@ -1570,12 +1592,21 @@ export default function AdminPage() {
                     )}
                     
                     {worksFormData.mainImage && (
-                      <div className="mb-3 relative w-full h-48 rounded-lg overflow-hidden border border-gray-700 group">
+                      <div className="mb-3 relative w-full h-48 rounded-lg overflow-hidden border border-gray-700 group bg-gray-800">
                         <Image
                           src={worksFormData.mainImage}
                           alt="Предпросмотр"
                           fill
                           className="object-cover"
+                          unoptimized={worksFormData.mainImage.startsWith('/uploads/')}
+                          onError={(e) => {
+                            console.error('Main image load error:', worksFormData.mainImage);
+                            e.currentTarget.style.display = 'none';
+                            const parent = e.currentTarget.parentElement;
+                            if (parent) {
+                              parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-800 text-red-500 text-sm">Ошибка загрузки изображения<br/>Проверьте путь: ${worksFormData.mainImage}</div>`;
+                            }
+                          }}
                         />
                         <button
                           type="button"
@@ -1676,12 +1707,21 @@ export default function AdminPage() {
                     {(worksFormData.images.length > 0 || worksFormData.videos.length > 0) && (
                       <div className="grid grid-cols-3 gap-3 mb-3 max-h-96 overflow-y-auto p-2">
                         {worksFormData.images.map((img, idx) => (
-                          <div key={`img-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 group">
+                          <div key={`img-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 group bg-gray-800">
                             <Image
                               src={img}
                               alt={`Фото ${idx + 1}`}
                               fill
                               className="object-cover"
+                              unoptimized={img.startsWith('/uploads/')}
+                              onError={(e) => {
+                                console.error('Image load error:', img);
+                                e.currentTarget.style.display = 'none';
+                                const parent = e.currentTarget.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500 text-xs">Ошибка загрузки</div>`;
+                                }
+                              }}
                             />
                             <button
                               type="button"
@@ -1700,8 +1740,20 @@ export default function AdminPage() {
                           </div>
                         ))}
                         {worksFormData.videos.map((video, idx) => (
-                          <div key={`video-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 group">
-                            <video src={video} className="w-full h-full object-cover" muted />
+                          <div key={`video-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 group bg-gray-800">
+                            <video 
+                              src={video} 
+                              className="w-full h-full object-cover" 
+                              muted
+                              onError={(e) => {
+                                console.error('Video load error:', video);
+                                e.currentTarget.style.display = 'none';
+                                const parent = e.currentTarget.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500 text-xs">Ошибка загрузки видео</div>`;
+                                }
+                              }}
+                            />
                             <button
                               type="button"
                               onClick={() => setWorksFormData({
@@ -1932,10 +1984,14 @@ export default function AdminPage() {
                                 alt={work.title}
                                 fill
                                 className="object-cover"
-                                unoptimized={work.mainImage.startsWith('https://') && work.mainImage.includes('blob.vercel-storage.com')}
+                                unoptimized={work.mainImage.startsWith('/uploads/') || (work.mainImage.startsWith('https://') && work.mainImage.includes('blob.vercel-storage.com'))}
                                 onError={(e) => {
                                   console.error('Image load error:', work.mainImage);
                                   e.currentTarget.style.display = 'none';
+                                  const parent = e.currentTarget.parentElement;
+                                  if (parent) {
+                                    parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500 text-xs">Ошибка</div>`;
+                                  }
                                 }}
                               />
                             </div>
@@ -1985,13 +2041,34 @@ export default function AdminPage() {
                                         alt={`Фото ${idx + 1}`}
                                         fill
                                         className="object-cover"
+                                        unoptimized={img.startsWith('/uploads/')}
+                                        onError={(e) => {
+                                          console.error('Thumbnail image load error:', img);
+                                          e.currentTarget.style.display = 'none';
+                                          const parent = e.currentTarget.parentElement;
+                                          if (parent) {
+                                            parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500 text-[8px]">Ошибка</div>`;
+                                          }
+                                        }}
                                       />
                                     </div>
                                   ))}
                                   {work.videos?.slice(0, 3).map((video, idx) => (
                                     <div key={`vid-${idx}`} className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden border border-purple-700 bg-gray-800">
-                                      <video src={video} className="w-full h-full object-cover" muted />
-                                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                      <video 
+                                        src={video} 
+                                        className="w-full h-full object-cover" 
+                                        muted
+                                        onError={(e) => {
+                                          console.error('Thumbnail video load error:', video);
+                                          e.currentTarget.style.display = 'none';
+                                          const parent = e.currentTarget.parentElement;
+                                          if (parent) {
+                                            parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500 text-[8px]">Ошибка</div>`;
+                                          }
+                                        }}
+                                      />
+                                      <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
                                         <span className="text-white text-xs">📹</span>
                                       </div>
                                     </div>
