@@ -1742,12 +1742,17 @@ export default function AdminPage() {
                       <div key={work.id} className="bg-gray-900 p-4 rounded-lg border border-gray-700">
                         <div className="flex items-start gap-4">
                           {work.mainImage && (
-                            <div className="relative w-24 h-24 flex-shrink-0 rounded overflow-hidden">
+                            <div className="relative w-24 h-24 flex-shrink-0 rounded overflow-hidden bg-gray-800">
                               <Image
                                 src={work.mainImage}
                                 alt={work.title}
                                 fill
                                 className="object-cover"
+                                unoptimized={work.mainImage.startsWith('https://') && work.mainImage.includes('blob.vercel-storage.com')}
+                                onError={(e) => {
+                                  console.error('Image load error:', work.mainImage);
+                                  e.currentTarget.style.display = 'none';
+                                }}
                               />
                             </div>
                           )}
