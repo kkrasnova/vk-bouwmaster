@@ -56,6 +56,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="nl">
+      <head>
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="any" href="/icon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icon.png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <LayoutWrapper>
           {children}
