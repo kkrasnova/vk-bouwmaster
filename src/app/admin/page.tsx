@@ -946,12 +946,14 @@ export default function AdminPage() {
         setEditingWork(null);
         loadWorks();
       } else {
-        const errorData = await response.json();
-        alert(`Ошибка: ${errorData.error || 'Неизвестная ошибка'}`);
+        const errorData = await response.json().catch(() => ({ error: 'Неизвестная ошибка' }));
+        const errorMessage = errorData.error || 'Неизвестная ошибка';
+        console.error('Error saving work:', errorMessage);
+        alert(`Ошибка: ${errorMessage}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving work:', error);
-      alert('Ошибка при сохранении');
+      alert(`Ошибка при сохранении: ${error.message || 'Проверьте консоль браузера для деталей'}`);
     } finally {
       setUploading(false);
     }
