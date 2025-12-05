@@ -159,6 +159,7 @@ export default function AdminPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
 
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number; fileName: string } | null>(null);
   const [dragActiveWorks, setDragActiveWorks] = useState(false);
   const [dragActiveAdditionalImages, setDragActiveAdditionalImages] = useState(false);
 
@@ -831,17 +832,22 @@ export default function AdminPage() {
   // Works handlers
   const handleWorkMainImageUpload = async (file: File) => {
     setUploading(true);
+    setUploadProgress({ current: 0, total: 1, fileName: file.name });
     try {
       const url = await handleFileUpload(file);
       if (url) {
         setWorksFormData({ ...worksFormData, mainImage: url });
-        console.log('Основное фото загружено:', url);
+        console.log('✅ Основное фото загружено:', url);
+        setUploadProgress({ current: 1, total: 1, fileName: file.name });
+        setTimeout(() => setUploadProgress(null), 1000);
       } else {
-        alert('Не удалось загрузить основное фото. Проверьте консоль браузера для деталей.');
+        alert('❌ Не удалось загрузить основное фото. Проверьте консоль браузера для деталей.');
+        setUploadProgress(null);
       }
     } catch (error) {
       console.error('Ошибка загрузки основного фото:', error);
-      alert('Ошибка при загрузке основного фото');
+      alert('❌ Ошибка при загрузке основного фото');
+      setUploadProgress(null);
     } finally {
       setUploading(false);
     }
@@ -871,29 +877,33 @@ export default function AdminPage() {
   };
 
   const handleWorkAdditionalImagesUpload = async (files: FileList) => {
+    const fileArray = Array.from(files);
+    const totalFiles = fileArray.length;
     setUploading(true);
+    setUploadProgress({ current: 0, total: totalFiles, fileName: '' });
+    
     try {
-      const imagePromises = Array.from(files).map(async (file) => {
+      const results: Array<{ type: 'image' | 'video'; url: string }> = [];
+      
+      for (let i = 0; i < fileArray.length; i++) {
+        const file = fileArray[i];
+        setUploadProgress({ current: i + 1, total: totalFiles, fileName: file.name });
+        
         if (file.type.startsWith('image/')) {
           const url = await handleFileUpload(file);
           if (url) {
-            return { type: 'image' as const, url };
+            results.push({ type: 'image', url });
           }
-          return null;
-        }
-        if (file.type.startsWith('video/')) {
+        } else if (file.type.startsWith('video/')) {
           const url = await handleFileUpload(file);
           if (url) {
-            return { type: 'video' as const, url };
+            results.push({ type: 'video', url });
           }
-          return null;
         }
-        return null;
-      });
+      }
       
-      const results = (await Promise.all(imagePromises)).filter(Boolean) as Array<{ type: 'image' | 'video'; url: string }>;
-      const imageUrls = results.filter(r => r.type === 'image' && r.url).map(r => r.url);
-      const videoUrls = results.filter(r => r.type === 'video' && r.url).map(r => r.url);
+      const imageUrls = results.filter(r => r.type === 'image').map(r => r.url);
+      const videoUrls = results.filter(r => r.type === 'video').map(r => r.url);
       
       if (imageUrls.length > 0 || videoUrls.length > 0) {
         const newImages = [...worksFormData.images, ...imageUrls];
@@ -904,15 +914,16 @@ export default function AdminPage() {
           videos: newVideos
         });
         console.log('Добавлены файлы:', { images: imageUrls.length, videos: videoUrls.length });
-        alert(`Загружено: ${imageUrls.length} фото, ${videoUrls.length} видео`);
+        alert(`✅ Загружено: ${imageUrls.length} фото, ${videoUrls.length} видео`);
       } else {
-        alert('Не удалось загрузить файлы. Проверьте консоль браузера.');
+        alert('❌ Не удалось загрузить файлы. Проверьте консоль браузера.');
       }
     } catch (error) {
       console.error('Ошибка при загрузке дополнительных файлов:', error);
-      alert('Ошибка при загрузке файлов');
+      alert('❌ Ошибка при загрузке файлов');
     } finally {
       setUploading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -1499,8 +1510,28 @@ export default function AdminPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Основное фото *</label>
+                    
+                    {/* Прогресс загрузки основного фото */}
+                    {uploadProgress && uploadProgress.total === 1 && (
+                      <div className="mb-3 p-4 bg-gray-900 rounded-lg border border-blue-500">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-white">Загрузка основного фото...</span>
+                          <span className="text-sm text-blue-400">
+                            {Math.round((uploadProgress.current / uploadProgress.total) * 100)}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                          <div
+                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-400 truncate">{uploadProgress.fileName}</p>
+                      </div>
+                    )}
+                    
                     {worksFormData.mainImage && (
-                      <div className="mb-3 relative w-full h-48 rounded-lg overflow-hidden border border-gray-700">
+                      <div className="mb-3 relative w-full h-48 rounded-lg overflow-hidden border border-gray-700 group">
                         <Image
                           src={worksFormData.mainImage}
                           alt="Предпросмотр"
@@ -1510,9 +1541,9 @@ export default function AdminPage() {
                         <button
                           type="button"
                           onClick={() => setWorksFormData({ ...worksFormData, mainImage: '' })}
-                          className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                          className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-600 text-white px-3 py-1.5 rounded text-sm transition-colors"
                         >
-                          Удалить
+                          🗑️ Удалить
                         </button>
                       </div>
                     )}
@@ -1524,27 +1555,35 @@ export default function AdminPage() {
                         dragActiveWorks
                           ? 'border-blue-500 bg-blue-900/20'
                           : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
-                      }`}
+                      } ${uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       <input
                         type="file"
                         accept="image/*"
                         onChange={handleWorkMainImageSelect}
+                        disabled={uploading}
                         className="hidden"
                         id="work-main-image-upload"
                       />
                       <label
                         htmlFor="work-main-image-upload"
-                        className="cursor-pointer flex flex-col items-center gap-4"
+                        className={`flex flex-col items-center gap-4 ${uploading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                       >
                         <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                         <div>
                           <p className="text-white font-medium">
-                            {uploading ? 'Загрузка...' : 'Перетащите фото сюда или нажмите для выбора'}
+                            {uploading ? (
+                              <span className="flex items-center gap-2">
+                                <span className="animate-spin">⏳</span>
+                                Загрузка...
+                              </span>
+                            ) : (
+                              'Перетащите фото сюда или нажмите для выбора'
+                            )}
                           </p>
-                          <p className="text-gray-400 text-sm mt-1">PNG, JPG, GIF до 10MB</p>
+                          <p className="text-gray-400 text-sm mt-1">PNG, JPG, GIF до 100MB</p>
                         </div>
                       </label>
                     </div>
@@ -1560,11 +1599,40 @@ export default function AdminPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Дополнительные фото и видео</label>
+                    <label className="block text-sm font-medium mb-2">
+                      Дополнительные фото и видео
+                      {(worksFormData.images.length > 0 || worksFormData.videos.length > 0) && (
+                        <span className="ml-2 text-blue-400">
+                          ({worksFormData.images.length} фото, {worksFormData.videos.length} видео)
+                        </span>
+                      )}
+                    </label>
+                    
+                    {/* Прогресс загрузки */}
+                    {uploadProgress && (
+                      <div className="mb-4 p-4 bg-gray-900 rounded-lg border border-blue-500">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-white">
+                            Загрузка: {uploadProgress.current} из {uploadProgress.total}
+                          </span>
+                          <span className="text-sm text-blue-400">
+                            {Math.round((uploadProgress.current / uploadProgress.total) * 100)}%
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                          <div
+                            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${(uploadProgress.current / uploadProgress.total) * 100}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-400 truncate">{uploadProgress.fileName}</p>
+                      </div>
+                    )}
+                    
                     {(worksFormData.images.length > 0 || worksFormData.videos.length > 0) && (
-                      <div className="grid grid-cols-3 gap-3 mb-3">
+                      <div className="grid grid-cols-3 gap-3 mb-3 max-h-96 overflow-y-auto p-2">
                         {worksFormData.images.map((img, idx) => (
-                          <div key={`img-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700">
+                          <div key={`img-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 group">
                             <Image
                               src={img}
                               alt={`Фото ${idx + 1}`}
@@ -1577,14 +1645,18 @@ export default function AdminPage() {
                                 ...worksFormData,
                                 images: worksFormData.images.filter((_, i) => i !== idx)
                               })}
-                              className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center"
+                              className="absolute top-1 right-1 bg-red-600/90 hover:bg-red-600 text-white w-7 h-7 rounded-full text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Удалить фото"
                             >
                               ×
                             </button>
+                            <div className="absolute bottom-1 left-1 bg-black/70 px-2 py-0.5 rounded text-white text-xs">
+                              📷 {idx + 1}
+                            </div>
                           </div>
                         ))}
                         {worksFormData.videos.map((video, idx) => (
-                          <div key={`video-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700">
+                          <div key={`video-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 group">
                             <video src={video} className="w-full h-full object-cover" muted />
                             <button
                               type="button"
@@ -1592,12 +1664,21 @@ export default function AdminPage() {
                                 ...worksFormData,
                                 videos: worksFormData.videos.filter((_, i) => i !== idx)
                               })}
-                              className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center"
+                              className="absolute top-1 right-1 bg-red-600/90 hover:bg-red-600 text-white w-7 h-7 rounded-full text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Удалить видео"
                             >
                               ×
                             </button>
-                            <div className="absolute top-1 left-1 bg-black/70 px-1.5 py-0.5 rounded text-white text-xs">
-                              📹
+                            <div className="absolute bottom-1 left-1 bg-black/70 px-2 py-0.5 rounded text-white text-xs flex items-center gap-1">
+                              <span>📹</span>
+                              <span>{idx + 1}</span>
+                            </div>
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <div className="bg-black/50 rounded-full p-2">
+                                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -1611,28 +1692,38 @@ export default function AdminPage() {
                         dragActiveAdditionalImages
                           ? 'border-blue-500 bg-blue-900/20'
                           : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
-                      }`}
+                      } ${uploading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       <input
                         type="file"
                         accept="image/*,video/*"
                         multiple
                         onChange={handleWorkAdditionalImagesSelect}
+                        disabled={uploading}
                         className="hidden"
                         id="work-additional-images-upload"
                       />
                       <label
                         htmlFor="work-additional-images-upload"
-                        className="cursor-pointer flex flex-col items-center gap-2"
+                        className={`flex flex-col items-center gap-2 ${uploading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                       >
                         <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                         <div>
                           <p className="text-white font-medium text-sm">
-                            {uploading ? 'Загрузка...' : 'Перетащите фото и видео сюда или нажмите для выбора'}
+                            {uploading ? (
+                              <span className="flex items-center gap-2">
+                                <span className="animate-spin">⏳</span>
+                                Загрузка файлов...
+                              </span>
+                            ) : (
+                              'Перетащите фото и видео сюда или нажмите для выбора'
+                            )}
                           </p>
-                          <p className="text-gray-400 text-xs mt-1">Можно выбрать несколько файлов</p>
+                          <p className="text-gray-400 text-xs mt-1">
+                            Можно выбрать несколько файлов одновременно (до 100MB каждый)
+                          </p>
                         </div>
                       </label>
                     </div>
@@ -1785,10 +1876,10 @@ export default function AdminPage() {
                     <p className="text-gray-400 text-center py-8">Нет работ. Добавьте первую работу.</p>
                   ) : (
                     works.map((work) => (
-                      <div key={work.id} className="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                      <div key={work.id} className="bg-gray-900 p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
                         <div className="flex items-start gap-4">
                           {work.mainImage && (
-                            <div className="relative w-24 h-24 flex-shrink-0 rounded overflow-hidden bg-gray-800">
+                            <div className="relative w-24 h-24 flex-shrink-0 rounded overflow-hidden bg-gray-800 border border-gray-700">
                               <Image
                                 src={work.mainImage}
                                 alt={work.title}
@@ -1806,30 +1897,81 @@ export default function AdminPage() {
                             <h3 className="text-lg font-bold text-white mb-1">{work.title}</h3>
                             <p className="text-sm text-blue-400 mb-2">{work.category}</p>
                             <p className="text-sm text-gray-300 line-clamp-2 mb-3">{work.description}</p>
-                            {work.projectId && (
-                              <p className="text-xs text-gray-500 mb-2">Проект: {work.projectId}</p>
-                            )}
-                            {work.images && work.images.length > 0 && (
-                              <p className="text-xs text-gray-500 mb-1">Доп. фото: {work.images.length}</p>
-                            )}
-                            {work.videos && work.videos.length > 0 && (
-                              <p className="text-xs text-gray-500 mb-1">Видео: {work.videos.length}</p>
-                            )}
-                            {work.city && (
-                              <p className="text-xs text-gray-500 mb-1">Город: {work.city}</p>
-                            )}
+                            
+                            {/* Информация о файлах */}
+                            <div className="flex flex-wrap gap-2 mb-3 text-xs">
+                              {work.projectId && (
+                                <span className="px-2 py-1 bg-gray-800 rounded text-gray-300">
+                                  📁 {work.projectId}
+                                </span>
+                              )}
+                              {work.images && work.images.length > 0 && (
+                                <span className="px-2 py-1 bg-blue-900/50 rounded text-blue-300">
+                                  📷 {work.images.length} фото
+                                </span>
+                              )}
+                              {work.videos && work.videos.length > 0 && (
+                                <span className="px-2 py-1 bg-purple-900/50 rounded text-purple-300">
+                                  📹 {work.videos.length} видео
+                                </span>
+                              )}
+                              {work.city && (
+                                <span className="px-2 py-1 bg-gray-800 rounded text-gray-300">
+                                  📍 {work.city}
+                                </span>
+                              )}
+                              {work.workDate && (
+                                <span className="px-2 py-1 bg-gray-800 rounded text-gray-300">
+                                  📅 {new Date(work.workDate).toLocaleDateString('ru-RU')}
+                                </span>
+                              )}
+                            </div>
+                            
+                            {/* Миниатюры дополнительных файлов */}
+                            {(work.images && work.images.length > 0) || (work.videos && work.videos.length > 0) ? (
+                              <div className="mb-3">
+                                <div className="flex gap-2 overflow-x-auto pb-2">
+                                  {work.images?.slice(0, 5).map((img, idx) => (
+                                    <div key={idx} className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden border border-gray-700 bg-gray-800">
+                                      <Image
+                                        src={img}
+                                        alt={`Фото ${idx + 1}`}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                  ))}
+                                  {work.videos?.slice(0, 3).map((video, idx) => (
+                                    <div key={`vid-${idx}`} className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden border border-purple-700 bg-gray-800">
+                                      <video src={video} className="w-full h-full object-cover" muted />
+                                      <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                        <span className="text-white text-xs">📹</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                  {((work.images?.length || 0) + (work.videos?.length || 0)) > 8 && (
+                                    <div className="w-16 h-16 flex-shrink-0 rounded border border-gray-700 bg-gray-800 flex items-center justify-center">
+                                      <span className="text-gray-400 text-xs">
+                                        +{((work.images?.length || 0) + (work.videos?.length || 0)) - 8}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ) : null}
+                            
                             <div className="flex gap-2">
                               <button
                                 onClick={() => handleWorkEdit(work)}
-                                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm text-white"
+                                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-sm text-white transition-colors"
                               >
-                                Редактировать
+                                ✏️ Редактировать
                               </button>
                               <button
                                 onClick={() => handleWorkDelete(work.id)}
-                                className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded text-sm text-white"
+                                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-sm text-white transition-colors"
                               >
-                                Удалить
+                                🗑️ Удалить
                               </button>
                             </div>
                           </div>
