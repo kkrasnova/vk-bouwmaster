@@ -906,6 +906,7 @@ export default function AdminPage() {
       const videoUrls = results.filter(r => r.type === 'video').map(r => r.url);
       
       if (imageUrls.length > 0 || videoUrls.length > 0) {
+        // Добавляем новые файлы к существующим (работает и при создании, и при редактировании)
         const newImages = [...worksFormData.images, ...imageUrls];
         const newVideos = [...worksFormData.videos, ...videoUrls];
         setWorksFormData({ 
@@ -913,8 +914,15 @@ export default function AdminPage() {
           images: newImages,
           videos: newVideos
         });
-        console.log('Добавлены файлы:', { images: imageUrls.length, videos: videoUrls.length });
-        alert(`✅ Загружено: ${imageUrls.length} фото, ${videoUrls.length} видео`);
+        console.log('Добавлены файлы:', { 
+          images: imageUrls.length, 
+          videos: videoUrls.length,
+          totalImages: newImages.length,
+          totalVideos: newVideos.length,
+          isEditing: !!editingWork
+        });
+        const editMsg = editingWork ? ' (добавлены к существующим)' : '';
+        alert(`✅ Загружено: ${imageUrls.length} фото, ${videoUrls.length} видео${editMsg}\n\nВсего: ${newImages.length} фото, ${newVideos.length} видео`);
       } else {
         alert('❌ Не удалось загрузить файлы. Проверьте консоль браузера.');
       }
@@ -968,11 +976,15 @@ export default function AdminPage() {
       
       // Логируем данные для отладки
       console.log('Отправка работы:', {
+        isEditing: !!editingWork,
+        workId: editingWork?.id,
         title: dataToSend.title,
         mainImage: dataToSend.mainImage,
         images: dataToSend.images?.length || 0,
         videos: dataToSend.videos?.length || 0,
-        category: dataToSend.category
+        category: dataToSend.category,
+        imagesList: dataToSend.images,
+        videosList: dataToSend.videos
       });
       
       const response = await fetch(url, {
@@ -988,9 +1000,22 @@ export default function AdminPage() {
         const videosCount = work.videos?.length || 0;
         
         if (editingWork) {
-          alert(`Работа обновлена!\n\nФото: ${imagesCount}\nВидео: ${videosCount}\n\nПереводы обновлены автоматически. Работа появится на сайте в течение 5 секунд.`);
+          const addedImages = imagesCount - (editingWork.images?.length || 0);
+          const addedVideos = videosCount - (editingWork.videos?.length || 0);
+          const removedImages = (editingWork.images?.length || 0) - (worksFormData.images.length - addedImages);
+          const removedVideos = (editingWork.videos?.length || 0) - (worksFormData.videos.length - addedVideos);
+          
+          let changeMsg = '';
+          if (addedImages > 0 || addedVideos > 0) {
+            changeMsg += `\nДобавлено: ${addedImages} фото, ${addedVideos} видео`;
+          }
+          if (removedImages > 0 || removedVideos > 0) {
+            changeMsg += `\nУдалено: ${removedImages} фото, ${removedVideos} видео`;
+          }
+          
+          alert(`✅ Работа обновлена!\n\nВсего файлов:\n📷 Фото: ${imagesCount}\n📹 Видео: ${videosCount}${changeMsg}\n\nПереводы обновлены автоматически. Работа появится на сайте в течение 5 секунд.`);
         } else {
-          alert(`Работа успешно добавлена!\n\nФото: ${imagesCount}\nВидео: ${videosCount}\n\nПереводы созданы автоматически на все языки. Работа появится в админ-панели и на сайте (Портфолио, Мои работы) в течение 5 секунд.`);
+          alert(`✅ Работа успешно добавлена!\n\nФото: ${imagesCount}\nВидео: ${videosCount}\n\nПереводы созданы автоматически на все языки. Работа появится в админ-панели и на сайте (Портфолио, Мои работы) в течение 5 секунд.`);
         }
         
         setWorksFormData({
@@ -1466,9 +1491,16 @@ export default function AdminPage() {
           {activeTab === 'works' && (
             <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8">
               <div className="elegant-card p-8">
-                <h2 className="text-2xl font-bold elegant-title mb-6">
-                  {editingWork ? 'Редактировать работу' : 'Добавить работу'}
-                </h2>
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold elegant-title">
+                    {editingWork ? '✏️ Редактировать работу' : '➕ Добавить работу'}
+                  </h2>
+                  {editingWork && (
+                    <p className="text-sm text-green-400 mt-2">
+                      Режим редактирования: можно изменять все поля, добавлять новые фото/видео или удалять существующие
+                    </p>
+                  )}
+                </div>
                 <form onSubmit={handleWorkSubmit} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Название работы *</label>
@@ -1509,7 +1541,14 @@ export default function AdminPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Основное фото *</label>
+                    <label className="block text-sm font-medium mb-2">
+                      Основное фото *
+                      {editingWork && worksFormData.mainImage && (
+                        <span className="ml-2 text-xs text-green-400">
+                          ✏️ Можно заменить на новое
+                        </span>
+                      )}
+                    </label>
                     
                     {/* Прогресс загрузки основного фото */}
                     {uploadProgress && uploadProgress.total === 1 && (
@@ -1604,6 +1643,11 @@ export default function AdminPage() {
                       {(worksFormData.images.length > 0 || worksFormData.videos.length > 0) && (
                         <span className="ml-2 text-blue-400">
                           ({worksFormData.images.length} фото, {worksFormData.videos.length} видео)
+                        </span>
+                      )}
+                      {editingWork && (
+                        <span className="ml-2 text-xs text-green-400">
+                          ✏️ Редактирование: можно добавлять новые или удалять существующие
                         </span>
                       )}
                     </label>
@@ -1722,7 +1766,10 @@ export default function AdminPage() {
                             )}
                           </p>
                           <p className="text-gray-400 text-xs mt-1">
-                            Можно выбрать несколько файлов одновременно (до 100MB каждый)
+                            {editingWork 
+                              ? 'Можно добавить новые файлы к существующим или удалить старые (до 100MB каждый)'
+                              : 'Можно выбрать несколько файлов одновременно (до 100MB каждый)'
+                            }
                           </p>
                         </div>
                       </label>
