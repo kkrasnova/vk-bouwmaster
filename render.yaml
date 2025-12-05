@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: vk-bouwmaster
+    env: node
+    plan: starter
+    region: frankfurt
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VERCEL
+        value: "1"
+      - key: BLOB_READ_WRITE_TOKEN
+        sync: false
+
