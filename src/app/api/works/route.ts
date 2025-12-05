@@ -37,7 +37,15 @@ function readWorksData(): PortfolioWork[] {
 }
 
 function writeWorksData(data: PortfolioWork[]) {
-  writeFileSync(WORKS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  try {
+    writeFileSync(WORKS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (error: any) {
+    // Проверяем, не является ли это ошибкой файловой системы (например, на Vercel)
+    if (error.code === 'EROFS' || error.code === 'EACCES' || error.message?.includes('read-only')) {
+      throw new Error('Файловая система доступна только для чтения. На Vercel нужно использовать базу данных или Vercel KV для хранения данных.');
+    }
+    throw error;
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -198,10 +206,11 @@ export async function PUT(request: NextRequest) {
     writeWorksData(works);
 
     return NextResponse.json({ success: true, work: works[index] });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in PUT:', error);
+    const errorMessage = error.message || 'Ошибка при обновлении';
     return NextResponse.json(
-      { error: 'Ошибка при обновлении' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
