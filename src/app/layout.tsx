@@ -15,13 +15,13 @@ export const metadata: Metadata = {
   keywords: "renovatie, huisverbetering, bouw, tegelwerk, dakreparaties, loodgieterswerk, schilderwerk, tuinontwerp, bouwmeester, verbouwing",
   icons: {
     icon: [
-      { url: '/icon.png', sizes: 'any' },
-      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+      { url: '/icon.png?v=2', sizes: 'any' },
+      { url: '/favicon.ico?v=2', sizes: '32x32', type: 'image/x-icon' },
     ],
     apple: [
-      { url: '/icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/icon.png?v=2', sizes: '180x180', type: 'image/png' },
     ],
-    shortcut: '/favicon.ico',
+    shortcut: '/favicon.ico?v=2',
   },
   openGraph: {
     url: "https://vkbouwmaster.com",
@@ -57,10 +57,10 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <head>
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="any" href="/icon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/icon.png" />
-        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=2" />
+        <link rel="icon" type="image/png" sizes="any" href="/icon.png?v=2" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/icon.png?v=2" />
+        <link rel="shortcut icon" href="/favicon.ico?v=2" />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <LayoutWrapper>
