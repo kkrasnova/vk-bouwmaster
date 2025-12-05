@@ -7,7 +7,7 @@
     "dev:https": "node server.js",
     "tunnel": "cloudflared tunnel --url http://127.0.0.1:3457",
     "tunnel:custom": "cloudflared tunnel run vkbouwmaster",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
