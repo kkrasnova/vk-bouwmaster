@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "title": "10 Essential Tips for Kitchen Renovation",
+    "excerpt": "Transform your kitchen with these expert tips for planning, design, and execution of your renovation project.",
+    "image": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=400&fit=crop",
+    "category": "Kitchen",
+    "date": "December 15, 2024",
+    "readTime": "5 min read",
+    "slug": "kitchen-renovation-tips",
+    "content": ""
+  },
+  {
+    "id": "2",
+    "title": "Choosing the Right Flooring for Your Home",
+    "excerpt": "A comprehensive guide to selecting the perfect flooring material based on your lifestyle, budget, and design preferences.",
+    "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&h=400&fit=crop",
+    "category": "Flooring",
+    "date": "December 10, 2024",
+    "readTime": "7 min read",
+    "slug": "choosing-right-flooring",
+    "content": ""
+  },
+  {
+    "id": "3",
+    "title": "Bathroom Renovation: Before and After",
+    "excerpt": "See how we transformed a dated bathroom into a modern, functional space with smart design choices and quality materials.",
+    "image": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&h=400&fit=crop",
+    "category": "Bathroom",
+    "date": "December 5, 2024",
+    "readTime": "4 min read",
+    "slug": "bathroom-renovation-before-after",
+    "content": ""
+  },
+  {
+    "id": "4",
+    "title": "Energy-Efficient Home Improvements",
+    "excerpt": "Learn about home improvements that can reduce your energy bills and increase your property value while being environmentally friendly.",
+    "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=400&fit=crop",
+    "category": "Energy Efficiency",
+    "date": "November 28, 2024",
+    "readTime": "6 min read",
+    "slug": "energy-efficient-home-improvements",
+    "content": ""
+  },
+  {
+    "id": "5",
+    "title": "Painting Your Home: DIY vs Professional",
+    "excerpt": "Discover when to tackle painting projects yourself and when it's best to hire professionals for optimal results.",
+    "image": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=400&fit=crop",
+    "category": "Painting",
+    "date": "November 20, 2024",
+    "readTime": "5 min read",
+    "slug": "painting-diy-vs-professional",
+    "content": ""
+  },
+  {
+    "id": "6",
+    "title": "Winter Home Maintenance Checklist",
+    "excerpt": "Prepare your home for winter with this comprehensive maintenance checklist to prevent costly repairs and ensure comfort.",
+    "image": "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=800&h=400&fit=crop",
+    "category": "Maintenance",
+    "date": "November 15, 2024",
+    "readTime": "8 min read",
+    "slug": "winter-home-maintenance-checklist",
+    "content": ""
+  }
+]

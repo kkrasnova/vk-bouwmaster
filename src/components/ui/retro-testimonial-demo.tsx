@@ -1,0 +1,78 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import {Carousel, TestimonialCard} from "@/components/ui/retro-testimonial";
+import {iTestimonial} from "@/components/ui/retro-testimonial";
+
+type Comment = {
+  id: string
+  name: string
+  surname?: string
+  message: string
+  createdAt: string
+  photos?: string[]
+  videos?: string[]
+  rating?: number
+  city?: string
+  profileImage?: string
+  translations?: Record<string, string>
+}
+
+const RetroTestimonialDemo = () => {
+  const [reviews, setReviews] = useState<Comment[]>([])
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await fetch('/api/comments')
+        if (res.ok) {
+          const list = await res.json()
+          setReviews(Array.isArray(list) ? list : [])
+        }
+      } catch {}
+    })()
+  }, [])
+
+  if (reviews.length === 0) {
+    return (
+      <div className="text-center text-gray-400 py-12">Пока нет отзывов</div>
+    )
+  }
+
+  const cards = reviews
+    .filter((review) => review.id)
+    .map((review, idx) => {
+      const testimonial: iTestimonial = {
+        id: review.id!,
+        name: `${review.name} ${review.surname || ''}`.trim(),
+        designation: new Date(review.createdAt).toLocaleDateString(),
+        description: review.message,
+        profileImage: review.profileImage || '/vk-bouwmaster-logo.svg',
+        photos: review.photos,
+        videos: review.videos,
+        rating: review.rating,
+        city: review.city,
+        translations: (review as any).translations,
+      }
+      return (
+        <TestimonialCard
+          key={review.id}
+          testimonial={testimonial}
+          index={idx}
+          backgroundImage="https://images.unsplash.com/photo-1528458965990-428de4b1cb0d?q=80&w=3129&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        />
+      )
+    })
+
+  return (
+    <div className="bg-black">
+      <div className="max-w-5xl mx-auto px-4">
+        <Carousel items={cards} />
+      </div>
+    </div>
+  );
+};
+
+export { RetroTestimonialDemo };
+
+

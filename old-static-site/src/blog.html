@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - VK Bouwmaster Tips & Insights</title>
+    <meta name="description" content="Read VK Bouwmaster's blog for renovation tips, design trends, and expert insights. Stay updated with the latest in home improvement.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+    <header id="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">VK Bouwmaster</a>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html" data-translate="nav.home">Home</a></li>
+                    <li><a href="index.html#services" data-translate="nav.services">Services</a></li>
+                    <li><a href="about.html" data-translate="nav.about">About</a></li>
+                    <li><a href="portfolio.html" data-translate="nav.portfolio">Portfolio</a></li>
+                    <li><a href="blog.html" data-translate="nav.blog">Blog</a></li>
+                    <li><a href="pricing.html" data-translate="nav.pricing">Pricing</a></li>
+                    <li><a href="team.html" data-translate="nav.team">Team</a></li>
+                    <li><a href="faq.html" data-translate="nav.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-translate="nav.contact">Contact</a></li>
+
+                    <!-- Mobile Controls -->
+                    <li class="mobile-nav-controls">
+                        <div class="language-switcher">
+                            <button class="language-btn mobile-lang-btn" id="mobileLangBtn" title="Выбрать язык">
+                                <span class="flag-icon">🇬🇧</span>
+                                <span class="lang-code">EN</span>
+                            </button>
+                        </div>
+                        <div class="theme-toggle-container">
+                            <button class="theme-toggle-btn mobile-theme-btn" id="mobileThemeToggle" title="Переключить тему">
+                                <span class="theme-icon">🌙</span>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="nav-controls">
+                    <div class="language-switcher">
+                        <button class="language-btn" id="languageBtn" title="Выбрать язык">
+                            <span class="flag-icon">🇬🇧</span>
+                            <span class="lang-code">EN</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="language-dropdown" id="languageDropdown">
+                            <div class="language-option" data-lang="en">
+                                <span class="flag">🇬🇧</span>
+                                <span class="name">English</span>
+                            </div>
+                            <div class="language-option" data-lang="ru">
+                                <span class="flag">🇷🇺</span>
+                                <span class="name">Русский</span>
+                            </div>
+                            <div class="language-option" data-lang="uk">
+                                <span class="flag">🇺🇦</span>
+                                <span class="name">Українська</span>
+                            </div>
+                            <div class="language-option" data-lang="pl">
+                                <span class="flag">🇵🇱</span>
+                                <span class="name">Polski</span>
+                            </div>
+                            <div class="language-option" data-lang="es">
+                                <span class="flag">🇪🇸</span>
+                                <span class="name">Español</span>
+                            </div>
+                            <div class="language-option" data-lang="nl">
+                                <span class="flag">🇳🇱</span>
+                                <span class="name">Nederlands</span>
+                            </div>
+                            <div class="language-option" data-lang="de">
+                                <span class="flag">🇩🇪</span>
+                                <span class="name">Deutsch</span>
+                            </div>
+                            <div class="language-option" data-lang="fr">
+                                <span class="flag">🇫🇷</span>
+                                <span class="name">Français</span>
+                            </div>
+                            <div class="language-option" data-lang="da">
+                                <span class="flag">🇩🇰</span>
+                                <span class="name">Dansk</span>
+                            </div>
+                            <div class="language-option" data-lang="it">
+                                <span class="flag">🇮🇹</span>
+                                <span class="name">Italiano</span>
+                            </div>
+                            <div class="language-option" data-lang="pt">
+                                <span class="flag">🇵🇹</span>
+                                <span class="name">Português</span>
+                            </div>
+                            <div class="language-option" data-lang="sv">
+                                <span class="flag">🇸🇪</span>
+                                <span class="name">Svenska</span>
+                            </div>
+                            <div class="language-option" data-lang="no">
+                                <span class="flag">🇳🇴</span>
+                                <span class="name">Norsk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-btn" id="themeToggle" title="Переключить тему">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Blog Hero -->
+        <section class="hero blog-hero">
+            <div class="hero-content">
+                <h1>Renovation Insights & Tips</h1>
+                <p>Expert advice, design trends, and renovation tips from our professional team</p>
+            </div>
+        </section>
+
+        <!-- Featured Article -->
+        <section class="featured-article-section">
+            <div class="container">
+                <div class="featured-article">
+                    <div class="article-image">📰</div>
+                    <div class="article-content">
+                        <div class="article-meta">
+                            <span class="article-date">December 15, 2024</span>
+                            <span class="article-category">Design Trends</span>
+                        </div>
+                        <h2>2025 Kitchen Design Trends: What's Hot This Year</h2>
+                        <p>Discover the latest kitchen design trends that are shaping homes in 2025. From smart appliances to sustainable materials, we explore what homeowners are choosing for their dream kitchens.</p>
+                        <a href="#" class="read-more-btn">Read Full Article</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Blog Articles -->
+        <section class="blog-articles-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Latest Articles</h2>
+                    <p>Stay updated with our latest tips, trends, and project insights</p>
+                </div>
+                
+                <div class="articles-grid">
+                    <article class="blog-card">
+                        <div class="blog-image">🔨</div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Dec 10, 2024</span>
+                                <span class="blog-category">Tips</span>
+                            </div>
+                            <h3>10 Essential Tools for Home Renovation</h3>
+                            <p>A comprehensive guide to the must-have tools for any successful home renovation project.</p>
+                            <a href="#" class="blog-link">Read More</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-image">🎨</div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Dec 5, 2024</span>
+                                <span class="blog-category">Design</span>
+                            </div>
+                            <h3>Choosing the Perfect Color Palette</h3>
+                            <p>Expert tips on selecting colors that transform your space and reflect your personality.</p>
+                            <a href="#" class="blog-link">Read More</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-image">💰</div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Nov 28, 2024</span>
+                                <span class="blog-category">Budget</span>
+                            </div>
+                            <h3>Renovation Budget Planning Guide</h3>
+                            <p>How to plan and manage your renovation budget effectively to avoid overspending.</p>
+                            <a href="#" class="blog-link">Read More</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-image">🌿</div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Nov 20, 2024</span>
+                                <span class="blog-category">Sustainability</span>
+                            </div>
+                            <h3>Eco-Friendly Renovation Materials</h3>
+                            <p>Sustainable materials and practices for environmentally conscious renovations.</p>
+                            <a href="#" class="blog-link">Read More</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-image">🏠</div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Nov 15, 2024</span>
+                                <span class="blog-category">Trends</span>
+                            </div>
+                            <h3>Small Space, Big Impact</h3>
+                            <p>Maximizing small spaces with clever design solutions and space-saving techniques.</p>
+                            <a href="#" class="blog-link">Read More</a>
+                        </div>
+                    </article>
+
+                    <article class="blog-card">
+                        <div class="blog-image">⚡</div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <span class="blog-date">Nov 8, 2024</span>
+                                <span class="blog-category">Technology</span>
+                            </div>
+                            <h3>Smart Home Integration</h3>
+                            <p>Incorporating smart technology into your renovation for modern living convenience.</p>
+                            <a href="#" class="blog-link">Read More</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter Section -->
+        <section class="newsletter-section">
+            <div class="container">
+                <div class="newsletter-content">
+                    <div class="newsletter-text">
+                        <h2>Stay Updated</h2>
+                        <p>Get the latest renovation tips, design trends, and exclusive offers delivered to your inbox</p>
+                    </div>
+                    <div class="newsletter-form">
+                        <input type="email" placeholder="Enter your email address" class="newsletter-input">
+                        <button type="submit" class="newsletter-btn">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 VK Bouwmaster. All rights reserved. | Professional Renovation Services</p>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

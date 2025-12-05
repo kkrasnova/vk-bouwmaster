@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VK Bouwmaster - Professional Renovation Services</title>
+    <meta name="description" content="VK Bouwmaster offers professional renovation services including tile installation, roof repairs, plumbing, painting, and garden design. Transform your home with our expert team.">
+    <meta name="keywords" content="renovation, home improvement, construction, tile installation, roof repairs, plumbing, painting, garden design">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+    <header id="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">VK Bouwmaster</a>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#services" data-translate="nav.services">Services</a></li>
+                    <li><a href="about.html" data-translate="nav.about">About</a></li>
+                    <li><a href="portfolio.html" data-translate="nav.portfolio">Portfolio</a></li>
+                    <li><a href="blog.html" data-translate="nav.blog">Blog</a></li>
+                    <li><a href="pricing.html" data-translate="nav.pricing">Pricing</a></li>
+                    <li><a href="team.html" data-translate="nav.team">Team</a></li>
+                    <li><a href="faq.html" data-translate="nav.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-translate="nav.contact">Contact</a></li>
+                    
+                    <!-- Mobile Controls -->
+                    <li class="mobile-nav-controls">
+                        <div class="language-switcher">
+                            <button class="language-btn mobile-lang-btn" id="mobileLangBtn" title="Выбрать язык">
+                                <span class="flag-icon">🇬🇧</span>
+                                <span class="lang-code">EN</span>
+                            </button>
+                        </div>
+                        <div class="theme-toggle-container">
+                            <button class="theme-toggle-btn mobile-theme-btn" id="mobileThemeToggle" title="Переключить тему">
+                                <span class="theme-icon">🌙</span>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="nav-controls">
+                    <div class="language-switcher">
+                        <button class="language-btn" id="languageBtn" title="Выбрать язык">
+                            <span class="flag-icon">🇬🇧</span>
+                            <span class="lang-code">EN</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="language-dropdown" id="languageDropdown">
+                            <div class="language-option" data-lang="en">
+                                <span class="flag">🇬🇧</span>
+                                <span class="name">English</span>
+                            </div>
+                            <div class="language-option" data-lang="ru">
+                                <span class="flag">🇷🇺</span>
+                                <span class="name">Русский</span>
+                            </div>
+                            <div class="language-option" data-lang="uk">
+                                <span class="flag">🇺🇦</span>
+                                <span class="name">Українська</span>
+                            </div>
+                            <div class="language-option" data-lang="pl">
+                                <span class="flag">🇵🇱</span>
+                                <span class="name">Polski</span>
+                            </div>
+                            <div class="language-option" data-lang="es">
+                                <span class="flag">🇪🇸</span>
+                                <span class="name">Español</span>
+                            </div>
+                            <div class="language-option" data-lang="nl">
+                                <span class="flag">🇳🇱</span>
+                                <span class="name">Nederlands</span>
+                            </div>
+                            <div class="language-option" data-lang="de">
+                                <span class="flag">🇩🇪</span>
+                                <span class="name">Deutsch</span>
+                            </div>
+                            <div class="language-option" data-lang="fr">
+                                <span class="flag">🇫🇷</span>
+                                <span class="name">Français</span>
+                            </div>
+                            <div class="language-option" data-lang="da">
+                                <span class="flag">🇩🇰</span>
+                                <span class="name">Dansk</span>
+                            </div>
+                            <div class="language-option" data-lang="it">
+                                <span class="flag">🇮🇹</span>
+                                <span class="name">Italiano</span>
+                            </div>
+                            <div class="language-option" data-lang="pt">
+                                <span class="flag">🇵🇹</span>
+                                <span class="name">Português</span>
+                            </div>
+                            <div class="language-option" data-lang="sv">
+                                <span class="flag">🇸🇪</span>
+                                <span class="name">Svenska</span>
+                            </div>
+                            <div class="language-option" data-lang="no">
+                                <span class="flag">🇳🇴</span>
+                                <span class="name">Norsk</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-btn" id="themeToggle" title="Переключить тему">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <!-- Enhanced Animated Background -->
+            <div class="particles-container">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <!-- Floating Decorative Elements -->
+            <div class="floating-element">🔨</div>
+            <div class="floating-element">🏠</div>
+            <div class="floating-element">🎨</div>
+            
+            <div class="hero-content">
+                <h1 data-translate="hero.title">Transform Your Space with Excellence</h1>
+                <p data-translate="hero.subtitle">Professional renovation services that bring your vision to life. From concept to completion, we deliver quality craftsmanship and exceptional results.</p>
+                <a href="#services" class="cta-button" data-translate="hero.cta">Explore Our Services</a>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="services-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2 data-translate="services.title">Our Services</h2>
+                    <p data-translate="services.subtitle">Comprehensive renovation solutions tailored to your needs</p>
+                </div>
+                
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">🔨</div>
+                        <h3>Tile Removal & Installation</h3>
+                        <p>Professional tile services for bathrooms, kitchens, and living spaces. Expert installation and removal with attention to detail.</p>
+                        <a href="services/tile-removal-installation.html" class="service-link">Learn More</a>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🏠</div>
+                        <h3>Roof Repairs</h3>
+                        <p>Complete roof maintenance and repair services. Protect your home with our expert roofing solutions.</p>
+                        <a href="services/roof-repairs.html" class="service-link">Learn More</a>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🚪</div>
+                        <h3>Window & Door Installation</h3>
+                        <p>Energy-efficient windows and doors installation. Enhance security and improve your home's energy efficiency.</p>
+                        <a href="services/window-door-installation-repair.html" class="service-link">Learn More</a>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🧱</div>
+                        <h3>Insulation & Decorative Finishing</h3>
+                        <p>Professional insulation and decorative finishing services. Create comfortable and beautiful living spaces.</p>
+                        <a href="services/insulation-decorative-finishing.html" class="service-link">Learn More</a>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">📐</div>
+                        <h3>Wall Leveling & Drywall</h3>
+                        <p>Perfect wall preparation and drywall installation. Achieve smooth, professional walls for your renovation project.</p>
+                        <a href="services/wall-leveling-drywall.html" class="service-link">Learn More</a>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🪵</div>
+                        <h3>Flooring Installation</h3>
+                        <p>High-quality flooring solutions for every room. From hardwood to laminate, we install with precision and care.</p>
+                        <a href="services/flooring-installation.html" class="service-link">Learn More</a>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🔧</div>
+                        <h3>Plumbing Repairs</h3>
+                        <p>Expert plumbing services for all your needs. Fast, reliable repairs and installations by certified professionals.</p>
+                        <a href="services/plumbing-repairs.html" class="service-link">Learn More</a>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🎨</div>
+                        <h3>Painting</h3>
+                        <p>Professional painting services for interior and exterior projects. Transform your space with quality paint and expert application.</p>
+                        <a href="services/painting.html" class="service-link">Learn More</a>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🌿</div>
+                        <h3>Garden Design & Landscaping</h3>
+                        <p>Create beautiful outdoor spaces with our garden design and landscaping services. From planning to maintenance.</p>
+                        <a href="services/garden-design-landscaping.html" class="service-link">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>What Our Clients Say</h2>
+                    <p>Don't just take our word for it - hear from our satisfied customers</p>
+                </div>
+                
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            VK Bouwmaster transformed our entire kitchen. The attention to detail and quality of work was outstanding. They completed the project on time and within budget.
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">JS</div>
+                            <div class="author-info">
+                                <h4>John Smith</h4>
+                                <p>Amsterdam</p>
+                                <div class="testimonial-rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            Excellent service from start to finish. The team was professional, clean, and respectful of our home. Highly recommend for any renovation project.
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MJ</div>
+                            <div class="author-info">
+                                <h4>Maria Johnson</h4>
+                                <p>Rotterdam</p>
+                                <div class="testimonial-rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-content">
+                            The bathroom renovation exceeded our expectations. Modern design, quality materials, and excellent craftsmanship. Worth every euro!
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">DW</div>
+                            <div class="author-info">
+                                <h4>David Wilson</h4>
+                                <p>Utrecht</p>
+                                <div class="testimonial-rating">
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section class="portfolio-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Our Recent Work</h2>
+                    <p>Take a look at some of our completed projects</p>
+                </div>
+                
+                <div class="portfolio-grid">
+                    <div class="portfolio-item">
+                        <div class="portfolio-image">🏠</div>
+                        <div class="portfolio-overlay">
+                            <h3>Modern Kitchen Renovation</h3>
+                            <p>Complete kitchen transformation with custom cabinets and premium finishes</p>
+                        </div>
+                        <div class="portfolio-info">
+                            <h3>Kitchen Renovation</h3>
+                            <p>Amsterdam • 2024</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item">
+                        <div class="portfolio-image">🛁</div>
+                        <div class="portfolio-overlay">
+                            <h3>Luxury Bathroom Design</h3>
+                            <p>Spacious bathroom with walk-in shower and premium fixtures</p>
+                        </div>
+                        <div class="portfolio-info">
+                            <h3>Bathroom Renovation</h3>
+                            <p>Rotterdam • 2024</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item">
+                        <div class="portfolio-image">🏡</div>
+                        <div class="portfolio-overlay">
+                            <h3>Complete Home Renovation</h3>
+                            <p>Full house renovation including all rooms and outdoor spaces</p>
+                        </div>
+                        <div class="portfolio-info">
+                            <h3>Full Home Renovation</h3>
+                            <p>Utrecht • 2024</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item">
+                        <div class="portfolio-image">🌿</div>
+                        <div class="portfolio-overlay">
+                            <h3>Garden Landscaping</h3>
+                            <p>Beautiful garden design with modern landscaping and outdoor features</p>
+                        </div>
+                        <div class="portfolio-info">
+                            <h3>Garden Design</h3>
+                            <p>The Hague • 2024</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item">
+                        <div class="portfolio-image">🔧</div>
+                        <div class="portfolio-overlay">
+                            <h3>Plumbing & Electrical</h3>
+                            <p>Complete plumbing and electrical system upgrade for modern living</p>
+                        </div>
+                        <div class="portfolio-info">
+                            <h3>System Upgrade</h3>
+                            <p>Eindhoven • 2024</p>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-item">
+                        <div class="portfolio-image">🎨</div>
+                        <div class="portfolio-overlay">
+                            <h3>Interior Design</h3>
+                            <p>Modern interior design with custom furniture and decorative elements</p>
+                        </div>
+                        <div class="portfolio-info">
+                            <h3>Interior Design</h3>
+                            <p>Amsterdam • 2024</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us Section -->
+        <section class="why-choose-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Why Choose VK Bouwmaster?</h2>
+                    <p>We deliver excellence in every project with unmatched quality and service</p>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🏆</div>
+                        <h3>Award Winning</h3>
+                        <p>Recognized for excellence in renovation and construction services across Europe</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Fast Delivery</h3>
+                        <p>Quick turnaround times without compromising on quality or attention to detail</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>Best Prices</h3>
+                        <p>Competitive pricing with transparent quotes and no hidden fees or surprises</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Fully Insured</h3>
+                        <p>Complete insurance coverage and warranties for your peace of mind</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section class="process-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Our Work Process</h2>
+                    <p>Simple, transparent, and efficient - from consultation to completion</p>
+                </div>
+                
+                <div class="process-timeline">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Consultation</h3>
+                            <p>Free initial consultation to understand your vision and requirements</p>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Planning</h3>
+                            <p>Detailed project planning with timeline, materials, and cost breakdown</p>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Execution</h3>
+                            <p>Professional execution with regular updates and quality checkpoints</p>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>Completion</h3>
+                            <p>Final inspection, cleanup, and handover with warranty documentation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" data-count="500">0</div>
+                        <div class="stat-label">Projects Completed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-count="15">0</div>
+                        <div class="stat-label">Years Experience</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-count="100">0</div>
+                        <div class="stat-label">% Satisfaction Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" data-count="50">0</div>
+                        <div class="stat-label">Team Members</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </section>
+    </main>
+
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 VK Bouwmaster. All rights reserved. | Professional Renovation Services</p>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - VK Bouwmaster Renovation Costs</title>
+    <meta name="description" content="Transparent pricing for VK Bouwmaster renovation services. Get detailed cost breakdowns for all our construction and renovation services.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+    <header id="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">VK Bouwmaster</a>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html" data-translate="nav.home">Home</a></li>
+                    <li><a href="index.html#services" data-translate="nav.services">Services</a></li>
+                    <li><a href="about.html" data-translate="nav.about">About</a></li>
+                    <li><a href="portfolio.html" data-translate="nav.portfolio">Portfolio</a></li>
+                    <li><a href="blog.html" data-translate="nav.blog">Blog</a></li>
+                    <li><a href="pricing.html" data-translate="nav.pricing">Pricing</a></li>
+                    <li><a href="team.html" data-translate="nav.team">Team</a></li>
+                    <li><a href="faq.html" data-translate="nav.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-translate="nav.contact">Contact</a></li>
+
+                    <!-- Mobile Controls -->
+                    <li class="mobile-nav-controls">
+                        <div class="language-switcher">
+                            <button class="language-btn mobile-lang-btn" id="mobileLangBtn" title="Выбрать язык">
+                                <span class="flag-icon">🇬🇧</span>
+                                <span class="lang-code">EN</span>
+                            </button>
+                        </div>
+                        <div class="theme-toggle-container">
+                            <button class="theme-toggle-btn mobile-theme-btn" id="mobileThemeToggle" title="Переключить тему">
+                                <span class="theme-icon">🌙</span>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="nav-controls">
+                    <div class="language-switcher">
+                        <button class="language-btn" id="languageBtn" title="Выбрать язык">
+                            <span class="flag-icon">🇬🇧</span>
+                            <span class="lang-code">EN</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="language-dropdown" id="languageDropdown">
+                            <div class="language-option" data-lang="en">
+                                <span class="flag">🇬🇧</span>
+                                <span class="name">English</span>
+                            </div>
+                            <div class="language-option" data-lang="ru">
+                                <span class="flag">🇷🇺</span>
+                                <span class="name">Русский</span>
+                            </div>
+                            <div class="language-option" data-lang="uk">
+                                <span class="flag">🇺🇦</span>
+                                <span class="name">Українська</span>
+                            </div>
+                            <div class="language-option" data-lang="pl">
+                                <span class="flag">🇵🇱</span>
+                                <span class="name">Polski</span>
+                            </div>
+                            <div class="language-option" data-lang="es">
+                                <span class="flag">🇪🇸</span>
+                                <span class="name">Español</span>
+                            </div>
+                            <div class="language-option" data-lang="nl">
+                                <span class="flag">🇳🇱</span>
+                                <span class="name">Nederlands</span>
+                            </div>
+                            <div class="language-option" data-lang="de">
+                                <span class="flag">🇩🇪</span>
+                                <span class="name">Deutsch</span>
+                            </div>
+                            <div class="language-option" data-lang="fr">
+                                <span class="flag">🇫🇷</span>
+                                <span class="name">Français</span>
+                            </div>
+                            <div class="language-option" data-lang="da">
+                                <span class="flag">🇩🇰</span>
+                                <span class="name">Dansk</span>
+                            </div>
+                            <div class="language-option" data-lang="it">
+                                <span class="flag">🇮🇹</span>
+                                <span class="name">Italiano</span>
+                            </div>
+                            <div class="language-option" data-lang="pt">
+                                <span class="flag">🇵🇹</span>
+                                <span class="name">Português</span>
+                            </div>
+                            <div class="language-option" data-lang="sv">
+                                <span class="flag">🇸🇪</span>
+                                <span class="name">Svenska</span>
+                            </div>
+                            <div class="language-option" data-lang="no">
+                                <span class="flag">🇳🇴</span>
+                                <span class="name">Norsk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-btn" id="themeToggle" title="Переключить тему">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Pricing Hero -->
+        <section class="hero pricing-hero">
+            <div class="hero-content">
+                <h1>Transparent Pricing</h1>
+                <p>No hidden fees, no surprises. Get detailed pricing for all our renovation services</p>
+            </div>
+        </section>
+
+        <!-- Pricing Plans -->
+        <section class="pricing-plans-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Service Packages</h2>
+                    <p>Choose the perfect package for your renovation needs</p>
+                </div>
+                
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <div class="pricing-icon">🔧</div>
+                            <h3>Basic Renovation</h3>
+                            <div class="pricing-amount">
+                                <span class="currency">€</span>
+                                <span class="amount">5,000</span>
+                                <span class="period">starting from</span>
+                            </div>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li>✅ Basic repairs and maintenance</li>
+                                <li>✅ Painting (2 rooms)</li>
+                                <li>✅ Minor plumbing fixes</li>
+                                <li>✅ Basic electrical work</li>
+                                <li>✅ 1-year warranty</li>
+                                <li>❌ Custom design</li>
+                                <li>❌ Premium materials</li>
+                            </ul>
+                        </div>
+                        <button class="pricing-btn">Get Quote</button>
+                    </div>
+
+                    <div class="pricing-card featured">
+                        <div class="featured-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <div class="pricing-icon">🏠</div>
+                            <h3>Complete Renovation</h3>
+                            <div class="pricing-amount">
+                                <span class="currency">€</span>
+                                <span class="amount">25,000</span>
+                                <span class="period">starting from</span>
+                            </div>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li>✅ Full room renovation</li>
+                                <li>✅ Custom design consultation</li>
+                                <li>✅ Premium materials</li>
+                                <li>✅ Complete electrical & plumbing</li>
+                                <li>✅ Flooring installation</li>
+                                <li>✅ 3-year warranty</li>
+                                <li>✅ Project management</li>
+                            </ul>
+                        </div>
+                        <button class="pricing-btn featured-btn">Get Quote</button>
+                    </div>
+
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <div class="pricing-icon">👑</div>
+                            <h3>Luxury Renovation</h3>
+                            <div class="pricing-amount">
+                                <span class="currency">€</span>
+                                <span class="amount">50,000</span>
+                                <span class="period">starting from</span>
+                            </div>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li>✅ Luxury full home renovation</li>
+                                <li>✅ Premium designer consultation</li>
+                                <li>✅ High-end materials only</li>
+                                <li>✅ Smart home integration</li>
+                                <li>✅ Custom furniture & fixtures</li>
+                                <li>✅ 5-year warranty</li>
+                                <li>✅ Dedicated project manager</li>
+                            </ul>
+                        </div>
+                        <button class="pricing-btn">Get Quote</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Pricing -->
+        <section class="service-pricing-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Individual Service Pricing</h2>
+                    <p>Detailed pricing for specific renovation services</p>
+                </div>
+                
+                <div class="service-pricing-grid">
+                    <div class="service-price-card">
+                        <h4>🔨 Tile Installation</h4>
+                        <div class="price-range">€35 - €75 per m²</div>
+                        <p>Includes removal, preparation, and installation</p>
+                    </div>
+                    <div class="service-price-card">
+                        <h4>🎨 Interior Painting</h4>
+                        <div class="price-range">€25 - €45 per m²</div>
+                        <p>Premium paint and professional application</p>
+                    </div>
+                    <div class="service-price-card">
+                        <h4>🚪 Window Installation</h4>
+                        <div class="price-range">€400 - €800 per window</div>
+                        <p>Energy-efficient windows with installation</p>
+                    </div>
+                    <div class="service-price-card">
+                        <h4>🔧 Plumbing Work</h4>
+                        <div class="price-range">€75 - €125 per hour</div>
+                        <p>Licensed plumber with materials included</p>
+                    </div>
+                    <div class="service-price-card">
+                        <h4>🪵 Flooring Installation</h4>
+                        <div class="price-range">€45 - €95 per m²</div>
+                        <p>Various materials from laminate to hardwood</p>
+                    </div>
+                    <div class="service-price-card">
+                        <h4>🏠 Roof Repairs</h4>
+                        <div class="price-range">€85 - €150 per m²</div>
+                        <p>Complete roof renovation and repairs</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Free Estimate CTA -->
+        <section class="estimate-cta-section">
+            <div class="container">
+                <div class="estimate-cta">
+                    <h2>Get Your Free Estimate Today!</h2>
+                    <p>Contact us for a detailed, no-obligation quote for your renovation project</p>
+                    <div class="cta-buttons">
+                        <a href="contact.html" class="cta-button">Get Free Quote</a>
+                        <a href="tel:+31123456789" class="cta-button secondary">Call Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 VK Bouwmaster. All rights reserved. | Professional Renovation Services</p>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - VK Bouwmaster Frequently Asked Questions</title>
+    <meta name="description" content="Find answers to frequently asked questions about VK Bouwmaster renovation services, pricing, timelines, and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+    <header id="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">VK Bouwmaster</a>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html" data-translate="nav.home">Home</a></li>
+                    <li><a href="index.html#services" data-translate="nav.services">Services</a></li>
+                    <li><a href="about.html" data-translate="nav.about">About</a></li>
+                    <li><a href="portfolio.html" data-translate="nav.portfolio">Portfolio</a></li>
+                    <li><a href="blog.html" data-translate="nav.blog">Blog</a></li>
+                    <li><a href="pricing.html" data-translate="nav.pricing">Pricing</a></li>
+                    <li><a href="team.html" data-translate="nav.team">Team</a></li>
+                    <li><a href="faq.html" data-translate="nav.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-translate="nav.contact">Contact</a></li>
+
+                    <!-- Mobile Controls -->
+                    <li class="mobile-nav-controls">
+                        <div class="language-switcher">
+                            <button class="language-btn mobile-lang-btn" id="mobileLangBtn" title="Выбрать язык">
+                                <span class="flag-icon">🇬🇧</span>
+                                <span class="lang-code">EN</span>
+                            </button>
+                        </div>
+                        <div class="theme-toggle-container">
+                            <button class="theme-toggle-btn mobile-theme-btn" id="mobileThemeToggle" title="Переключить тему">
+                                <span class="theme-icon">🌙</span>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="nav-controls">
+                    <div class="language-switcher">
+                        <button class="language-btn" id="languageBtn" title="Выбрать язык">
+                            <span class="flag-icon">🇬🇧</span>
+                            <span class="lang-code">EN</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="language-dropdown" id="languageDropdown">
+                            <div class="language-option" data-lang="en">
+                                <span class="flag">🇬🇧</span>
+                                <span class="name">English</span>
+                            </div>
+                            <div class="language-option" data-lang="ru">
+                                <span class="flag">🇷🇺</span>
+                                <span class="name">Русский</span>
+                            </div>
+                            <div class="language-option" data-lang="uk">
+                                <span class="flag">🇺🇦</span>
+                                <span class="name">Українська</span>
+                            </div>
+                            <div class="language-option" data-lang="pl">
+                                <span class="flag">🇵🇱</span>
+                                <span class="name">Polski</span>
+                            </div>
+                            <div class="language-option" data-lang="es">
+                                <span class="flag">🇪🇸</span>
+                                <span class="name">Español</span>
+                            </div>
+                            <div class="language-option" data-lang="nl">
+                                <span class="flag">🇳🇱</span>
+                                <span class="name">Nederlands</span>
+                            </div>
+                            <div class="language-option" data-lang="de">
+                                <span class="flag">🇩🇪</span>
+                                <span class="name">Deutsch</span>
+                            </div>
+                            <div class="language-option" data-lang="fr">
+                                <span class="flag">🇫🇷</span>
+                                <span class="name">Français</span>
+                            </div>
+                            <div class="language-option" data-lang="da">
+                                <span class="flag">🇩🇰</span>
+                                <span class="name">Dansk</span>
+                            </div>
+                            <div class="language-option" data-lang="it">
+                                <span class="flag">🇮🇹</span>
+                                <span class="name">Italiano</span>
+                            </div>
+                            <div class="language-option" data-lang="pt">
+                                <span class="flag">🇵🇹</span>
+                                <span class="name">Português</span>
+                            </div>
+                            <div class="language-option" data-lang="sv">
+                                <span class="flag">🇸🇪</span>
+                                <span class="name">Svenska</span>
+                            </div>
+                            <div class="language-option" data-lang="no">
+                                <span class="flag">🇳🇴</span>
+                                <span class="name">Norsk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-btn" id="themeToggle" title="Переключить тему">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- FAQ Hero -->
+        <section class="hero faq-hero">
+            <div class="hero-content">
+                <h1>Frequently Asked Questions</h1>
+                <p>Find answers to common questions about our renovation services and process</p>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <div class="faq-grid">
+                    <div class="faq-category">
+                        <h3>🏠 General Questions</h3>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>How long does a typical renovation take?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Project timelines vary depending on the scope of work. A bathroom renovation typically takes 2-4 weeks, while a complete kitchen renovation can take 4-8 weeks. We provide detailed timelines during the planning phase.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Do you provide free estimates?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Yes! We provide free, detailed estimates for all projects. Our team will visit your property, assess the work needed, and provide a comprehensive quote with no hidden fees.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Are you licensed and insured?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Absolutely! VK Bouwmaster is fully licensed and insured. We carry comprehensive liability insurance and all our work comes with warranties for your peace of mind.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-category">
+                        <h3>💰 Pricing & Payment</h3>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>What payment methods do you accept?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>We accept bank transfers, credit cards, and cash payments. For larger projects, we offer flexible payment schedules tied to project milestones.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Do you require a deposit?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Yes, we typically require a 20% deposit to begin work. This covers initial materials and secures your project timeline. The remaining balance is paid according to the agreed schedule.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Can the project cost change during renovation?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>We provide detailed estimates to minimize surprises. Any changes to the original scope will be discussed and approved by you before proceeding, with transparent pricing for additional work.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-category">
+                        <h3>🔧 Services & Process</h3>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Do you handle permits and inspections?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Yes, we handle all necessary permits and coordinate inspections as part of our service. We ensure all work meets local building codes and regulations.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Can I live in my home during renovation?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>In many cases, yes! We work to minimize disruption and can often phase the work to allow you to remain in your home. We'll discuss the best approach during planning.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>What warranty do you provide?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>We provide comprehensive warranties: 1 year for basic work, 3 years for complete renovations, and 5 years for luxury projects. All warranties cover both materials and workmanship.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-category">
+                        <h3>📅 Scheduling & Timeline</h3>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>How far in advance should I book?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>We recommend booking 4-8 weeks in advance for most projects. However, we can accommodate urgent repairs and have emergency services available 24/7.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>What if the project takes longer than expected?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>We pride ourselves on meeting deadlines. If unforeseen circumstances cause delays, we communicate immediately and work to minimize impact. Our detailed planning helps prevent most delays.</p>
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button class="faq-question">
+                                    <span>Do you work on weekends?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    <p>Our standard hours are Monday-Friday, 8 AM - 6 PM. Weekend work can be arranged for urgent projects or to meet tight deadlines, subject to additional scheduling fees.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Still Have Questions -->
+        <section class="questions-cta-section">
+            <div class="container">
+                <div class="questions-cta">
+                    <h2>Still Have Questions?</h2>
+                    <p>Can't find the answer you're looking for? Our team is here to help!</p>
+                    <div class="cta-buttons">
+                        <a href="contact.html" class="cta-button">Contact Us</a>
+                        <a href="tel:+31123456789" class="cta-button secondary">Call Directly</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 VK Bouwmaster. All rights reserved. | Professional Renovation Services</p>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // FAQ accordion functionality
+        const faqQuestions = document.querySelectorAll('.faq-question');
+
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', function() {
+                const faqItem = this.parentElement;
+                const answer = faqItem.querySelector('.faq-answer');
+                const icon = this.querySelector('.faq-icon');
+                
+                // Close other open items
+                faqQuestions.forEach(otherQuestion => {
+                    if (otherQuestion !== this) {
+                        const otherItem = otherQuestion.parentElement;
+                        const otherAnswer = otherItem.querySelector('.faq-answer');
+                        const otherIcon = otherQuestion.querySelector('.faq-icon');
+                        
+                        otherItem.classList.remove('active');
+                        otherAnswer.style.maxHeight = '0';
+                        otherIcon.textContent = '+';
+                    }
+                });
+                
+                // Toggle current item
+                if (faqItem.classList.contains('active')) {
+                    faqItem.classList.remove('active');
+                    answer.style.maxHeight = '0';
+                    icon.textContent = '+';
+                } else {
+                    faqItem.classList.add('active');
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                    icon.textContent = '−';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

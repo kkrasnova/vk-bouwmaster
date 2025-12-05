@@ -1,0 +1,56 @@
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { LayoutWrapper } from "@/components/layout/layout-wrapper";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://vkbouwmaster.com'),
+  title: "VK Bouwmaster - Professionele Renovatiediensten",
+  description: "VK Bouwmaster biedt professionele renovatiediensten, waaronder tegelwerk, dakreparaties, loodgieterswerk, schilderwerk en tuinontwerp. Transformeer uw huis met ons team van experts.",
+  keywords: "renovatie, huisverbetering, bouw, tegelwerk, dakreparaties, loodgieterswerk, schilderwerk, tuinontwerp, bouwmeester, verbouwing",
+  openGraph: {
+    url: "https://vkbouwmaster.com",
+    title: "VK Bouwmaster - Professionele Renovatiediensten",
+    description: "VK Bouwmaster biedt professionele renovatiediensten, waaronder tegelwerk, dakreparaties, loodgieterswerk, schilderwerk en tuinontwerp. Transformeer uw huis met ons team van experts.",
+    type: "website",
+    locale: "nl_NL",
+    siteName: "VK Bouwmaster",
+    alternateLocale: ["nl_NL"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VK Bouwmaster - Professionele Renovatiediensten",
+    description: "VK Bouwmaster biedt professionele renovatiediensten voor uw huis. Transformeer uw huis met ons team van experts.",
+  },
+  alternates: {
+    canonical: "https://vkbouwmaster.com",
+  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="nl">
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
+      </body>
+    </html>
+  );
+}

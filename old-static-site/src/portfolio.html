@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - VK Bouwmaster Projects</title>
+    <meta name="description" content="Explore VK Bouwmaster's portfolio of completed renovation projects. See our work in kitchens, bathrooms, complete home renovations, and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
+</head>
+<body>
+    <header id="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">VK Bouwmaster</a>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="index.html" data-translate="nav.home">Home</a></li>
+                    <li><a href="index.html#services" data-translate="nav.services">Services</a></li>
+                    <li><a href="about.html" data-translate="nav.about">About</a></li>
+                    <li><a href="portfolio.html" data-translate="nav.portfolio">Portfolio</a></li>
+                    <li><a href="blog.html" data-translate="nav.blog">Blog</a></li>
+                    <li><a href="pricing.html" data-translate="nav.pricing">Pricing</a></li>
+                    <li><a href="team.html" data-translate="nav.team">Team</a></li>
+                    <li><a href="faq.html" data-translate="nav.faq">FAQ</a></li>
+                    <li><a href="contact.html" data-translate="nav.contact">Contact</a></li>
+
+                    <!-- Mobile Controls -->
+                    <li class="mobile-nav-controls">
+                        <div class="language-switcher">
+                            <button class="language-btn mobile-lang-btn" id="mobileLangBtn" title="Выбрать язык">
+                                <span class="flag-icon">🇬🇧</span>
+                                <span class="lang-code">EN</span>
+                            </button>
+                        </div>
+                        <div class="theme-toggle-container">
+                            <button class="theme-toggle-btn mobile-theme-btn" id="mobileThemeToggle" title="Переключить тему">
+                                <span class="theme-icon">🌙</span>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="nav-controls">
+                    <div class="language-switcher">
+                        <button class="language-btn" id="languageBtn" title="Выбрать язык">
+                            <span class="flag-icon">🇬🇧</span>
+                            <span class="lang-code">EN</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="language-dropdown" id="languageDropdown">
+                            <div class="language-option" data-lang="en">
+                                <span class="flag">🇬🇧</span>
+                                <span class="name">English</span>
+                            </div>
+                            <div class="language-option" data-lang="ru">
+                                <span class="flag">🇷🇺</span>
+                                <span class="name">Русский</span>
+                            </div>
+                            <div class="language-option" data-lang="uk">
+                                <span class="flag">🇺🇦</span>
+                                <span class="name">Українська</span>
+                            </div>
+                            <div class="language-option" data-lang="pl">
+                                <span class="flag">🇵🇱</span>
+                                <span class="name">Polski</span>
+                            </div>
+                            <div class="language-option" data-lang="es">
+                                <span class="flag">🇪🇸</span>
+                                <span class="name">Español</span>
+                            </div>
+                            <div class="language-option" data-lang="nl">
+                                <span class="flag">🇳🇱</span>
+                                <span class="name">Nederlands</span>
+                            </div>
+                            <div class="language-option" data-lang="de">
+                                <span class="flag">🇩🇪</span>
+                                <span class="name">Deutsch</span>
+                            </div>
+                            <div class="language-option" data-lang="fr">
+                                <span class="flag">🇫🇷</span>
+                                <span class="name">Français</span>
+                            </div>
+                            <div class="language-option" data-lang="da">
+                                <span class="flag">🇩🇰</span>
+                                <span class="name">Dansk</span>
+                            </div>
+                            <div class="language-option" data-lang="it">
+                                <span class="flag">🇮🇹</span>
+                                <span class="name">Italiano</span>
+                            </div>
+                            <div class="language-option" data-lang="pt">
+                                <span class="flag">🇵🇹</span>
+                                <span class="name">Português</span>
+                            </div>
+                            <div class="language-option" data-lang="sv">
+                                <span class="flag">🇸🇪</span>
+                                <span class="name">Svenska</span>
+                            </div>
+                            <div class="language-option" data-lang="no">
+                                <span class="flag">🇳🇴</span>
+                                <span class="name">Norsk</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-btn" id="themeToggle" title="Переключить тему">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Portfolio Hero -->
+        <section class="hero portfolio-hero">
+            <div class="hero-content">
+                <h1>Our Portfolio</h1>
+                <p>Discover our exceptional renovation projects and see the quality craftsmanship that sets us apart</p>
+            </div>
+        </section>
+
+        <!-- Portfolio Filter -->
+        <section class="portfolio-filter-section">
+            <div class="container">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All Projects</button>
+                    <button class="filter-btn" data-filter="kitchen">Kitchens</button>
+                    <button class="filter-btn" data-filter="bathroom">Bathrooms</button>
+                    <button class="filter-btn" data-filter="living">Living Rooms</button>
+                    <button class="filter-btn" data-filter="exterior">Exterior</button>
+                    <button class="filter-btn" data-filter="commercial">Commercial</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Gallery -->
+        <section class="portfolio-gallery-section">
+            <div class="container">
+                <div class="portfolio-gallery">
+                    <div class="portfolio-project" data-category="kitchen">
+                        <div class="project-image">🍳</div>
+                        <div class="project-overlay">
+                            <h3>Modern Kitchen Renovation</h3>
+                            <p>Complete kitchen transformation with custom cabinets</p>
+                            <div class="project-details">
+                                <span class="project-cost">€25,000</span>
+                                <span class="project-duration">6 weeks</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h4>Luxury Kitchen Design</h4>
+                            <p>Amsterdam • 2024</p>
+                            <div class="project-tags">
+                                <span class="tag">Custom Cabinets</span>
+                                <span class="tag">Premium Appliances</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-project" data-category="bathroom">
+                        <div class="project-image">🛁</div>
+                        <div class="project-overlay">
+                            <h3>Spa-Style Bathroom</h3>
+                            <p>Luxurious bathroom with walk-in shower and premium fixtures</p>
+                            <div class="project-details">
+                                <span class="project-cost">€18,000</span>
+                                <span class="project-duration">4 weeks</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h4>Master Bathroom Renovation</h4>
+                            <p>Rotterdam • 2024</p>
+                            <div class="project-tags">
+                                <span class="tag">Walk-in Shower</span>
+                                <span class="tag">Heated Floors</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-project" data-category="living">
+                        <div class="project-image">🛋️</div>
+                        <div class="project-overlay">
+                            <h3>Open Concept Living</h3>
+                            <p>Modern living space with open floor plan</p>
+                            <div class="project-details">
+                                <span class="project-cost">€35,000</span>
+                                <span class="project-duration">8 weeks</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h4>Living Room Redesign</h4>
+                            <p>Utrecht • 2024</p>
+                            <div class="project-tags">
+                                <span class="tag">Open Concept</span>
+                                <span class="tag">Smart Home</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-project" data-category="exterior">
+                        <div class="project-image">🏡</div>
+                        <div class="project-overlay">
+                            <h3>Exterior Renovation</h3>
+                            <p>Complete exterior makeover with landscaping</p>
+                            <div class="project-details">
+                                <span class="project-cost">€45,000</span>
+                                <span class="project-duration">10 weeks</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h4>Full Exterior Renovation</h4>
+                            <p>The Hague • 2024</p>
+                            <div class="project-tags">
+                                <span class="tag">Landscaping</span>
+                                <span class="tag">New Roof</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-project" data-category="commercial">
+                        <div class="project-image">🏢</div>
+                        <div class="project-overlay">
+                            <h3>Office Renovation</h3>
+                            <p>Modern office space with collaborative areas</p>
+                            <div class="project-details">
+                                <span class="project-cost">€60,000</span>
+                                <span class="project-duration">12 weeks</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h4>Commercial Office Space</h4>
+                            <p>Eindhoven • 2024</p>
+                            <div class="project-tags">
+                                <span class="tag">Modern Design</span>
+                                <span class="tag">Eco-Friendly</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="portfolio-project" data-category="kitchen">
+                        <div class="project-image">👨‍🍳</div>
+                        <div class="project-overlay">
+                            <h3>Chef's Kitchen</h3>
+                            <p>Professional-grade kitchen for cooking enthusiasts</p>
+                            <div class="project-details">
+                                <span class="project-cost">€40,000</span>
+                                <span class="project-duration">8 weeks</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h4>Professional Kitchen</h4>
+                            <p>Amsterdam • 2024</p>
+                            <div class="project-tags">
+                                <span class="tag">Professional Grade</span>
+                                <span class="tag">Custom Island</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 VK Bouwmaster. All rights reserved. | Professional Renovation Services</p>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Portfolio filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const portfolioProjects = document.querySelectorAll('.portfolio-project');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+                
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter projects
+                portfolioProjects.forEach(project => {
+                    const category = project.getAttribute('data-category');
+                    
+                    if (filter === 'all' || filter === category) {
+                        project.style.display = 'block';
+                        project.style.animation = 'bounceIn 0.6s ease';
+                    } else {
+                        project.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

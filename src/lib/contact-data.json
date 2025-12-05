@@ -1,0 +1,23 @@
+{
+  "phone": {
+    "number1": "+1 (555) 123-4567",
+    "number2": "+1 (555) 987-6543"
+  },
+  "email": {
+    "address1": "vkbouwmaster@gmail.com",
+    "address2": "vkbouwmaster@gmail.com"
+  },
+  "address": {
+    "street": "123 Construction Avenue",
+    "city": "Amsterdam, Netherlands"
+  },
+  "hours": {
+    "weekdays": "Monday - Friday: 8:00 AM - 6:00 PM",
+    "saturday": "Saturday: 9:00 AM - 4:00 PM",
+    "sunday": "Sunday: Closed"
+  },
+  "emergency": {
+    "phone": "+1 (555) 911-2222"
+  }
+}
+
