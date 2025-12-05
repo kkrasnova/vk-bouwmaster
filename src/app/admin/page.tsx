@@ -534,15 +534,22 @@ export default function AdminPage() {
         body: formData,
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Неизвестная ошибка' }));
+        throw new Error(errorData.error || `Ошибка сервера: ${response.status}`);
+      }
+
       const data = await response.json();
-      if (data.success) {
+      if (data.success && data.url) {
+        console.log('Файл успешно загружен:', data.url);
         return data.url;
       } else {
-        throw new Error(data.error || 'Ошибка загрузки');
+        throw new Error(data.error || 'Ошибка загрузки: файл не сохранён');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Ошибка загрузки файла:', error);
-      alert('Ошибка при загрузке файла');
+      const errorMessage = error.message || 'Ошибка при загрузке файла';
+      alert(`Ошибка при загрузке файла: ${errorMessage}\n\nПроверьте консоль браузера для деталей.`);
       return null;
     }
   };
@@ -862,25 +869,42 @@ export default function AdminPage() {
     try {
       const imagePromises = Array.from(files).map(async (file) => {
         if (file.type.startsWith('image/')) {
-          return { type: 'image' as const, url: await handleFileUpload(file) };
+          const url = await handleFileUpload(file);
+          if (url) {
+            return { type: 'image' as const, url };
+          }
+          return null;
         }
         if (file.type.startsWith('video/')) {
-          return { type: 'video' as const, url: await handleFileUpload(file) };
+          const url = await handleFileUpload(file);
+          if (url) {
+            return { type: 'video' as const, url };
+          }
+          return null;
         }
         return null;
       });
       
-      const results = (await Promise.all(imagePromises)).filter(Boolean) as Array<{ type: 'image' | 'video'; url: string | null }>;
-      const imageUrls = results.filter(r => r.type === 'image' && r.url).map(r => r.url as string);
-      const videoUrls = results.filter(r => r.type === 'video' && r.url).map(r => r.url as string);
+      const results = (await Promise.all(imagePromises)).filter(Boolean) as Array<{ type: 'image' | 'video'; url: string }>;
+      const imageUrls = results.filter(r => r.type === 'image' && r.url).map(r => r.url);
+      const videoUrls = results.filter(r => r.type === 'video' && r.url).map(r => r.url);
       
       if (imageUrls.length > 0 || videoUrls.length > 0) {
+        const newImages = [...worksFormData.images, ...imageUrls];
+        const newVideos = [...worksFormData.videos, ...videoUrls];
         setWorksFormData({ 
           ...worksFormData, 
-          images: [...worksFormData.images, ...imageUrls],
-          videos: [...worksFormData.videos, ...videoUrls]
+          images: newImages,
+          videos: newVideos
         });
+        console.log('Добавлены файлы:', { images: imageUrls.length, videos: videoUrls.length });
+        alert(`Загружено: ${imageUrls.length} фото, ${videoUrls.length} видео`);
+      } else {
+        alert('Не удалось загрузить файлы. Проверьте консоль браузера.');
       }
+    } catch (error) {
+      console.error('Ошибка при загрузке дополнительных файлов:', error);
+      alert('Ошибка при загрузке файлов');
     } finally {
       setUploading(false);
     }
@@ -924,6 +948,15 @@ export default function AdminPage() {
             // Убираем пустые переводы при создании - API автоматически создаст переводы на все языки
             translations: undefined
           };
+      
+      // Логируем данные для отладки
+      console.log('Отправка работы:', {
+        title: dataToSend.title,
+        mainImage: dataToSend.mainImage,
+        images: dataToSend.images?.length || 0,
+        videos: dataToSend.videos?.length || 0,
+        category: dataToSend.category
+      });
       
       const response = await fetch(url, {
         method,

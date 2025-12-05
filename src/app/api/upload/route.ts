@@ -59,14 +59,18 @@ export async function POST(request: NextRequest) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
       await writeFile(filePath, buffer);
+      console.log('Файл успешно сохранён:', filePath);
     } catch (writeError: any) {
       console.error('Ошибка записи файла:', writeError);
+      console.error('Код ошибки:', writeError.code);
+      console.error('Сообщение:', writeError.message);
       
       if (writeError.code === 'EROFS' || writeError.code === 'EACCES' || writeError.message?.includes('read-only')) {
         return NextResponse.json(
           { 
-            error: 'Файловая система доступна только для чтения.',
-            code: 'READ_ONLY_FS'
+            error: 'Файловая система доступна только для чтения. На Render.com нужно использовать Render Disk или внешнее хранилище (S3, Cloudflare R2).',
+            code: 'READ_ONLY_FS',
+            details: writeError.message
           },
           { status: 500 }
         );

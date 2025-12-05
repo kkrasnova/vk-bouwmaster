@@ -103,6 +103,14 @@ export async function POST(request: NextRequest) {
   try {
     const work: PortfolioWork = await request.json();
 
+    console.log('POST /api/works - получена работа:', {
+      title: work.title,
+      mainImage: work.mainImage,
+      images: work.images?.length || 0,
+      videos: work.videos?.length || 0,
+      category: work.category
+    });
+
     if (!work.title || !work.mainImage || !work.category) {
       return NextResponse.json(
         { error: 'Необходимы: title, mainImage, category' },
@@ -131,11 +139,23 @@ export async function POST(request: NextRequest) {
       id: work.id || Date.now().toString(),
       projectId: work.projectId || `project-${Date.now()}`,
       workDate: work.workDate || new Date().toISOString().split('T')[0],
-      translations: translations || work.translations
+      translations: translations || work.translations,
+      // Убеждаемся, что images и videos сохраняются
+      images: work.images || [],
+      videos: work.videos || []
     };
+
+    console.log('Сохранение работы:', {
+      id: newWork.id,
+      title: newWork.title,
+      images: newWork.images?.length || 0,
+      videos: newWork.videos?.length || 0
+    });
 
     works.push(newWork);
     await writeWorksData(works);
+
+    console.log('Работа успешно сохранена. Всего работ:', works.length);
 
     return NextResponse.json({ success: true, work: newWork });
   } catch (error) {
