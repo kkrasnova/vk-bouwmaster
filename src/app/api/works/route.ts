@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { translateWork } from '@/lib/translate';
+import { get, put } from '@vercel/blob';
 
 const WORKS_FILE = join(process.cwd(), 'src/lib/works-data.json');
+const WORKS_BLOB_KEY = 'works-data.json';
 
 export interface WorkTranslations {
   title: string;
@@ -26,25 +28,61 @@ export interface PortfolioWork {
   translations?: Record<string, WorkTranslations>;
 }
 
-function readWorksData(): PortfolioWork[] {
-  try {
-    const data = readFileSync(WORKS_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    // Если файл не существует, возвращаем пустой массив
-    return [];
+async function readWorksData(): Promise<PortfolioWork[]> {
+  const isVercel = process.env.VERCEL === '1' || process.env.BLOB_READ_WRITE_TOKEN;
+  
+  if (isVercel && process.env.BLOB_READ_WRITE_TOKEN) {
+    // Используем Vercel Blob Storage на продакшене
+    try {
+      const blob = await get(WORKS_BLOB_KEY, { token: process.env.BLOB_READ_WRITE_TOKEN });
+      const text = await blob.text();
+      return JSON.parse(text || '[]');
+    } catch (error: any) {
+      // Если файл не существует, возвращаем пустой массив
+      if (error.statusCode === 404) {
+        return [];
+      }
+      console.error('Error reading from Blob:', error);
+      return [];
+    }
+  } else {
+    // Локальное чтение из файла
+    try {
+      const data = readFileSync(WORKS_FILE, 'utf-8');
+      return JSON.parse(data);
+    } catch (error) {
+      // Если файл не существует, возвращаем пустой массив
+      return [];
+    }
   }
 }
 
-function writeWorksData(data: PortfolioWork[]) {
-  try {
-    writeFileSync(WORKS_FILE, JSON.stringify(data, null, 2), 'utf-8');
-  } catch (error: any) {
-    // Проверяем, не является ли это ошибкой файловой системы (например, на Vercel)
-    if (error.code === 'EROFS' || error.code === 'EACCES' || error.message?.includes('read-only')) {
-      throw new Error('Файловая система доступна только для чтения. На Vercel нужно использовать базу данных или Vercel KV для хранения данных.');
+async function writeWorksData(data: PortfolioWork[]): Promise<void> {
+  const isVercel = process.env.VERCEL === '1' || process.env.BLOB_READ_WRITE_TOKEN;
+  
+  if (isVercel && process.env.BLOB_READ_WRITE_TOKEN) {
+    // Используем Vercel Blob Storage на продакшене
+    try {
+      const jsonData = JSON.stringify(data, null, 2);
+      await put(WORKS_BLOB_KEY, jsonData, {
+        access: 'public',
+        token: process.env.BLOB_READ_WRITE_TOKEN,
+      });
+    } catch (error: any) {
+      console.error('Error writing to Blob:', error);
+      throw new Error(`Ошибка записи в хранилище: ${error.message || 'Неизвестная ошибка'}`);
     }
-    throw error;
+  } else {
+    // Локальная запись в файл
+    try {
+      writeFileSync(WORKS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (error: any) {
+      // Проверяем, не является ли это ошибкой файловой системы (например, на Vercel)
+      if (error.code === 'EROFS' || error.code === 'EACCES' || error.message?.includes('read-only')) {
+        throw new Error('Файловая система доступна только для чтения. На Vercel нужно использовать Vercel Blob Storage.');
+      }
+      throw error;
+    }
   }
 }
 
@@ -55,7 +93,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const translateAll = searchParams.get('translateAll') === 'true';
 
-    let works = readWorksData();
+    let works = await readWorksData();
 
     if (projectId) {
       works = works.filter(work => work.projectId === projectId);
@@ -88,7 +126,7 @@ export async function GET(request: NextRequest) {
         }
       }
       if (updated) {
-        writeWorksData(works);
+        await writeWorksData(works);
       }
     }
 
@@ -126,7 +164,7 @@ export async function POST(request: NextRequest) {
       // Продолжаем без переводов, если произошла ошибка
     }
 
-    const works = readWorksData();
+    const works = await readWorksData();
 
     const newWork: PortfolioWork = {
       ...work,
@@ -137,7 +175,7 @@ export async function POST(request: NextRequest) {
     };
 
     works.push(newWork);
-    writeWorksData(works);
+    await writeWorksData(works);
 
     return NextResponse.json({ success: true, work: newWork });
   } catch (error) {
@@ -163,7 +201,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const workId = id || work.id;
-    const works = readWorksData();
+    const works = await readWorksData();
     const index = works.findIndex(w => w.id === workId);
 
     if (index === -1) {
@@ -203,7 +241,7 @@ export async function PUT(request: NextRequest) {
       id: workId,
       translations: translations || existingWork.translations
     };
-    writeWorksData(works);
+    await writeWorksData(works);
 
     return NextResponse.json({ success: true, work: works[index] });
   } catch (error: any) {
@@ -228,9 +266,9 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const works = readWorksData();
+    const works = await readWorksData();
     const filteredWorks = works.filter(work => work.id !== id);
-    writeWorksData(filteredWorks);
+    await writeWorksData(filteredWorks);
 
     return NextResponse.json({ success: true });
   } catch (error) {
