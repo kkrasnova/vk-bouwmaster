@@ -910,16 +910,19 @@ export default function AdminPage() {
       const url = editingWork ? `/api/works?id=${editingWork.id}` : '/api/works';
       const method = editingWork ? 'PUT' : 'POST';
       
-      // При создании новой работы не передаем переводы - API создаст их автоматически
-      // При редактировании передаем переводы только если они были изменены вручную
+      // При создании и редактировании не передаем переводы - API создаст/обновит их автоматически
+      // API автоматически определит, нужно ли обновлять переводы (если изменились title, description, category или city)
       const dataToSend = editingWork 
-        ? { ...editingWork, ...worksFormData }
+        ? { 
+            ...editingWork, 
+            ...worksFormData,
+            // Не передаем переводы - API обновит их автоматически при изменении текстовых полей
+            translations: undefined
+          }
         : {
             ...worksFormData,
             // Убираем пустые переводы при создании - API автоматически создаст переводы на все языки
-            translations: Object.keys(worksFormData.translations || {}).length > 0 
-              ? worksFormData.translations 
-              : undefined
+            translations: undefined
           };
       
       const response = await fetch(url, {
@@ -1417,13 +1420,6 @@ export default function AdminPage() {
                   {editingWork ? 'Редактировать работу' : 'Добавить работу'}
                 </h2>
                 <form onSubmit={handleWorkSubmit} className="space-y-4">
-                  {editingWork && (
-                    <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-3 mb-4">
-                      <p className="text-sm text-blue-200">
-                        💡 <strong>Совет:</strong> При изменении названия, описания, категории или города переводы обновятся автоматически на всех языках.
-                      </p>
-                    </div>
-                  )}
                   <div>
                     <label className="block text-sm font-medium mb-2">Название работы *</label>
                     <input

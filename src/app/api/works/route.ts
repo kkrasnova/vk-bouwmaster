@@ -171,7 +171,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Если изменились title, description, category или city, обновляем переводы
+    // Если изменились title, description, category или city, обновляем переводы автоматически
     const existingWork = works[index];
     const needsRetranslation = 
       work.title !== existingWork.title ||
@@ -179,8 +179,9 @@ export async function PUT(request: NextRequest) {
       work.category !== existingWork.category ||
       work.city !== existingWork.city;
 
-    let translations = work.translations || existingWork.translations;
+    let translations = existingWork.translations;
     
+    // Если изменились текстовые поля, автоматически создаём новые переводы
     if (needsRetranslation && (work.title || work.description || work.category || work.city)) {
       try {
         translations = await translateWork({
@@ -189,9 +190,11 @@ export async function PUT(request: NextRequest) {
           category: work.category || existingWork.category,
           city: work.city || existingWork.city
         });
+        console.log('Translations updated automatically for work:', workId);
       } catch (translationError) {
         console.error('Translation error:', translationError);
-        // Используем существующие переводы или те, что были переданы
+        // Используем существующие переводы при ошибке
+        translations = existingWork.translations;
       }
     }
 
