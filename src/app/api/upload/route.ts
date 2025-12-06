@@ -55,11 +55,13 @@ export async function POST(request: NextRequest) {
     if (hasRenderDisk) {
       // Используем Render Disk
       uploadDir = renderDiskPath;
-      fileUrl = `/uploads/${fileName}`;
+      // Используем API route для отдачи файлов из Render Disk
+      fileUrl = `/api/uploads/${fileName}`;
       console.log('Используется Render Disk:', uploadDir);
     } else {
       // Пробуем локальное хранилище (для разработки)
       uploadDir = join(process.cwd(), 'public', 'uploads');
+      // Локально файлы доступны напрямую из public
       fileUrl = `/uploads/${fileName}`;
       console.log('Используется локальное хранилище:', uploadDir);
     }
