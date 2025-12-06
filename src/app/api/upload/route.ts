@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir, access } from 'fs/promises';
+import { mkdir, access } from 'fs/promises';
 import { join } from 'path';
-import { existsSync } from 'fs';
-import { constants } from 'fs';
+import { existsSync, createWriteStream, constants } from 'fs';
+import { pipeline } from 'stream/promises';
+import { Readable } from 'stream';
 
-// Увеличиваем лимит размера файла (до 100MB)
-export const maxDuration = 60;
+// Увеличиваем лимит времени (для больших видео можно поднять через env)
+export const maxDuration = 300;
 export const runtime = 'nodejs';
+
+// Лимит размера файла можно задать через env MAX_UPLOAD_MB, по умолчанию без ограничения
+const MAX_UPLOAD_MB = process.env.MAX_UPLOAD_MB ? Number(process.env.MAX_UPLOAD_MB) : Infinity;
+
+function readableFromWeb(webStream: ReadableStream): Readable {
+  return Readable.fromWeb(webStream as any);
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,21 +28,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Проверяем размер файла (максимум 100MB)
-    const maxSize = 100 * 1024 * 1024; // 100MB
-    if (file.size > maxSize) {
+    // Проверяем размер файла только если задан ограничитель
+    if (isFinite(MAX_UPLOAD_MB) && file.size > MAX_UPLOAD_MB * 1024 * 1024) {
       return NextResponse.json(
-        { error: `Файл слишком большой. Максимальный размер: 100MB. Ваш файл: ${(file.size / 1024 / 1024).toFixed(2)}MB` },
+        { error: `Файл слишком большой. Максимальный размер: ${MAX_UPLOAD_MB}MB. Ваш файл: ${(file.size / 1024 / 1024).toFixed(2)}MB` },
         { status: 400 }
       );
     }
 
-    // Проверяем тип файла
-    const allowedTypes = ['image/', 'video/'];
+    // Теперь разрешаем только изображения
+    const allowedTypes = ['image/'];
     const isValidType = allowedTypes.some(type => file.type.startsWith(type));
     if (!isValidType) {
       return NextResponse.json(
-        { error: 'Неподдерживаемый тип файла. Разрешены только изображения и видео.' },
+        { error: 'Неподдерживаемый тип файла. Разрешены только изображения.' },
         { status: 400 }
       );
     }
@@ -92,10 +99,10 @@ export async function POST(request: NextRequest) {
     const filePath = join(uploadDir, fileName);
 
     try {
-      // Конвертируем File в Buffer и сохраняем
-      const bytes = await file.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      await writeFile(filePath, buffer);
+      // Стримим файл на диск, чтобы не держать большие файлы в памяти
+      const readable = readableFromWeb(file.stream());
+      const writable = createWriteStream(filePath);
+      await pipeline(readable, writable);
       console.log('✅ Файл успешно сохранён:', filePath);
       console.log('URL файла:', fileUrl);
     } catch (writeError: any) {

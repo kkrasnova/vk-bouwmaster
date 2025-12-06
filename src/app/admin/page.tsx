@@ -309,7 +309,7 @@ export default function AdminPage() {
     setUploading(true);
     try {
       // Подготовка данных для отправки
-      // Отправляем пустые массивы для удаления всех фото/видео, если они были удалены
+      // Отправляем пустые массивы для удаления всех фото, если они были удалены
       const dataToSave = {
         name: reviewFormData.name,
         surname: reviewFormData.surname || undefined,
@@ -905,48 +905,41 @@ export default function AdminPage() {
     setUploadProgress({ current: 0, total: totalFiles, fileName: '' });
     
     try {
-      const results: Array<{ type: 'image' | 'video'; url: string }> = [];
-      
+      const results: Array<{ type: 'image'; url: string }> = [];
+      let skipped = 0;
       for (let i = 0; i < fileArray.length; i++) {
         const file = fileArray[i];
         setUploadProgress({ current: i + 1, total: totalFiles, fileName: file.name });
         
-        if (file.type.startsWith('image/')) {
-          const url = await handleFileUpload(file);
-          if (url) {
-            results.push({ type: 'image', url });
-          }
-        } else if (file.type.startsWith('video/')) {
-          const url = await handleFileUpload(file);
-          if (url) {
-            results.push({ type: 'video', url });
-          }
+        if (!file.type.startsWith('image/')) {
+          skipped++;
+          continue;
+        }
+
+        const url = await handleFileUpload(file);
+        if (url) {
+          results.push({ type: 'image', url });
         }
       }
       
       const imageUrls = results.filter(r => r.type === 'image').map(r => r.url);
-      const videoUrls = results.filter(r => r.type === 'video').map(r => r.url);
       
-      if (imageUrls.length > 0 || videoUrls.length > 0) {
-        // Добавляем новые файлы к существующим (работает и при создании, и при редактировании)
+      if (imageUrls.length > 0) {
         const newImages = [...worksFormData.images, ...imageUrls];
-        const newVideos = [...worksFormData.videos, ...videoUrls];
         setWorksFormData({ 
           ...worksFormData, 
           images: newImages,
-          videos: newVideos
+          videos: [] // видео не поддерживаем
         });
         console.log('Добавлены файлы:', { 
           images: imageUrls.length, 
-          videos: videoUrls.length,
           totalImages: newImages.length,
-          totalVideos: newVideos.length,
           isEditing: !!editingWork
         });
         const editMsg = editingWork ? ' (добавлены к существующим)' : '';
-        alert(`✅ Загружено: ${imageUrls.length} фото, ${videoUrls.length} видео${editMsg}\n\nВсего: ${newImages.length} фото, ${newVideos.length} видео`);
+        alert(`✅ Загружено: ${imageUrls.length} фото${editMsg}\n\nВсего: ${newImages.length} фото${skipped ? `\nПропущено (не фото): ${skipped}` : ''}`);
       } else {
-        alert('❌ Не удалось загрузить файлы. Проверьте консоль браузера.');
+        alert(`❌ Не удалось загрузить файлы. Пропущено (не фото): ${skipped}`);
       }
     } catch (error) {
       console.error('Ошибка при загрузке дополнительных файлов:', error);
@@ -987,11 +980,13 @@ export default function AdminPage() {
         ? { 
             ...editingWork, 
             ...worksFormData,
+            videos: [], // отключаем отправку видео
             // Не передаем переводы - API обновит их автоматически при изменении текстовых полей
             translations: undefined
           }
         : {
             ...worksFormData,
+            videos: [], // отключаем отправку видео
             // Убираем пустые переводы при создании - API автоматически создаст переводы на все языки
             translations: undefined
           };
@@ -1003,10 +998,10 @@ export default function AdminPage() {
         title: dataToSend.title,
         mainImage: dataToSend.mainImage,
         images: dataToSend.images?.length || 0,
-        videos: dataToSend.videos?.length || 0,
+        videos: 0,
         category: dataToSend.category,
         imagesList: dataToSend.images,
-        videosList: dataToSend.videos
+        videosList: []
       });
       
       const response = await fetch(url, {
@@ -1019,25 +1014,25 @@ export default function AdminPage() {
         const result = await response.json();
         const work = result.work || result;
         const imagesCount = work.images?.length || 0;
-        const videosCount = work.videos?.length || 0;
+        const videosCount = 0;
         
         if (editingWork) {
           const addedImages = imagesCount - (editingWork.images?.length || 0);
-          const addedVideos = videosCount - (editingWork.videos?.length || 0);
+          const addedVideos = 0;
           const removedImages = (editingWork.images?.length || 0) - (worksFormData.images.length - addedImages);
-          const removedVideos = (editingWork.videos?.length || 0) - (worksFormData.videos.length - addedVideos);
+          const removedVideos = 0;
           
           let changeMsg = '';
           if (addedImages > 0 || addedVideos > 0) {
-            changeMsg += `\nДобавлено: ${addedImages} фото, ${addedVideos} видео`;
+            changeMsg += `\nДобавлено: ${addedImages} фото`;
           }
           if (removedImages > 0 || removedVideos > 0) {
-            changeMsg += `\nУдалено: ${removedImages} фото, ${removedVideos} видео`;
+            changeMsg += `\nУдалено: ${removedImages} фото`;
           }
           
-          alert(`✅ Работа обновлена!\n\nВсего файлов:\n📷 Фото: ${imagesCount}\n📹 Видео: ${videosCount}${changeMsg}\n\nПереводы обновлены автоматически. Работа появится на сайте в течение 5 секунд.`);
+          alert(`✅ Работа обновлена!\n\nВсего файлов:\n📷 Фото: ${imagesCount}${changeMsg}\n\nПереводы обновлены автоматически. Работа появится на сайте в течение 5 секунд.`);
         } else {
-          alert(`✅ Работа успешно добавлена!\n\nФото: ${imagesCount}\nВидео: ${videosCount}\n\nПереводы созданы автоматически на все языки. Работа появится в админ-панели и на сайте (Портфолио, Мои работы) в течение 5 секунд.`);
+          alert(`✅ Работа успешно добавлена!\n\nФото: ${imagesCount}\n\nПереводы созданы автоматически на все языки. Работа появится в админ-панели и на сайте (Портфолио, Мои работы) в течение 5 секунд.`);
         }
         
         setWorksFormData({
@@ -1047,7 +1042,6 @@ export default function AdminPage() {
           category: '',
           projectId: '',
           images: [],
-          videos: [],
           workDate: new Date().toISOString().split('T')[0],
           city: '',
           translations: {},
@@ -1097,7 +1091,7 @@ export default function AdminPage() {
       category: work.category,
       projectId: work.projectId || '',
       images: work.images || [],
-      videos: work.videos || [],
+      videos: [], // видео не поддерживаем
       workDate: work.workDate || new Date().toISOString().split('T')[0],
       city: work.city || '',
       translations: work.translations || {},
@@ -1516,10 +1510,10 @@ export default function AdminPage() {
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold elegant-title">
                     {editingWork ? '✏️ Редактировать работу' : '➕ Добавить работу'}
-                  </h2>
+                </h2>
                   {editingWork && (
                     <p className="text-sm text-green-400 mt-2">
-                      Режим редактирования: можно изменять все поля, добавлять новые фото/видео или удалять существующие
+                      Режим редактирования: можно изменять все поля, добавлять новые фото или удалять существующие
                     </p>
                   )}
                 </div>
@@ -1670,10 +1664,10 @@ export default function AdminPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">
-                      Дополнительные фото и видео
-                      {(worksFormData.images.length > 0 || worksFormData.videos.length > 0) && (
+                      Дополнительные фото
+                    {(worksFormData.images.length > 0) && (
                         <span className="ml-2 text-blue-400">
-                          ({worksFormData.images.length} фото, {worksFormData.videos.length} видео)
+                          ({worksFormData.images.length} фото)
                         </span>
                       )}
                       {editingWork && (
@@ -1704,7 +1698,7 @@ export default function AdminPage() {
                       </div>
                     )}
                     
-                    {(worksFormData.images.length > 0 || worksFormData.videos.length > 0) && (
+                    {(worksFormData.images.length > 0) && (
                       <div className="grid grid-cols-3 gap-3 mb-3 max-h-96 overflow-y-auto p-2">
                         {worksFormData.images.map((img, idx) => (
                           <div key={`img-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 group bg-gray-800">
@@ -1739,45 +1733,6 @@ export default function AdminPage() {
                             </div>
                           </div>
                         ))}
-                        {worksFormData.videos.map((video, idx) => (
-                          <div key={`video-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-gray-700 group bg-gray-800">
-                            <video 
-                              src={video} 
-                              className="w-full h-full object-cover" 
-                              muted
-                              onError={(e) => {
-                                console.error('Video load error:', video);
-                                e.currentTarget.style.display = 'none';
-                                const parent = e.currentTarget.parentElement;
-                                if (parent) {
-                                  parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500 text-xs">Ошибка загрузки видео</div>`;
-                                }
-                              }}
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setWorksFormData({
-                                ...worksFormData,
-                                videos: worksFormData.videos.filter((_, i) => i !== idx)
-                              })}
-                              className="absolute top-1 right-1 bg-red-600/90 hover:bg-red-600 text-white w-7 h-7 rounded-full text-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                              title="Удалить видео"
-                            >
-                              ×
-                            </button>
-                            <div className="absolute bottom-1 left-1 bg-black/70 px-2 py-0.5 rounded text-white text-xs flex items-center gap-1">
-                              <span>📹</span>
-                              <span>{idx + 1}</span>
-                            </div>
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                              <div className="bg-black/50 rounded-full p-2">
-                                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M8 5v14l11-7z"/>
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
                       </div>
                     )}
                     <div
@@ -1792,7 +1747,7 @@ export default function AdminPage() {
                     >
                       <input
                         type="file"
-                        accept="image/*,video/*"
+                        accept="image/*"
                         multiple
                         onChange={handleWorkAdditionalImagesSelect}
                         disabled={uploading}
@@ -1814,13 +1769,13 @@ export default function AdminPage() {
                                 Загрузка файлов...
                               </span>
                             ) : (
-                              'Перетащите фото и видео сюда или нажмите для выбора'
+                              'Перетащите фото сюда или нажмите для выбора'
                             )}
                           </p>
                           <p className="text-gray-400 text-xs mt-1">
                             {editingWork 
-                              ? 'Можно добавить новые файлы к существующим или удалить старые (до 100MB каждый)'
-                              : 'Можно выбрать несколько файлов одновременно (до 100MB каждый)'
+                              ? 'Можно добавить новые фото к существующим или удалить старые'
+                              : 'Можно выбрать несколько фото одновременно'
                             }
                           </p>
                         </div>
@@ -2003,22 +1958,22 @@ export default function AdminPage() {
                             
                             {/* Информация о файлах */}
                             <div className="flex flex-wrap gap-2 mb-3 text-xs">
-                              {work.projectId && (
+                            {work.projectId && (
                                 <span className="px-2 py-1 bg-gray-800 rounded text-gray-300">
                                   📁 {work.projectId}
                                 </span>
-                              )}
-                              {work.images && work.images.length > 0 && (
+                            )}
+                            {work.images && work.images.length > 0 && (
                                 <span className="px-2 py-1 bg-blue-900/50 rounded text-blue-300">
                                   📷 {work.images.length} фото
                                 </span>
-                              )}
-                              {work.videos && work.videos.length > 0 && (
+                            )}
+                            {work.videos && work.videos.length > 0 && (
                                 <span className="px-2 py-1 bg-purple-900/50 rounded text-purple-300">
                                   📹 {work.videos.length} видео
                                 </span>
-                              )}
-                              {work.city && (
+                            )}
+                            {work.city && (
                                 <span className="px-2 py-1 bg-gray-800 rounded text-gray-300">
                                   📍 {work.city}
                                 </span>
@@ -2055,19 +2010,24 @@ export default function AdminPage() {
                                   ))}
                                   {work.videos?.slice(0, 3).map((video, idx) => (
                                     <div key={`vid-${idx}`} className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden border border-purple-700 bg-gray-800">
-                                      <video 
-                                        src={video} 
-                                        className="w-full h-full object-cover" 
+                                      <video
+                                        src={video}
+                                        className="w-full h-full object-cover"
                                         muted
+                                        controls
                                         onError={(e) => {
                                           console.error('Thumbnail video load error:', video);
                                           e.currentTarget.style.display = 'none';
                                           const parent = e.currentTarget.parentElement;
                                           if (parent) {
-                                            parent.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-800 text-gray-500 text-[8px]">Ошибка</div>`;
+                                            const fallback = parent.querySelector('.video-fallback');
+                                            fallback?.classList.remove('hidden');
                                           }
                                         }}
                                       />
+                                      <div className="video-fallback absolute inset-0 hidden items-center justify-center bg-gray-800 text-gray-500 text-[8px]">
+                                        Ошибка
+                                      </div>
                                       <div className="absolute inset-0 flex items-center justify-center bg-black/30 pointer-events-none">
                                         <span className="text-white text-xs">📹</span>
                                       </div>

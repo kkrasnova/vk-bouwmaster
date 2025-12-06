@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
-import { translateText } from '@/lib/translate'
+import { translateText, detectSourceLanguage } from '@/lib/translate'
 import { Language } from '@/lib/translations'
 
 type Comment = {
@@ -72,15 +72,24 @@ export async function POST(request: NextRequest) {
     const profileImage = String(body.profileImage || '').trim()
     
     // Автоматически переводим сообщение на все языки
+    // Определяем исходный язык автоматически
     let translations: Record<string, string> | undefined
     try {
-      const languages: Language[] = ['EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA']
-      translations = { RU: message } // Оригинал на русском
+      const sourceLang = detectSourceLanguage(message)
+      console.log(`[Comments API] Detected source language: ${sourceLang} for comment message`)
       
-      // Переводим на все языки
+      // Определяем код языка для сохранения оригинала
+      const sourceLangCode = sourceLang === 'ru' ? 'RU' : sourceLang === 'nl' ? 'NL' : sourceLang === 'en' ? 'EN' : 'RU'
+      const languages: Language[] = ['RU', 'EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA']
+      
+      translations = { [sourceLangCode]: message } // Сохраняем оригинал
+      
+      // Переводим на все языки, кроме исходного
       for (const lang of languages) {
+        if (lang === sourceLangCode) continue // Пропускаем исходный язык
+        
         try {
-          const translated = await translateText(message, lang)
+          const translated = await translateText(message, lang, sourceLang)
           translations[lang] = translated
           // Небольшая задержка между запросами
           await new Promise(resolve => setTimeout(resolve, 50))
@@ -130,12 +139,19 @@ export async function PUT(request: NextRequest) {
     let translations = body.translations || list[idx].translations
     if (body.message !== undefined && body.message !== list[idx].message) {
       try {
-        const languages: Language[] = ['EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA']
-        translations = { RU: body.message }
+        const sourceLang = detectSourceLanguage(body.message)
+        console.log(`[Comments API] Detected source language: ${sourceLang} for updated comment message`)
+        
+        const sourceLangCode = sourceLang === 'ru' ? 'RU' : sourceLang === 'nl' ? 'NL' : sourceLang === 'en' ? 'EN' : 'RU'
+        const languages: Language[] = ['RU', 'EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA']
+        
+        translations = { [sourceLangCode]: body.message }
         
         for (const lang of languages) {
+          if (lang === sourceLangCode) continue
+          
           try {
-            const translated = await translateText(body.message, lang)
+            const translated = await translateText(body.message, lang, sourceLang)
             translations[lang] = translated
             await new Promise(resolve => setTimeout(resolve, 50))
           } catch (error) {

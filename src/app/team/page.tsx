@@ -1,66 +1,53 @@
 "use client"
 
+import { useEffect, useState } from 'react'
 import { useTranslations } from '@/hooks/useTranslations'
 import { useScrollAnimation } from '@/hooks/useScrollAnimation'
 
-const teamMembers = [
-  {
-    name: "Viktor Krasnov",
-    position: "Founder & Lead Contractor",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-    bio: "With over 15 years of experience in construction and renovation, Viktor founded VK Bouwmaster with a vision to deliver exceptional quality and customer service.",
-    specialties: ["Project Management", "Construction", "Quality Control"],
-    experience: "15+ years"
-  },
-  {
-    name: "Maria Rodriguez",
-    position: "Interior Design Specialist",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
-    bio: "Maria brings creativity and expertise to every project, helping clients achieve their vision with innovative design solutions and attention to detail.",
-    specialties: ["Interior Design", "Color Consultation", "Space Planning"],
-    experience: "12+ years"
-  },
-  {
-    name: "James Thompson",
-    position: "Master Carpenter",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-    bio: "James is a skilled craftsman with expertise in custom carpentry, cabinet making, and fine woodworking. His attention to detail is unmatched.",
-    specialties: ["Custom Carpentry", "Cabinet Making", "Fine Woodworking"],
-    experience: "18+ years"
-  },
-  {
-    name: "Sarah Kim",
-    position: "Flooring Specialist",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
-    bio: "Sarah specializes in all types of flooring installation and repair. Her precision and knowledge ensure perfect results every time.",
-    specialties: ["Hardwood Installation", "Tile Work", "Floor Repair"],
-    experience: "10+ years"
-  },
-  {
-    name: "David Wilson",
-    position: "Plumbing Expert",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
-    bio: "David is a licensed plumber with extensive experience in residential and commercial plumbing systems. He ensures everything works perfectly.",
-    specialties: ["Plumbing Installation", "System Repair", "Emergency Services"],
-    experience: "14+ years"
-  },
-  {
-    name: "Lisa Chen",
-    position: "Painting Professional",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face",
-    bio: "Lisa is a painting specialist with an eye for color and detail. She transforms spaces with beautiful, long-lasting finishes.",
-    specialties: ["Interior Painting", "Exterior Painting", "Specialty Finishes"],
-    experience: "8+ years"
-  }
-];
+interface TeamMember {
+  id: string;
+  name: string;
+  position: string;
+  image: string;
+  bio: string;
+  specialties: string[];
+  experience: string;
+  translations?: Record<string, {
+    name: string;
+    position: string;
+    bio: string;
+    specialties: string[];
+    experience: string;
+  }>;
+}
 
 export default function TeamPage() {
-  const { t, isInitialized } = useTranslations()
+  const { t, isInitialized, currentLanguage } = useTranslations()
   const heroRef = useScrollAnimation()
   const teamRef = useScrollAnimation()
   const valuesRef = useScrollAnimation()
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+  const [loading, setLoading] = useState(true)
 
-  if (!isInitialized) {
+  useEffect(() => {
+    loadTeamMembers()
+  }, [currentLanguage])
+
+  const loadTeamMembers = async () => {
+    try {
+      const response = await fetch(`/api/team?lang=${currentLanguage}`)
+      if (response.ok) {
+        const data = await response.json()
+        setTeamMembers(Array.isArray(data) ? data : [])
+      }
+    } catch (error) {
+      console.error('Error loading team members:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (!isInitialized || loading) {
     return (
       <div className="unified-gradient-bg">
         <section className="text-white py-20">
@@ -92,41 +79,49 @@ export default function TeamPage() {
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">{t.team.intro.subtitle}</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {teamMembers.map((member, index) => (
-              <div key={index} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-                <div className="relative">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-80 object-cover"
-                  />
-                </div>
-                
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">{member.name}</h3>
-                  <p className="text-blue-400 font-medium mb-3">{member.position}</p>
-                  <p className="text-gray-300 mb-4 text-sm">{member.bio}</p>
-                  
-                  <div className="mb-4">
-                    <h4 className="font-semibold text-white mb-2 text-sm">{t.team.specialties}</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {member.specialties.map((specialty, specialtyIndex) => (
-                        <span
-                          key={specialtyIndex}
-                          className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
-                        >
-                          {specialty}
-                        </span>
-                      ))}
-                    </div>
+          {teamMembers.length === 0 ? (
+            <div className="text-center py-16 border-2 border-dashed border-gray-700 rounded-lg bg-gray-900/30">
+              <div className="text-6xl mb-4">👥</div>
+              <p className="text-gray-300 text-xl font-medium mb-2">{t.team?.noMembers?.title || 'No team members yet'}</p>
+              <p className="text-gray-500 text-sm">{t.team?.noMembers?.subtitle || 'Add team members through the admin panel'}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {teamMembers.map((member) => (
+                <div key={member.id} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                  <div className="relative">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-full h-80 object-cover"
+                    />
                   </div>
                   
-                  <div className="text-sm text-gray-300">{t.team.experience} {member.experience}</div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-white mb-2">{member.name}</h3>
+                    <p className="text-blue-400 font-medium mb-3">{member.position}</p>
+                    <p className="text-gray-300 mb-4 text-sm">{member.bio}</p>
+                    
+                    <div className="mb-4">
+                      <h4 className="font-semibold text-white mb-2 text-sm">{t.team.specialties}</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {member.specialties.map((specialty, specialtyIndex) => (
+                          <span
+                            key={specialtyIndex}
+                            className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
+                          >
+                            {specialty}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="text-sm text-gray-300">{t.team.experience} {member.experience}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

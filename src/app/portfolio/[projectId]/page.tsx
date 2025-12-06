@@ -10,9 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { iPortfolioWork } from '@/components/ui/portfolio-gallery'
 import { GradientButton } from '@/components/ui/gradient-button'
 import { useTranslations } from '@/hooks/useTranslations'
-import { translateCategory, getTranslatedWork, Language } from '@/lib/translations'
-import { translateText } from '@/lib/translate'
-import { Languages } from 'lucide-react'
+import { translateCategory, getTranslatedWork } from '@/lib/translations'
 type Comment = { id: string; projectId: string; name: string; surname?: string; message: string; createdAt: string; photos?: string[]; videos?: string[]; rating?: number; city?: string; profileImage?: string; translations?: Record<string, string> }
 
 export default function PortfolioDetailPage() {
@@ -32,9 +30,7 @@ export default function PortfolioDetailPage() {
   const [formPhotos, setFormPhotos] = useState<string[]>([])
   const [formVideos, setFormVideos] = useState<string[]>([])
   const sectionRef = useScrollAnimation()
-  const [translatedComments, setTranslatedComments] = useState<Record<string, { text: string; language: string }>>({})
-  const [translatingCommentId, setTranslatingCommentId] = useState<string | null>(null)
-  const [selectedTranslateLang, setSelectedTranslateLang] = useState<Record<string, Language>>({})
+  const [failedMedia, setFailedMedia] = useState<Record<string, boolean>>({})
 
   const StarRating = ({ rating, onRatingChange, readOnly = false }: { rating: number; onRatingChange?: (rating: number) => void; readOnly?: boolean }) => {
     return (
@@ -302,63 +298,6 @@ export default function PortfolioDetailPage() {
     }
   }
 
-  const handleTranslateComment = async (commentId: string, comment: Comment, targetLang: Language) => {
-    if (!comment.message || comment.message.trim() === '') return
-    
-    setTranslatingCommentId(commentId)
-    try {
-      // Сначала проверяем, есть ли уже сохраненный перевод
-      if (comment.translations && comment.translations[targetLang]) {
-        setTranslatedComments(prev => ({
-          ...prev,
-          [commentId]: { text: comment.translations![targetLang], language: targetLang }
-        }))
-        setSelectedTranslateLang(prev => ({
-          ...prev,
-          [commentId]: targetLang
-        }))
-        setTranslatingCommentId(null)
-        return
-      }
-      
-      // Если перевода нет, переводим на лету
-      const translatedText = await translateText(comment.message, targetLang)
-      setTranslatedComments(prev => ({
-        ...prev,
-        [commentId]: { text: translatedText, language: targetLang }
-      }))
-      setSelectedTranslateLang(prev => ({
-        ...prev,
-        [commentId]: targetLang
-      }))
-    } catch (error) {
-      console.error('Translation error:', error)
-      alert('Ошибка при переводе комментария')
-    } finally {
-      setTranslatingCommentId(null)
-    }
-  }
-
-  const handleResetTranslation = (commentId: string) => {
-    setTranslatedComments(prev => {
-      const newState = { ...prev }
-      delete newState[commentId]
-      return newState
-    })
-    setSelectedTranslateLang(prev => {
-      const newState = { ...prev }
-      delete newState[commentId]
-      return newState
-    })
-  }
-
-  const languages: Language[] = ['RU', 'EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA']
-  const languageNames: Record<Language, string> = {
-    RU: 'Русский', EN: 'English', NL: 'Nederlands', DE: 'Deutsch', FR: 'Français', ES: 'Español', 
-    IT: 'Italiano', PT: 'Português', PL: 'Polski', CZ: 'Čeština', HU: 'Magyar', RO: 'Română', 
-    BG: 'Български', HR: 'Hrvatski', SK: 'Slovenčina', SL: 'Slovenščina', ET: 'Eesti', LV: 'Latviešu', 
-    LT: 'Lietuvių', FI: 'Suomi', SV: 'Svenska', DA: 'Dansk', NO: 'Norsk', GR: 'Ελληνικά', UA: 'Українська'
-  }
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -624,17 +563,33 @@ export default function PortfolioDetailPage() {
                     onClick={() => handleMediaClick(idx)}
                   >
                     {media.type === 'video' ? (
-                      <>
-                        <video
-                          src={media.url}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                          playsInline
-                          muted
-                        />
-                        <div className="absolute top-2 right-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
-                          📹
+                      failedMedia[media.url] ? (
+                        <div className="w-full h-full flex items-center justify-center bg-gray-900 text-gray-300 text-xs text-center px-2">
+                          Ошибка загрузки видео
+                          <a
+                            href={media.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="block text-blue-400 underline mt-1"
+                          >
+                            Открыть в новой вкладке
+                          </a>
                         </div>
-                      </>
+                      ) : (
+                        <>
+                          <video
+                            src={media.url}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            playsInline
+                            muted
+                            controls
+                            onError={() => setFailedMedia(prev => ({ ...prev, [media.url]: true }))}
+                          />
+                          <div className="absolute top-2 right-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
+                            📹
+                          </div>
+                        </>
+                      )
                     ) : (
                       <Image
                         src={media.url}
@@ -756,51 +711,9 @@ export default function PortfolioDetailPage() {
                       </div>
                     </div>
                     <div className="text-white whitespace-pre-wrap mb-2 text-base leading-relaxed">
-                      {translatedComments[c.id] 
-                        ? translatedComments[c.id].text 
-                        : (c.translations && c.translations[currentLanguage] 
-                            ? c.translations[currentLanguage] 
-                            : c.message)}
-                    </div>
-                    <div className="flex items-center gap-2 mb-4">
-                      {translatedComments[c.id] ? (
-                        <>
-                          <span className="text-xs text-gray-400">
-                            {t.portfolio?.detail?.translatedTo || 'Переведено на'} {languageNames[translatedComments[c.id].language as Language]}
-                          </span>
-                          <button
-                            onClick={() => handleResetTranslation(c.id)}
-                            className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
-                          >
-                            {t.portfolio?.detail?.showOriginal || 'Показать оригинал'}
-                          </button>
-                        </>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <Languages className="w-4 h-4 text-gray-400" />
-                          <select
-                            value={selectedTranslateLang[c.id] || ''}
-                            onChange={(e) => {
-                              const lang = e.target.value as Language
-                              if (lang) {
-                                handleTranslateComment(c.id, c, lang)
-                              }
-                            }}
-                            disabled={translatingCommentId === c.id}
-                            className="text-xs bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <option value="">{t.portfolio?.detail?.translateTo || 'Перевести на...'}</option>
-                            {languages.filter(lang => lang !== 'RU').map(lang => (
-                              <option key={lang} value={lang}>
-                                {languageNames[lang]}
-                              </option>
-                            ))}
-                          </select>
-                          {translatingCommentId === c.id && (
-                            <span className="text-xs text-gray-400">{t.portfolio?.detail?.translating || 'Переводим...'}</span>
-                          )}
-                        </div>
-                      )}
+                      {c.translations && c.translations[currentLanguage] 
+                        ? c.translations[currentLanguage] 
+                        : c.message}
                     </div>
                     {(c.photos && c.photos.length > 0) || (c.videos && c.videos.length > 0) ? (
                       <div className="mt-3">
@@ -1077,12 +990,27 @@ export default function PortfolioDetailPage() {
               {selectedImageIndex !== null && selectedImageIndex < allMedia.length && (
                 <>
                   {allMedia[selectedImageIndex].type === 'video' ? (
-                    <video
-                      src={allMedia[selectedImageIndex].url}
-                      className="max-w-full max-h-full object-contain"
-                      controls
-                      autoPlay
-                    />
+                    failedMedia[allMedia[selectedImageIndex].url] ? (
+                      <div className="max-w-full max-h-full flex flex-col items-center justify-center text-white text-center gap-2 px-4">
+                        <span>Не удалось загрузить видео.</span>
+                        <a
+                          href={allMedia[selectedImageIndex].url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-300 underline"
+                        >
+                          Открыть в новой вкладке
+                        </a>
+                      </div>
+                    ) : (
+                      <video
+                        src={allMedia[selectedImageIndex].url}
+                        className="max-w-full max-h-full object-contain"
+                        controls
+                        autoPlay
+                        onError={() => setFailedMedia(prev => ({ ...prev, [allMedia[selectedImageIndex].url]: true }))}
+                      />
+                    )
                   ) : (
                     <Image
                       src={allMedia[selectedImageIndex].url}

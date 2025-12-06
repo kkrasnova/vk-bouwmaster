@@ -1400,21 +1400,23 @@ export function getTranslatedWork(
   work: { title: string; description: string; category: string; city?: string; translations?: Record<string, WorkTranslations> },
   language: Language
 ): { title: string; description: string; category: string; city?: string } {
-  if (!work.translations || !work.translations[language]) {
+  // Если есть переводы для текущего языка, используем их
+  if (work.translations && work.translations[language]) {
+    const translation = work.translations[language]
     return {
-      title: work.title,
-      description: work.description,
-      category: translateCategory(work.category, language),
-      city: work.city
+      title: translation.title || work.title,
+      description: translation.description || work.description,
+      category: translation.category ? translateCategory(translation.category, language) : translateCategory(work.category, language),
+      city: translation.city || work.city
     }
   }
 
-  const translation = work.translations[language]
+  // Если переводов нет, возвращаем оригинал
   return {
-    title: translation.title || work.title,
-    description: translation.description || work.description,
-    category: translation.category ? translateCategory(translation.category, language) : translateCategory(work.category, language),
-    city: translation.city || work.city
+    title: work.title,
+    description: work.description,
+    category: translateCategory(work.category, language),
+    city: work.city
   }
 }
 

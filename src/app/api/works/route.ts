@@ -1,9 +1,59 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { translateWork } from '@/lib/translate';
 
-const WORKS_FILE = join(process.cwd(), 'src/lib/works-data.json');
+// Путь к persistent-хранилищу.
+// 1) В проде на Render используем Render Disk, смонтированный в /uploads
+// 2) Локально (или без диска) пишем в public/uploads, чтобы файлы были доступны
+// 3) Файл в src/lib оставляем как резерв для начального наполнения
+const RENDER_DISK_PATH = '/uploads';
+const LOCAL_UPLOADS_PATH = join(process.cwd(), 'public', 'uploads');
+const FALLBACK_REPO_FILE = join(process.cwd(), 'src', 'lib', 'works-data.json');
+
+const getStorageDir = () => (existsSync(RENDER_DISK_PATH) ? RENDER_DISK_PATH : LOCAL_UPLOADS_PATH);
+const getWorksFilePath = () => join(getStorageDir(), 'works-data.json');
+const hasRenderDisk = () => existsSync(RENDER_DISK_PATH);
+
+function ensureStorageDir() {
+  const dir = getStorageDir();
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
+  }
+}
+
+function normalizeFileUrl(url: string | undefined, renderDisk: boolean): string | undefined {
+  if (!url) return url;
+  // Если файл лежит на Render Disk, прямой путь /uploads недоступен, нужно ходить через API
+  if (renderDisk && url.startsWith('/uploads/')) {
+    const fileName = url.split('/').pop();
+    if (fileName) {
+      return `/api/uploads/${fileName}`;
+    }
+  }
+  return url;
+}
+
+function normalizeWorkFiles(work: PortfolioWork, renderDisk: boolean): PortfolioWork {
+  const normalizedMain = normalizeFileUrl(work.mainImage, renderDisk) || work.mainImage;
+  const normalizedImages = (work.images || []).map(img => normalizeFileUrl(img, renderDisk) || img);
+  const normalizedVideos = (work.videos || []).map(vid => normalizeFileUrl(vid, renderDisk) || vid);
+  return {
+    ...work,
+    mainImage: normalizedMain,
+    images: normalizedImages,
+    videos: normalizedVideos,
+  };
+}
+
+// Проверяем, нужно ли переводить: нет переводов, мало ключей или пустые поля
+function needsTranslation(work: PortfolioWork): boolean {
+  const translations = work.translations;
+  if (!translations || Object.keys(translations).length < 5) return true;
+  return Object.values(translations).some(
+    (t) => !t || !t.title || !t.description || !t.category
+  );
+}
 
 export interface WorkTranslations {
   title: string;
@@ -27,21 +77,43 @@ export interface PortfolioWork {
 }
 
 async function readWorksData(): Promise<PortfolioWork[]> {
-  // Локальное чтение из файла
+  // Пытаемся читать из основного хранилища (Render Disk или public/uploads),
+  // если его нет — читаем из fallback файла в репозитории.
   try {
-    const data = readFileSync(WORKS_FILE, 'utf-8');
+    const data = readFileSync(getWorksFilePath(), 'utf-8');
     return JSON.parse(data);
-  } catch {
-    return [];
+  } catch (primaryError) {
+    // fallback: данные в репозитории (read-only), используем как seed
+    try {
+      const data = readFileSync(FALLBACK_REPO_FILE, 'utf-8');
+      const parsed = JSON.parse(data);
+      // Пытаемся сохранить seed в основное хранилище (если оно доступно для записи)
+      try {
+        ensureStorageDir();
+        writeFileSync(getWorksFilePath(), JSON.stringify(parsed, null, 2), 'utf-8');
+      } catch (seedError) {
+        console.warn('Не удалось сохранить seed данных в основное хранилище:', seedError);
+      }
+      return parsed;
+    } catch (fallbackError) {
+      console.error('Ошибка чтения данных работ:', primaryError, fallbackError);
+      return [];
+    }
   }
 }
 
 async function writeWorksData(data: PortfolioWork[]): Promise<void> {
-  // Локальная запись в файл
   try {
-    writeFileSync(WORKS_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    ensureStorageDir();
+    writeFileSync(getWorksFilePath(), JSON.stringify(data, null, 2), 'utf-8');
   } catch (error: any) {
     console.error('Error writing works data:', error);
+    // Добавляем понятную ошибку при read-only FS на Render/Vercel
+    if (error.code === 'EACCES' || error.code === 'EROFS' || error.message?.includes('read-only')) {
+      throw new Error(
+        'Файловая система доступна только для чтения. Для сохранения работ нужен Render Disk (mount: /uploads).'
+      );
+    }
     throw new Error(`Ошибка записи данных: ${error.message || 'Неизвестная ошибка'}`);
   }
 }
@@ -52,23 +124,62 @@ export async function GET(request: NextRequest) {
     const projectId = searchParams.get('projectId');
     const category = searchParams.get('category');
     const translateAll = searchParams.get('translateAll') === 'true';
+    const renderDisk = hasRenderDisk();
 
     let works = await readWorksData();
+    // Убираем видео — больше не поддерживаем
+    works = works.map(w => ({ ...w, videos: [] }));
+    // Нормализуем ссылки, если файлы лежат на Render Disk
+    let normalized = false;
+    works = works.map(work => {
+      const normalizedWork = normalizeWorkFiles(work, renderDisk);
+      if (
+        normalizedWork.mainImage !== work.mainImage ||
+        normalizedWork.images !== work.images ||
+        normalizedWork.videos !== work.videos
+      ) {
+        normalized = true;
+      }
+      return normalizedWork;
+    });
 
-    if (projectId) {
-      works = works.filter(work => work.projectId === projectId);
+    // Автоматически заполняем переводы, если их нет, без ручного запроса
+    let translationsAdded = false;
+    const worksNeedingTranslation = works.filter(w => needsTranslation(w));
+    console.log(`[Works API] Found ${worksNeedingTranslation.length} works needing translation out of ${works.length} total`);
+    
+    for (let i = 0; i < works.length; i++) {
+      const work = works[i];
+      if (needsTranslation(work)) {
+        try {
+          console.log(`[Works API] 🔄 Translating work ${work.id}: "${work.title.substring(0, 30)}..."`);
+          const translations = await translateWork({
+            title: work.title,
+            description: work.description || '',
+            category: work.category,
+            city: work.city
+          });
+          works[i] = { ...work, translations };
+          translationsAdded = true;
+          console.log(`[Works API] ✅ Translation completed for work ${work.id}`);
+          // Небольшая задержка между переводами, чтобы не спамить API
+          await new Promise(resolve => setTimeout(resolve, 50));
+        } catch (error: any) {
+          console.error(`[Works API] ❌ Error translating work ${work.id}:`, error.message || error);
+        }
+      }
+    }
+    
+    if (translationsAdded) {
+      console.log(`[Works API] 💾 Saving works with new translations...`);
     }
 
-    if (category) {
-      works = works.filter(work => work.category === category);
-    }
-
-    // Если запрошено перевести все работы без переводов
+    // Если нужно, по-прежнему можно форсировать translateAll=true (останавливаемся только на пустых переводах)
     if (translateAll) {
       let updated = false;
       for (let i = 0; i < works.length; i++) {
         const work = works[i];
-        if (!work.translations || Object.keys(work.translations).length === 0) {
+        if (needsTranslation(work)) {
           try {
             const translations = await translateWork({
               title: work.title,
@@ -78,16 +189,31 @@ export async function GET(request: NextRequest) {
             });
             works[i] = { ...work, translations };
             updated = true;
-            // Небольшая задержка между работами
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolve => setTimeout(resolve, 50));
           } catch (error) {
             console.error(`Error translating work ${work.id}:`, error);
           }
         }
       }
       if (updated) {
-        await writeWorksData(works);
+        translationsAdded = true;
       }
+    }
+
+    if (projectId) {
+      works = works.filter(work => work.projectId === projectId);
+    }
+
+    if (category) {
+      works = works.filter(work => work.category === category);
+    }
+
+    // Сохраняем только если были добавлены новые переводы
+    // Нормализация файлов не требует сохранения, так как это только изменение путей для отображения
+    if (translationsAdded) {
+      console.log(`[Works API] 💾 Saving ${works.length} works with new translations`);
+      await writeWorksData(works);
+      console.log(`[Works API] ✅ Works saved successfully`);
     }
 
     return NextResponse.json(works);
@@ -102,6 +228,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const work: PortfolioWork = await request.json();
+    const renderDisk = hasRenderDisk();
+    // Не принимаем видео
+    work.videos = [];
 
     console.log('POST /api/works - получена работа:', {
       title: work.title,
@@ -135,14 +264,14 @@ export async function POST(request: NextRequest) {
     const works = await readWorksData();
 
     const newWork: PortfolioWork = {
-      ...work,
+      ...normalizeWorkFiles(work, renderDisk),
       id: work.id || Date.now().toString(),
       projectId: work.projectId || `project-${Date.now()}`,
       workDate: work.workDate || new Date().toISOString().split('T')[0],
       translations: translations || work.translations,
-      // Убеждаемся, что images и videos сохраняются
+      // Убеждаемся, что images сохраняются, видео отключаем
       images: work.images || [],
-      videos: work.videos || []
+      videos: []
     };
 
     console.log('Сохранение работы:', {
@@ -172,6 +301,9 @@ export async function PUT(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const work: PortfolioWork = await request.json();
+    const renderDisk = hasRenderDisk();
+    // Не принимаем видео
+    work.videos = [];
 
     if (!id && !work.id) {
       return NextResponse.json(
@@ -220,9 +352,10 @@ export async function PUT(request: NextRequest) {
 
     works[index] = { 
       ...existingWork, 
-      ...work, 
+      ...normalizeWorkFiles(work, renderDisk), 
       id: workId,
-      translations: translations || existingWork.translations
+      translations: translations || existingWork.translations,
+      videos: [] // отключаем видео
     };
     await writeWorksData(works);
 
@@ -261,5 +394,6 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
 
 

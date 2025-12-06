@@ -7,9 +7,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useTranslations } from '@/hooks/useTranslations'
 import { GradientButton } from '@/components/ui/gradient-button'
-import { Star, MessageSquare, Camera, Video, MapPin, User, CheckCircle2, Heart, Languages } from 'lucide-react'
-import { translateText } from '@/lib/translate'
-import { Language } from '@/lib/translations'
+import { Star, MessageSquare, Camera, Video, MapPin, User, CheckCircle2, Heart } from 'lucide-react'
 
 type Comment = { id: string; projectId: string; name: string; surname?: string; message: string; createdAt: string; photos?: string[]; videos?: string[]; rating?: number; city?: string; profileImage?: string; translations?: Record<string, string> }
 
@@ -44,9 +42,6 @@ export default function ReviewsPage() {
   const [form, setForm] = useState({ name: '', surname: '', message: '', rating: 5, city: '', profileImage: '' })
   const [formPhotos, setFormPhotos] = useState<string[]>([])
   const [formVideos, setFormVideos] = useState<string[]>([])
-  const [translatedComments, setTranslatedComments] = useState<Record<string, { text: string; language: string }>>({})
-  const [translatingCommentId, setTranslatingCommentId] = useState<string | null>(null)
-  const [selectedTranslateLang, setSelectedTranslateLang] = useState<Record<string, Language>>({})
 
   const handleFileUpload = async (file: File): Promise<string | null> => {
     const formData = new FormData()
@@ -112,63 +107,7 @@ export default function ReviewsPage() {
     }
   }, [showThankYou])
 
-  const handleTranslateComment = async (commentId: string, comment: Comment, targetLang: Language) => {
-    if (!comment.message || comment.message.trim() === '') return
-    
-    setTranslatingCommentId(commentId)
-    try {
-      // Сначала проверяем, есть ли уже сохраненный перевод
-      if (comment.translations && comment.translations[targetLang]) {
-        setTranslatedComments(prev => ({
-          ...prev,
-          [commentId]: { text: comment.translations![targetLang], language: targetLang }
-        }))
-        setSelectedTranslateLang(prev => ({
-          ...prev,
-          [commentId]: targetLang
-        }))
-        setTranslatingCommentId(null)
-        return
-      }
-      
-      // Если перевода нет, переводим на лету
-      const translatedText = await translateText(comment.message, targetLang)
-      setTranslatedComments(prev => ({
-        ...prev,
-        [commentId]: { text: translatedText, language: targetLang }
-      }))
-      setSelectedTranslateLang(prev => ({
-        ...prev,
-        [commentId]: targetLang
-      }))
-    } catch (error) {
-      console.error('Translation error:', error)
-      alert('Ошибка при переводе комментария')
-    } finally {
-      setTranslatingCommentId(null)
-    }
-  }
 
-  const handleResetTranslation = (commentId: string) => {
-    setTranslatedComments(prev => {
-      const newState = { ...prev }
-      delete newState[commentId]
-      return newState
-    })
-    setSelectedTranslateLang(prev => {
-      const newState = { ...prev }
-      delete newState[commentId]
-      return newState
-    })
-  }
-
-  const languages: Language[] = ['RU', 'EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA']
-  const languageNames: Record<Language, string> = {
-    RU: 'Русский', EN: 'English', NL: 'Nederlands', DE: 'Deutsch', FR: 'Français', ES: 'Español', 
-    IT: 'Italiano', PT: 'Português', PL: 'Polski', CZ: 'Čeština', HU: 'Magyar', RO: 'Română', 
-    BG: 'Български', HR: 'Hrvatski', SK: 'Slovenčina', SL: 'Slovenščina', ET: 'Eesti', LV: 'Latviešu', 
-    LT: 'Lietuvių', FI: 'Suomi', SV: 'Svenska', DA: 'Dansk', NO: 'Norsk', GR: 'Ελληνικά', UA: 'Українська'
-  }
 
   async function submitComment(e: React.FormEvent) {
     e.preventDefault()
@@ -804,52 +743,10 @@ export default function ReviewsPage() {
                       {/* Message */}
                       <div className="mb-4">
                         <p className="text-white text-base md:text-lg leading-relaxed whitespace-pre-wrap">
-                          {translatedComments[c.id] 
-                            ? translatedComments[c.id].text 
-                            : (c.translations && c.translations[currentLanguage] 
-                                ? c.translations[currentLanguage] 
-                                : c.message)}
+                          {c.translations && c.translations[currentLanguage] 
+                            ? c.translations[currentLanguage] 
+                            : c.message}
                         </p>
-                      </div>
-                      <div className="flex items-center gap-2 mb-6">
-                        {translatedComments[c.id] ? (
-                          <>
-                            <span className="text-xs text-gray-400">
-                              {t.portfolio?.detail?.translatedTo || 'Переведено на'} {languageNames[translatedComments[c.id].language as Language]}
-                            </span>
-                            <button
-                              onClick={() => handleResetTranslation(c.id)}
-                              className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
-                            >
-                              {t.portfolio?.detail?.showOriginal || 'Показать оригинал'}
-                            </button>
-                          </>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Languages className="w-4 h-4 text-gray-400" />
-                            <select
-                              value={selectedTranslateLang[c.id] || ''}
-                              onChange={(e) => {
-                                const lang = e.target.value as Language
-                                if (lang) {
-                                  handleTranslateComment(c.id, c, lang)
-                                }
-                              }}
-                              disabled={translatingCommentId === c.id}
-                              className="text-xs bg-gray-800 border border-gray-700 rounded px-2 py-1 text-white hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <option value="">{t.portfolio?.detail?.translateTo || 'Перевести на...'}</option>
-                              {languages.filter(lang => lang !== 'RU').map(lang => (
-                                <option key={lang} value={lang}>
-                                  {languageNames[lang]}
-                                </option>
-                              ))}
-                            </select>
-                            {translatingCommentId === c.id && (
-                              <span className="text-xs text-gray-400">{t.portfolio?.detail?.translating || 'Переводим...'}</span>
-                            )}
-                          </div>
-                        )}
                       </div>
 
                       {/* Photos and Videos */}
