@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stat, readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync, createReadStream } from 'fs';
-import { NextRequest, NextResponse } from 'next/server';
 
 // API route для отдачи файлов из /uploads (Render Disk) или public/uploads
 export async function GET(
