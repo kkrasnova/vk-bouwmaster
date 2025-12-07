@@ -47,9 +47,18 @@ function normalizeWorkFiles(work: PortfolioWork, renderDisk: boolean): Portfolio
 }
 
 // Проверяем, нужно ли переводить: нет переводов, мало ключей или пустые поля
+// Ожидаем переводы для всех 25 языков: RU, EN, NL, DE, FR, ES, IT, PT, PL, CZ, HU, RO, BG, HR, SK, SL, ET, LV, LT, FI, SV, DA, NO, GR, UA
+const EXPECTED_LANGUAGES = ['RU', 'EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA'];
+
 function needsTranslation(work: PortfolioWork): boolean {
   const translations = work.translations;
-  if (!translations || Object.keys(translations).length < 5) return true;
+  if (!translations || Object.keys(translations).length < EXPECTED_LANGUAGES.length) return true;
+  
+  // Проверяем, что есть переводы для всех ожидаемых языков
+  const missingLanguages = EXPECTED_LANGUAGES.filter(lang => !translations[lang]);
+  if (missingLanguages.length > 0) return true;
+  
+  // Проверяем, что переводы не пустые
   return Object.values(translations).some(
     (t) => !t || !t.title || !t.description || !t.category
   );
@@ -144,29 +153,61 @@ export async function GET(request: NextRequest) {
     });
 
     // Автоматически заполняем переводы, если их нет, без ручного запроса
+    // Переводим в фоне, но не блокируем ответ - возвращаем работы сразу, переводы добавятся при следующем запросе
     let translationsAdded = false;
     const worksNeedingTranslation = works.filter(w => needsTranslation(w));
     console.log(`[Works API] Found ${worksNeedingTranslation.length} works needing translation out of ${works.length} total`);
     
-    for (let i = 0; i < works.length; i++) {
-      const work = works[i];
-      if (needsTranslation(work)) {
+    // Запускаем переводы в фоне (не ждем завершения)
+    if (worksNeedingTranslation.length > 0) {
+      // Переводим первую работу синхронно, остальные в фоне
+      const firstWorkNeedingTranslation = worksNeedingTranslation[0];
+      const firstIndex = works.findIndex(w => w.id === firstWorkNeedingTranslation.id);
+      if (firstIndex !== -1) {
         try {
-          console.log(`[Works API] 🔄 Translating work ${work.id}: "${work.title.substring(0, 30)}..."`);
+          console.log(`[Works API] 🔄 Translating work ${firstWorkNeedingTranslation.id}: "${firstWorkNeedingTranslation.title.substring(0, 30)}..."`);
           const translations = await translateWork({
-            title: work.title,
-            description: work.description || '',
-            category: work.category,
-            city: work.city
+            title: firstWorkNeedingTranslation.title,
+            description: firstWorkNeedingTranslation.description || '',
+            category: firstWorkNeedingTranslation.category,
+            city: firstWorkNeedingTranslation.city
           });
-          works[i] = { ...work, translations };
+          works[firstIndex] = { ...firstWorkNeedingTranslation, translations };
           translationsAdded = true;
-          console.log(`[Works API] ✅ Translation completed for work ${work.id}`);
-          // Небольшая задержка между переводами, чтобы не спамить API
-          await new Promise(resolve => setTimeout(resolve, 50));
+          console.log(`[Works API] ✅ Translation completed for work ${firstWorkNeedingTranslation.id}`);
         } catch (error: any) {
-          console.error(`[Works API] ❌ Error translating work ${work.id}:`, error.message || error);
+          console.error(`[Works API] ❌ Error translating work ${firstWorkNeedingTranslation.id}:`, error.message || error);
         }
+      }
+      
+      // Остальные работы переводим в фоне (не блокируем ответ)
+      if (worksNeedingTranslation.length > 1) {
+        (async () => {
+          for (let i = 1; i < worksNeedingTranslation.length; i++) {
+            const work = worksNeedingTranslation[i];
+            const index = works.findIndex(w => w.id === work.id);
+            if (index !== -1) {
+              try {
+                console.log(`[Works API] 🔄 Translating work ${work.id}: "${work.title.substring(0, 30)}..."`);
+                const translations = await translateWork({
+                  title: work.title,
+                  description: work.description || '',
+                  category: work.category,
+                  city: work.city
+                });
+                works[index] = { ...work, translations };
+                await new Promise(resolve => setTimeout(resolve, 50));
+              } catch (error: any) {
+                console.error(`[Works API] ❌ Error translating work ${work.id}:`, error.message || error);
+              }
+            }
+          }
+          // Сохраняем все переводы после завершения
+          if (translationsAdded) {
+            await writeWorksData(works);
+            console.log(`[Works API] 💾 Saved all translated works`);
+          }
+        })();
       }
     }
     
