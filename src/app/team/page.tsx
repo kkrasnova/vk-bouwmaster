@@ -82,8 +82,8 @@ export default function TeamPage() {
           {teamMembers.length === 0 ? (
             <div className="text-center py-16 border-2 border-dashed border-gray-700 rounded-lg bg-gray-900/30">
               <div className="text-6xl mb-4">👥</div>
-              <p className="text-gray-300 text-xl font-medium mb-2">{t.team?.noMembers?.title || 'No team members yet'}</p>
-              <p className="text-gray-500 text-sm">{t.team?.noMembers?.subtitle || 'Add team members through the admin panel'}</p>
+              <p className="text-gray-300 text-xl font-medium mb-2">No team members yet</p>
+              <p className="text-gray-500 text-sm">Add team members through the admin panel</p>
             </div>
           ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
