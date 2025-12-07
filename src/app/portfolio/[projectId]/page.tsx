@@ -28,7 +28,6 @@ export default function PortfolioDetailPage() {
   const [uploading, setUploading] = useState(false)
   const [form, setForm] = useState({ name: '', surname: '', message: '', rating: 5, city: '', profileImage: '' })
   const [formPhotos, setFormPhotos] = useState<string[]>([])
-  const [formVideos, setFormVideos] = useState<string[]>([])
   const sectionRef = useScrollAnimation()
   const [failedMedia, setFailedMedia] = useState<Record<string, boolean>>({})
 
@@ -75,16 +74,6 @@ export default function PortfolioDetailPage() {
     e.target.value = ''
   }
 
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return
-    setUploading(true)
-    const files = Array.from(e.target.files)
-    const uploadPromises = files.map(file => handleFileUpload(file))
-    const urls = (await Promise.all(uploadPromises)).filter(Boolean) as string[]
-    setFormVideos([...formVideos, ...urls])
-    setUploading(false)
-    e.target.value = ''
-  }
 
   const handleProfileImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return
@@ -261,7 +250,6 @@ export default function PortfolioDetailPage() {
           surname: form.surname,
           message: form.message,
           photos: formPhotos.length > 0 ? formPhotos : undefined,
-          videos: formVideos.length > 0 ? formVideos : undefined,
           rating: form.rating,
           city: form.city || undefined,
           profileImage: form.profileImage || undefined,
@@ -270,7 +258,6 @@ export default function PortfolioDetailPage() {
       if (res.ok) {
         setForm({ name: '', surname: '', message: '', rating: 5, city: '', profileImage: '' })
         setFormPhotos([])
-        setFormVideos([])
         await fetchComments()
       }
     } finally {
@@ -867,53 +854,6 @@ export default function PortfolioDetailPage() {
                             onClick={() => setFormPhotos(formPhotos.filter((_, i) => i !== idx))}
                             className="absolute top-1 right-1 bg-red-600/90 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                             title={t.portfolio?.detail?.deletePhoto || 'Delete photo'}
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Video Upload */}
-              <div className="bg-gradient-to-br from-cyan-900/20 via-blue-900/20 to-cyan-900/20 border border-cyan-700/30 rounded-xl p-4">
-                <label className="block text-sm font-medium mb-3 text-white">
-                  {t.portfolio?.detail?.addVideosLabel || '🎥 Add videos'} <span className="text-gray-400 text-xs">({t.portfolio?.detail?.addVideosOptional || 'optional'})</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="video/*"
-                    multiple
-                    onChange={handleVideoUpload}
-                    disabled={uploading}
-                    id="video-upload"
-                    className="hidden"
-                  />
-                  <GradientButton
-                    type="button"
-                    variant="variant"
-                    onClick={() => document.getElementById('video-upload')?.click()}
-                    disabled={uploading}
-                    className="w-full"
-                  >
-                    {uploading ? (t.common?.loading || 'Loading...') : (t.portfolio?.detail?.selectVideos || '🎥 Select videos')}
-                  </GradientButton>
-                </div>
-                {formVideos.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-xs text-gray-400 mb-2">{t.portfolio?.detail?.videosUploaded || 'Videos uploaded:'} {formVideos.length}</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {formVideos.map((url, idx) => (
-                        <div key={idx} className="relative rounded-lg overflow-hidden border border-gray-700 group">
-                          <video src={url} controls className="w-full aspect-video bg-black" />
-                          <button
-                            type="button"
-                            onClick={() => setFormVideos(formVideos.filter((_, i) => i !== idx))}
-                            className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                            title={t.portfolio?.detail?.deleteVideo || 'Delete video'}
                           >
                             ×
                           </button>

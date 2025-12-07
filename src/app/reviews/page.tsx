@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useTranslations } from '@/hooks/useTranslations'
 import { GradientButton } from '@/components/ui/gradient-button'
-import { Star, MessageSquare, Camera, Video, MapPin, User, CheckCircle2, Heart } from 'lucide-react'
+import { Star, MessageSquare, Camera, MapPin, User, CheckCircle2, Heart } from 'lucide-react'
 
 type Comment = { id: string; projectId: string; name: string; surname?: string; message: string; createdAt: string; photos?: string[]; videos?: string[]; rating?: number; city?: string; profileImage?: string; translations?: Record<string, string> }
 
@@ -41,7 +41,6 @@ export default function ReviewsPage() {
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', surname: '', message: '', rating: 5, city: '', profileImage: '' })
   const [formPhotos, setFormPhotos] = useState<string[]>([])
-  const [formVideos, setFormVideos] = useState<string[]>([])
 
   const handleFileUpload = async (file: File): Promise<string | null> => {
     const formData = new FormData()
@@ -66,16 +65,6 @@ export default function ReviewsPage() {
     e.target.value = ''
   }
 
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return
-    setUploading(true)
-    const files = Array.from(e.target.files)
-    const uploadPromises = files.map(file => handleFileUpload(file))
-    const urls = (await Promise.all(uploadPromises)).filter(Boolean) as string[]
-    setFormVideos([...formVideos, ...urls])
-    setUploading(false)
-    e.target.value = ''
-  }
 
   const handleProfileImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return
@@ -126,7 +115,6 @@ export default function ReviewsPage() {
           ...form,
           projectId: 'general', // Используем 'general' как значение по умолчанию
           photos: formPhotos.length > 0 ? formPhotos : undefined,
-          videos: formVideos.length > 0 ? formVideos : undefined,
         }),
       })
       
@@ -136,7 +124,6 @@ export default function ReviewsPage() {
         // Сразу очищаем все поля формы после успешной отправки
         setForm({ name: '', surname: '', message: '', rating: 5, city: '', profileImage: '' })
         setFormPhotos([])
-        setFormVideos([])
         setError(null)
         
         // Обновляем список отзывов в фоне (но новый отзыв появится только после подтверждения администратором)
@@ -546,63 +533,10 @@ export default function ReviewsPage() {
               )}
             </motion.div>
 
-            {/* Video Upload */}
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="bg-gradient-to-br from-cyan-900/20 via-blue-900/20 to-cyan-900/20 border border-cyan-700/30 rounded-xl p-4 hover:border-cyan-600/50 transition-all"
-            >
-              <label className="block text-sm font-medium mb-3 text-white flex items-center gap-2">
-                <Video className="h-4 w-4 text-cyan-400" />
-                <span>{reviewsText.form?.addVideosLabel || 'Add videos'} <span className="text-gray-400 text-xs">{reviewsText.form?.addVideosOptional || '(optional)'}</span></span>
-              </label>
-              <div className="relative">
-                <input
-                  type="file"
-                  accept="video/*"
-                  multiple
-                  onChange={handleVideoUpload}
-                  disabled={uploading}
-                  id="video-upload-reviews"
-                  className="hidden"
-                />
-                <GradientButton
-                  type="button"
-                  variant="variant"
-                  onClick={() => document.getElementById('video-upload-reviews')?.click()}
-                  disabled={uploading}
-                  className="w-full"
-                >
-                  {uploading ? (t.common?.loading || 'Loading...') : (reviewsText.form?.selectVideos || '🎥 Select videos')}
-                </GradientButton>
-              </div>
-              {formVideos.length > 0 && (
-                <div className="mt-3">
-                  <p className="text-xs text-gray-400 mb-2">{reviewsText.form?.videosUploaded || 'Videos uploaded:'} {formVideos.length}</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {formVideos.map((url, idx) => (
-                      <div key={idx} className="relative rounded-lg overflow-hidden border border-gray-700 group">
-                        <video src={url} controls className="w-full aspect-video bg-black" />
-                        <button
-                          type="button"
-                          onClick={() => setFormVideos(formVideos.filter((_, i) => i !== idx))}
-                          className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-600 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                          title={reviewsText.form?.deleteVideo || 'Delete video'}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </motion.div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
               className="bg-gradient-to-br from-blue-900/20 via-cyan-900/20 to-blue-900/20 border border-blue-700/30 rounded-xl p-4"
             >
               <GradientButton

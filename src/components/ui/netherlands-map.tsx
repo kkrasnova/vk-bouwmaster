@@ -75,7 +75,7 @@ export function NetherlandsMap({ selectedCity, onCitySelect }: { selectedCity?: 
           loading="lazy"
           allowFullScreen
           referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps/embed/v1/view?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dS6a4ZZU7Du8eU&center=${mapCenter.lat},${mapCenter.lng}&zoom=${mapZoom}&language=nl`}
+          src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dS6a4ZZU7Du8eU&q=Netherlands&zoom=${mapZoom}&language=nl`}
         />
         
         {/* Overlay с информацией */}
