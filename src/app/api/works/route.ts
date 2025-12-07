@@ -52,16 +52,25 @@ const EXPECTED_LANGUAGES = ['RU', 'EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL'
 
 function needsTranslation(work: PortfolioWork): boolean {
   const translations = work.translations;
-  if (!translations || Object.keys(translations).length < EXPECTED_LANGUAGES.length) return true;
+  if (!translations || Object.keys(translations).length === 0) return true;
   
   // Проверяем, что есть переводы для всех ожидаемых языков
   const missingLanguages = EXPECTED_LANGUAGES.filter(lang => !translations[lang]);
-  if (missingLanguages.length > 0) return true;
+  if (missingLanguages.length > 0) {
+    console.log(`[needsTranslation] Work ${work.id} missing translations for: ${missingLanguages.join(', ')}`);
+    return true;
+  }
   
-  // Проверяем, что переводы не пустые
-  return Object.values(translations).some(
-    (t) => !t || !t.title || !t.description || !t.category
+  // Проверяем, что переводы не пустые и содержат все необходимые поля
+  const hasEmptyTranslations = Object.values(translations).some(
+    (t) => !t || !t.title || !t.description || !t.category || t.title.trim() === '' || t.description.trim() === ''
   );
+  if (hasEmptyTranslations) {
+    console.log(`[needsTranslation] Work ${work.id} has empty translations`);
+    return true;
+  }
+  
+  return false;
 }
 
 export interface WorkTranslations {
