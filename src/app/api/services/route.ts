@@ -121,11 +121,12 @@ export async function GET(request: NextRequest) {
     
     if (servicesNeedingTranslation.length > 0) {
       console.log(`[Services API] Found ${servicesNeedingTranslation.length} services needing translation out of ${services.length} total`);
+      console.log(`[Services API] Starting automatic translation for: ${servicesNeedingTranslation.map(s => s.id).join(', ')}`);
       
-      // Переводим все услуги, которым нужны переводы
+      // Переводим все услуги, которым нужны переводы (синхронно, чтобы переводы были готовы сразу)
       for (const service of servicesNeedingTranslation) {
         try {
-          console.log(`[Services API] Translating service: ${service.id}`);
+          console.log(`[Services API] Translating service: ${service.id}...`);
           const translations = await translateServicePage(service);
           
           // Обновляем услугу с переводами
@@ -135,14 +136,18 @@ export async function GET(request: NextRequest) {
               ...services[serviceIndex],
               translations
             };
+            console.log(`[Services API] ✅ Service ${service.id} translated to ${Object.keys(translations).length} languages`);
           }
         } catch (error: any) {
-          console.error(`[Services API] Error translating service ${service.id}:`, error.message || error);
+          console.error(`[Services API] ❌ Error translating service ${service.id}:`, error.message || error);
         }
       }
       
       // Сохраняем обновленные данные
       await writeServicesData(services);
+      console.log(`[Services API] ✅ All translations saved`);
+    } else {
+      console.log(`[Services API] All ${services.length} services are already translated`);
     }
     
     return NextResponse.json(services);
