@@ -23736,6 +23736,8 @@ export function getTranslations(language: Language): Translations {
     navigation: {
       ...base.navigation,
       ...(partial.navigation || {}),
+      // Гарантируем, что reviews всегда присутствует
+      reviews: partial.navigation?.reviews || base.navigation.reviews,
     },
     common: {
       ...base.common,

@@ -11,7 +11,7 @@ export function Footer() {
     <footer className="bg-black text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-black/50"></div>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8">
           {/* Company Info */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-2">
             <VKBouwmasterLogo />
@@ -46,9 +46,9 @@ export function Footer() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">{t.footer?.quickLinks?.title || 'Быстрые ссылки'}</span>
             </h3>
             <ul className="space-y-1.5 sm:space-y-2">
-              <li><Link href="/about" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation.about}</Link></li>
-              <li><Link href="/services" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation.services}</Link></li>
-              <li><Link href="/portfolio" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation.portfolio}</Link></li>
+              <li><Link href="/about" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.about || 'About'}</Link></li>
+              <li><Link href="/services" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.services || 'Services'}</Link></li>
+              <li><Link href="/portfolio" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.portfolio || 'Portfolio'}</Link></li>
             </ul>
           </div>
 
@@ -63,6 +63,20 @@ export function Footer() {
               <li><Link href="/services/plumbing-repairs" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.home.services?.plumbing?.title || 'Plumbing Repairs'}</Link></li>
               <li><Link href="/services/roof-repairs" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.home.services?.roofing?.title || 'Roof Repairs'}</Link></li>
               <li><Link href="/services/garden-design-landscaping" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.home.services?.garden?.title || 'Garden Design'}</Link></li>
+            </ul>
+          </div>
+
+          {/* Shot / Additional Links */}
+          <div>
+            <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">{t.footer?.shot?.title || 'Shot'}</span>
+            </h3>
+            <ul className="space-y-1.5 sm:space-y-2">
+              <li><Link href="/contact" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.contact || 'Contact'}</Link></li>
+              <li><Link href="/reviews" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.reviews || 'Reviews'}</Link></li>
+              <li><Link href="/faq" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.faq || 'FAQ'}</Link></li>
+              <li><Link href="/pricing" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.pricing || 'Pricing'}</Link></li>
+              <li><Link href="/team" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.team || 'Team'}</Link></li>
             </ul>
           </div>
         </div>
