@@ -75,7 +75,6 @@ export function Footer() {
               <li><Link href="/" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.home || 'Home'}</Link></li>
               <li><Link href="/blog" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.blog || 'Blog'}</Link></li>
               <li><Link href="/reviews" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.reviews || 'Reviews'}</Link></li>
-              <li><Link href="/faq" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.faq || 'FAQ'}</Link></li>
               <li><Link href="/contact" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.contact || 'Contact'}</Link></li>
             </ul>
           </div>
