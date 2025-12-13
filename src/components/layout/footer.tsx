@@ -72,11 +72,11 @@ export function Footer() {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">{t.footer?.shot?.title || 'Shot'}</span>
             </h3>
             <ul className="space-y-1.5 sm:space-y-2">
-              <li><Link href="/contact" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.contact || 'Contact'}</Link></li>
+              <li><Link href="/" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.home || 'Home'}</Link></li>
+              <li><Link href="/blog" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.blog || 'Blog'}</Link></li>
               <li><Link href="/reviews" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.reviews || 'Reviews'}</Link></li>
               <li><Link href="/faq" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.faq || 'FAQ'}</Link></li>
-              <li><Link href="/pricing" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.pricing || 'Pricing'}</Link></li>
-              <li><Link href="/team" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.team || 'Team'}</Link></li>
+              <li><Link href="/contact" className="text-sm sm:text-base text-gray-300 hover:text-white transition-colors break-words">{t.navigation?.contact || 'Contact'}</Link></li>
             </ul>
           </div>
         </div>
