@@ -5,11 +5,9 @@ import { existsSync, createWriteStream, constants } from 'fs';
 import { pipeline } from 'stream/promises';
 import { Readable } from 'stream';
 
-// Увеличиваем лимит времени (для больших видео можно поднять через env)
 export const maxDuration = 300;
 export const runtime = 'nodejs';
 
-// Лимит размера файла можно задать через env MAX_UPLOAD_MB, по умолчанию без ограничения
 const MAX_UPLOAD_MB = process.env.MAX_UPLOAD_MB ? Number(process.env.MAX_UPLOAD_MB) : Infinity;
 
 function readableFromWeb(webStream: ReadableStream): Readable {
@@ -28,7 +26,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Проверяем размер файла только если задан ограничитель
     if (isFinite(MAX_UPLOAD_MB) && file.size > MAX_UPLOAD_MB * 1024 * 1024) {
       return NextResponse.json(
         { error: `Файл слишком большой. Максимальный размер: ${MAX_UPLOAD_MB}MB. Ваш файл: ${(file.size / 1024 / 1024).toFixed(2)}MB` },
@@ -36,7 +33,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Теперь разрешаем только изображения
     const allowedTypes = ['image/'];
     const isValidType = allowedTypes.some(type => file.type.startsWith(type));
     if (!isValidType) {
@@ -46,40 +42,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Генерируем уникальное имя файла
     const timestamp = Date.now();
     const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
     const fileName = `${timestamp}_${originalName}`;
 
-    // Проверяем наличие Render Disk (монтируется в /uploads)
     const renderDiskPath = '/uploads';
     const hasRenderDisk = existsSync(renderDiskPath);
     
-    // Определяем путь для сохранения
     let uploadDir: string;
     let fileUrl: string;
     
     if (hasRenderDisk) {
-      // Используем Render Disk
       uploadDir = renderDiskPath;
-      // Используем API route для отдачи файлов из Render Disk
       fileUrl = `/api/uploads/${fileName}`;
       console.log('Используется Render Disk:', uploadDir);
     } else {
-      // Пробуем локальное хранилище (для разработки)
       uploadDir = join(process.cwd(), 'public', 'uploads');
-      // Локально файлы доступны напрямую из public
       fileUrl = `/uploads/${fileName}`;
       console.log('Используется локальное хранилище:', uploadDir);
     }
 
-    // Создаём директорию, если её нет
     try {
       if (!existsSync(uploadDir)) {
         await mkdir(uploadDir, { recursive: true });
       }
       
-      // Проверяем, доступна ли директория для записи
       await access(uploadDir, constants.W_OK);
     } catch (dirError: any) {
       console.error('Ошибка доступа к директории:', dirError);
@@ -99,7 +86,6 @@ export async function POST(request: NextRequest) {
     const filePath = join(uploadDir, fileName);
 
     try {
-      // Стримим файл на диск, чтобы не держать большие файлы в памяти
       const readable = readableFromWeb(file.stream());
       const writable = createWriteStream(filePath);
       await pipeline(readable, writable);
@@ -154,7 +140,6 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Проверяем наличие Render Disk
     const renderDiskPath = '/uploads';
     const hasRenderDisk = existsSync(renderDiskPath);
     

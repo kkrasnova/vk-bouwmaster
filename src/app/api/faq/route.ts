@@ -46,12 +46,10 @@ export async function GET(request: NextRequest) {
     
     const data = readFAQData();
     
-    // Если запрашивается русский язык, возвращаем оригинальные данные
     if (lang === 'RU') {
       return NextResponse.json(data);
     }
     
-    // Для всех остальных языков (включая NL по умолчанию) возвращаем переводы
       const translated = data.map(category => {
         const translation = category.translations?.[lang];
         if (translation) {
@@ -87,7 +85,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Автоматически переводим на все языки
     let translations: Record<string, {
       title: string;
       questions: Array<{ question: string; answer: string }>;
@@ -103,7 +100,6 @@ export async function POST(request: NextRequest) {
       });
     } catch (translationError) {
       console.error('Translation error:', translationError);
-      // Продолжаем без переводов, если произошла ошибка
     }
 
     const data = readFAQData();
@@ -147,13 +143,11 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Проверяем, изменились ли title, questions (для перевода)
     const oldItem = data[index];
     const titleChanged = oldItem.title !== item.title;
     const questionsChanged = JSON.stringify(oldItem.questions.map(q => ({ q: q.question, a: q.answer }))) !== 
                              JSON.stringify(item.questions.map(q => ({ q: q.question, a: q.answer })));
 
-    // Если изменились данные, переводим заново
     if (titleChanged || questionsChanged) {
       try {
         const translations = await translateFAQCategory({
@@ -166,10 +160,8 @@ export async function PUT(request: NextRequest) {
         item.translations = translations;
       } catch (translationError) {
         console.error('Translation error:', translationError);
-        // Продолжаем без переводов, если произошла ошибка
       }
     } else {
-      // Сохраняем существующие переводы
       item.translations = oldItem.translations || item.translations;
     }
 

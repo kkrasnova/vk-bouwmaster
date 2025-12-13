@@ -31,17 +31,13 @@ export default function AboutPage() {
 
   return (
     <div className="unified-gradient-bg">
-      {/* Hero Section with Shader Animation */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient-bg pt-20 pb-20">
-        {/* Shader Animation now on top with opacity */}
         <div className="absolute inset-0 z-20 opacity-90 pointer-events-none">
           <ShaderAnimation />
         </div>
         
-        {/* Dark blue background with gradient fade to black */}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-950 via-blue-950/80 to-black"></div>
         
-        {/* Gradient fade at bottom to smooth transition */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-25 pointer-events-none"></div>
         
         <Parallax speed={0.3} className="relative z-30 text-center px-4">
@@ -62,7 +58,6 @@ export default function AboutPage() {
         </Parallax>
       </section>
 
-      {/* Story Section */}
       <motion.section 
         ref={storyRef} 
         className="py-20 bg-black scroll-fade-in relative"
@@ -117,7 +112,6 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      {/* Mission Section */}
       <motion.section 
         ref={missionRef} 
         className="py-20 bg-gradient-to-b from-black via-gray-900 to-black scroll-fade-in relative"
@@ -143,7 +137,6 @@ export default function AboutPage() {
           </motion.div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Качество */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -162,7 +155,6 @@ export default function AboutPage() {
               <Meteors number={15} />
             </motion.div>
             
-            {/* Инновации */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -181,7 +173,6 @@ export default function AboutPage() {
               <Meteors number={15} />
             </motion.div>
             
-            {/* Удовлетворенность */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -203,7 +194,6 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      {/* Why Choose Us Section */}
       <motion.section 
         ref={whyChooseRef} 
         className="py-20 bg-black scroll-fade-in relative"
@@ -274,7 +264,6 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      {/* Certifications Section */}
       <motion.section 
         ref={certificationsRef} 
         className="py-20 bg-gradient-to-b from-black via-gray-900 to-black scroll-fade-in relative"
@@ -331,7 +320,6 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      {/* CTA Section */}
       <motion.section 
         ref={ctaRef} 
         className="relative py-20 bg-black overflow-hidden scroll-fade-in"
@@ -340,17 +328,13 @@ export default function AboutPage() {
         viewport={{ once: false, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        {/* Animated Background Layers */}
         <div className="absolute inset-0">
-          {/* Dark gradient overlay - более прозрачный, чтобы лучи были видны */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60"></div>
           
-          {/* Main Shader Animation - яркие лучи */}
           <div className="absolute inset-0 opacity-100">
             <ShaderAnimation />
           </div>
           
-          {/* Subtle accent gradients for depth - уменьшены, чтобы не мешали лучам */}
           <motion.div
             className="absolute top-1/2 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"
             animate={{
@@ -376,7 +360,6 @@ export default function AboutPage() {
             }}
           />
           
-          {/* Moving Particles Effect */}
           <div className="absolute inset-0">
             {[...Array(20)].map((_, i) => (
               <motion.div
@@ -402,7 +385,6 @@ export default function AboutPage() {
           </div>
         </div>
         
-        {/* Meteors Effect */}
         <Meteors number={30} />
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

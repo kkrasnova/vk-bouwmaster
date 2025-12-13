@@ -61,7 +61,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Автоматически переводим на все языки
     let translations: Record<string, BlogPostTranslations> | undefined;
     try {
       translations = await translateBlogPost({
@@ -72,7 +71,6 @@ export async function POST(request: NextRequest) {
       });
     } catch (translationError) {
       console.error('Translation error:', translationError);
-      // Продолжаем без переводов, если произошла ошибка
     }
 
     const data = readBlogData();
@@ -118,7 +116,6 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Проверяем, изменились ли основные поля - если да, переводим заново
     const existingItem = data[index];
     const needsRetranslation = 
       existingItem.title !== item.title ||
@@ -138,7 +135,6 @@ export async function PUT(request: NextRequest) {
         });
       } catch (translationError) {
         console.error('Translation error:', translationError);
-        // Используем существующие переводы, если новая попытка не удалась
         translations = translations || existingItem.translations;
       }
     }

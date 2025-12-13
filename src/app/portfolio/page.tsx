@@ -58,16 +58,13 @@ export default function PortfolioPage() {
       }
     }
     
-    // Загружаем сразу
     fetchWorks()
     fetchReviews()
     
-    // Автообновление при фокусе окна
     const onFocus = () => {
       fetchWorks()
       fetchReviews()
     }
-    // Автообновление при изменении видимости
     const onVisible = () => {
       if (document.visibilityState === 'visible') {
         fetchWorks()
@@ -78,7 +75,6 @@ export default function PortfolioPage() {
     window.addEventListener('focus', onFocus)
     document.addEventListener('visibilitychange', onVisible)
     
-    // Автообновление каждые 5 секунд для быстрого отображения новых работ
     const interval = setInterval(() => {
       fetchWorks()
       fetchReviews()
@@ -105,7 +101,6 @@ export default function PortfolioPage() {
 
   return (
     <div className="unified-gradient-bg">
-      {/* High-impact Hero */}
       <section className="relative overflow-hidden text-white pt-28 pb-28 hero-gradient-bg min-h-[75vh]">
         <div className="absolute inset-0 z-10 opacity-100 pointer-events-none">
           <ShaderAnimation />
@@ -113,7 +108,6 @@ export default function PortfolioPage() {
         <div className="absolute inset-0 gradient-hero opacity-70" />
         <div className="absolute -right-48 -top-48 w-[680px] h-[680px] rounded-full bg-cyan-500/15 blur-3xl" />
         <div className="absolute -left-48 -bottom-48 w-[680px] h-[680px] rounded-full bg-blue-600/15 blur-3xl" />
-        {/* Mask any seam/line at bottom of hero */}
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-black z-30 pointer-events-none" />
         <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[75vh] flex flex-col justify-center text-center py-8">
           <motion.h1
@@ -133,13 +127,10 @@ export default function PortfolioPage() {
             {t.portfolio?.hero?.subtitle || 'Изучите мои завершенные проекты и посмотрите качество моей работы'}
           </motion.p>
 
-          {/* Hero CTAs removed per request */}
 
-          {/* Counters removed per request */}
         </div>
       </section>
 
-      {/* Why choose me - big animated cards */}
       <section className="py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-6">
@@ -179,7 +170,6 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      {/* Featured projects */}
       <section className="py-16 section-transition">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
@@ -232,7 +222,6 @@ export default function PortfolioPage() {
 
       
 
-      {/* Testimonials - dynamic from comments */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
@@ -272,7 +261,6 @@ export default function PortfolioPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">

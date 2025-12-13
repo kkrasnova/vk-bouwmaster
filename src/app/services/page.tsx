@@ -100,9 +100,7 @@ export default function ServicesPage() {
 
   return (
     <div className="unified-gradient-bg relative min-h-screen">
-      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient-bg pt-20 pb-20 z-10">
-        {/* Shader Animation только в hero секции */}
         <div className="absolute inset-0 z-20 opacity-90 pointer-events-none">
           <ShaderAnimation />
         </div>
@@ -129,7 +127,6 @@ export default function ServicesPage() {
         </Parallax>
       </section>
 
-      {/* Services Grid Section */}
       <motion.section 
         ref={servicesRef} 
         className="relative pt-8 pb-20 bg-gradient-to-b from-black via-gray-900 to-black z-10"
@@ -138,7 +135,6 @@ export default function ServicesPage() {
         viewport={{ once: false, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        {/* Переходная анимация сверху */}
         <motion.div 
           className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-black/30 to-black z-0"
           initial={{ opacity: 0 }}
@@ -189,7 +185,6 @@ export default function ServicesPage() {
             ))}
           </div>
 
-          {/* CTA Button */}
           <motion.div 
             className="flex justify-center mt-16"
             initial={{ opacity: 0, y: 30 }}

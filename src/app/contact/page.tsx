@@ -89,9 +89,7 @@ export default function ContactPage() {
     })
   }
 
-  // Если показывается страница благодарности
   if (showThankYou) {
-    // Получаем переводы для страницы благодарности
     const thankYouText = (t.contactThankYou && 
       t.contactThankYou.title && 
       t.contactThankYou.message && 
@@ -167,17 +165,13 @@ export default function ContactPage() {
 
   return (
     <div className="unified-gradient-bg relative min-h-screen">
-      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient-bg pt-16 sm:pt-20 md:pt-24 pb-20 z-10">
-        {/* Shader Animation now on top with opacity */}
         <div className="absolute inset-0 z-20 opacity-90 pointer-events-none">
           <ShaderAnimation />
         </div>
         
-        {/* Dark blue background with gradient fade to black */}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-950 via-blue-950/80 to-black"></div>
         
-        {/* Gradient fade at bottom to smooth transition */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-25 pointer-events-none"></div>
         
         <Parallax speed={0.3} className="relative z-30 text-center px-4">
@@ -206,7 +200,6 @@ export default function ContactPage() {
         </Parallax>
       </section>
 
-      {/* Contact Form & Info Section */}
       <motion.section 
         ref={contactInfoRef} 
         className="relative pt-8 pb-20 bg-gradient-to-b from-black via-gray-900 to-black z-10"
@@ -215,7 +208,6 @@ export default function ContactPage() {
         viewport={{ once: false, margin: "-100px" }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        {/* Переходная анимация сверху */}
         <motion.div 
           className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-black/30 to-black z-0"
           initial={{ opacity: 0 }}
@@ -225,7 +217,6 @@ export default function ContactPage() {
         ></motion.div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Contact Form */}
             <motion.div 
               className="lg:col-span-2"
               initial={{ opacity: 0, x: -50 }}
@@ -303,7 +294,6 @@ export default function ContactPage() {
                       />
                     </motion.div>
 
-                    {/* Address Fields */}
                     <motion.div
                       className="grid grid-cols-1 md:grid-cols-3 gap-6"
                       initial={{ opacity: 0, y: 20 }}
@@ -418,7 +408,6 @@ export default function ContactPage() {
               </div>
             </motion.div>
 
-            {/* Contact Information */}
             <motion.div 
               className="space-y-6"
               initial={{ opacity: 0, x: 50 }}
@@ -501,7 +490,6 @@ export default function ContactPage() {
                 <Meteors number={15} />
               </div>
 
-              {/* Contact Methods */}
               <motion.div 
                 className="relative bg-gradient-to-br from-blue-900/40 to-cyan-900/40 border-2 border-blue-700/50 rounded-2xl p-6 shadow-2xl"
                 initial={{ opacity: 0, y: 20 }}

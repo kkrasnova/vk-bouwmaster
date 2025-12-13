@@ -3,7 +3,6 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { translateServicePage } from '@/lib/translate';
 
-// Путь к persistent-хранилищу
 const RENDER_DISK_PATH = '/uploads';
 const LOCAL_UPLOADS_PATH = join(process.cwd(), 'public', 'uploads');
 const FALLBACK_REPO_FILE = join(process.cwd(), 'src', 'lib', 'services-data.json');
@@ -116,20 +115,17 @@ export async function GET(request: NextRequest) {
   try {
     let services = await readServicesData();
     
-    // Проверяем и переводим услуги, которым нужны переводы
     const servicesNeedingTranslation = services.filter(needsTranslation);
     
     if (servicesNeedingTranslation.length > 0) {
       console.log(`[Services API] Found ${servicesNeedingTranslation.length} services needing translation out of ${services.length} total`);
       console.log(`[Services API] Starting automatic translation for: ${servicesNeedingTranslation.map(s => s.id).join(', ')}`);
       
-      // Переводим все услуги, которым нужны переводы (синхронно, чтобы переводы были готовы сразу)
       for (const service of servicesNeedingTranslation) {
         try {
           console.log(`[Services API] Translating service: ${service.id}...`);
           const translations = await translateServicePage(service);
           
-          // Обновляем услугу с переводами
           const serviceIndex = services.findIndex(s => s.id === service.id);
           if (serviceIndex !== -1) {
             services[serviceIndex] = {
@@ -143,7 +139,6 @@ export async function GET(request: NextRequest) {
         }
       }
       
-      // Сохраняем обновленные данные
       await writeServicesData(services);
       console.log(`[Services API] ✅ All translations saved`);
     } else {
@@ -165,10 +160,8 @@ export async function PUT(request: NextRequest) {
     const existingIndex = services.findIndex(s => s.id === service.id);
     
     if (existingIndex !== -1) {
-      // Обновляем существующую услугу
       const oldService = services[existingIndex];
       
-      // Проверяем, изменились ли основные поля (которые требуют перевода)
       const contentChanged = 
         oldService.hero.title !== service.hero.title ||
         oldService.hero.subtitle !== service.hero.subtitle ||
@@ -179,17 +172,14 @@ export async function PUT(request: NextRequest) {
       
       services[existingIndex] = service;
       
-      // Если контент изменился, нужно перевести заново
       if (contentChanged || needsTranslation(service)) {
         console.log(`[Services API] Content changed for service ${service.id}, generating new translations`);
         const translations = await translateServicePage(service);
         services[existingIndex].translations = translations;
       }
     } else {
-      // Добавляем новую услугу
       services.push(service);
       
-      // Генерируем переводы для новой услуги
       if (needsTranslation(service)) {
         console.log(`[Services API] Generating translations for new service ${service.id}`);
         const translations = await translateServicePage(service);

@@ -22,14 +22,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false)
   const [wasAutoDetected, setWasAutoDetected] = useState(false)
 
-  // Всегда используем нидерландский язык по умолчанию, игнорируя сохраненный выбор
   useEffect(() => {
-    // Всегда устанавливаем нидерландский язык, независимо от сохраненного выбора
       setCurrentLanguage('NL')
       setTranslations(getTranslations('NL'))
       setIsInitialized(true)
     
-    // Очищаем сохраненный язык из localStorage, чтобы всегда показывать NL
     try {
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem(STORAGE_KEY)
@@ -37,11 +34,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, [])
 
-  // Change language handler (не сохраняем в localStorage, чтобы всегда возвращаться к NL)
   const changeLanguage = useCallback((lang: Language) => {
     setCurrentLanguage(lang)
     setTranslations(getTranslations(lang))
-    // Не сохраняем в localStorage, чтобы при следующей загрузке всегда был NL
   }, [])
 
   const resetLanguage = useCallback(() => {

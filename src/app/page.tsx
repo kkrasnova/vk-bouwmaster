@@ -20,14 +20,11 @@ export default function Home() {
   
   return (
     <div className="unified-gradient-bg">
-      {/* Hero Section with Shader Animation */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient-bg pt-16 sm:pt-20 md:pt-24 pb-20">
-        {/* Shader Animation now on top with opacity */}
         <div className="absolute inset-0 z-20 opacity-90 pointer-events-none">
           <ShaderAnimation />
         </div>
         
-        {/* Dark blue background */}
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-blue-950 to-black"></div>
         
         <Parallax speed={0.3} className="relative z-30 text-center px-4">
@@ -55,7 +52,6 @@ export default function Home() {
         </Parallax>
       </section>
 
-      {/* About Section */}
       <section ref={aboutRef} className="bg-black scroll-fade-in py-12">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 animate-fade-in">
@@ -123,10 +119,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Simple Photos Grid Section (moved after About) */}
       <SimpleWorksGridSection />
 
-      {/* Services Section */}
       <section ref={servicesRef} className="bg-black py-12">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 animate-fade-in">
@@ -258,7 +252,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
       <section className="bg-black py-12">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-4">

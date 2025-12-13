@@ -89,7 +89,6 @@ export default function ReviewsPage() {
     })()
   }, [])
 
-  // Прокрутка в начало страницы при показе страницы благодарности
   useEffect(() => {
     if (showThankYou) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -121,18 +120,15 @@ export default function ReviewsPage() {
       const data = await res.json()
       
       if (res.ok) {
-        // Сразу очищаем все поля формы после успешной отправки
         setForm({ name: '', surname: '', message: '', rating: 5, city: '', profileImage: '' })
         setFormPhotos([])
         setError(null)
         
-        // Обновляем список отзывов в фоне (но новый отзыв появится только после подтверждения администратором)
         fetch('/api/comments')
           .then(res => res.json())
           .then(list => setComments(list))
           .catch(() => {}) // Игнорируем ошибки при обновлении списка
         
-        // Прокручиваем в начало страницы и показываем страницу благодарности
         window.scrollTo({ top: 0, behavior: 'smooth' })
         setShowThankYou(true)
         setSending(false)
@@ -149,8 +145,6 @@ export default function ReviewsPage() {
     }
   }
 
-  // Получаем актуальные переводы каждый раз при рендере
-  // Используем currentLanguage как зависимость для принудительного обновления
   const reviewsText = (t.reviews || {
     hero: { badge: 'Your opinion matters to us', title: 'Customer Reviews', subtitle: 'Share your experience working with us. Your reviews help other clients make decisions.' },
     form: {
@@ -195,9 +189,7 @@ export default function ReviewsPage() {
     }
   }) as typeof t.reviews
 
-  // Если показывается страница благодарности
   if (showThankYou) {
-    // Используем переводы, если они доступны, иначе fallback на EN
     const thankYouText = t.thankYou || {
       title: 'Thank you for your review!',
       message1: 'I am very happy that you shared your experience!',
@@ -297,7 +289,6 @@ export default function ReviewsPage() {
   return (
     <div className="unified-gradient-bg min-h-screen text-white pt-32 sm:pt-40 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Hero Section */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -324,7 +315,6 @@ export default function ReviewsPage() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Form */}
           <motion.form 
             onSubmit={submitComment} 
             initial={{ opacity: 0, x: -30 }}
@@ -481,7 +471,6 @@ export default function ReviewsPage() {
               </div>
             </motion.div>
             
-            {/* Photo Upload */}
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -566,7 +555,6 @@ export default function ReviewsPage() {
             </motion.div>
           </motion.form>
 
-          {/* List of all reviews */}
           <motion.div 
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -620,7 +608,6 @@ export default function ReviewsPage() {
                         }
                       }}
                     >
-                      {/* Header */}
                       <div className="flex items-start gap-4 mb-4">
                         <div className="relative w-16 h-16 flex-shrink-0 rounded-full overflow-hidden bg-black/60 border-2 border-blue-500/30 flex items-center justify-center">
                           {c.profileImage && c.profileImage !== '/vk-bouwmaster-logo.svg' && c.profileImage.trim() !== '' ? (
@@ -674,7 +661,6 @@ export default function ReviewsPage() {
                         </div>
                       </div>
 
-                      {/* Message */}
                       <div className="mb-4">
                         <p className="text-white text-base md:text-lg leading-relaxed whitespace-pre-wrap">
                           {c.translations && c.translations[currentLanguage] 
@@ -683,7 +669,6 @@ export default function ReviewsPage() {
                         </p>
                       </div>
 
-                      {/* Photos and Videos */}
                       {allMedia.length > 0 && (
                         <div className="mb-4">
                           <h4 className="text-lg font-semibold text-white mb-4">

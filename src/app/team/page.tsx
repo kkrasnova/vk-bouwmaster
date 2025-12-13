@@ -61,7 +61,6 @@ export default function TeamPage() {
 
   return (
     <div className="unified-gradient-bg">
-      {/* Hero Section */}
       <section className="text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -71,7 +70,6 @@ export default function TeamPage() {
         </div>
       </section>
 
-      {/* Team Introduction */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -125,7 +123,6 @@ export default function TeamPage() {
         </div>
       </section>
 
-      {/* Team Values */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -167,7 +164,6 @@ export default function TeamPage() {
         </div>
       </section>
 
-      {/* Certifications & Training */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -221,7 +217,6 @@ export default function TeamPage() {
         </div>
       </section>
 
-      {/* Join Our Team */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-white mb-6">{t.team.join.title}</h2>

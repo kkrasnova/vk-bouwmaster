@@ -13,7 +13,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from '@/hooks/useTranslations';
 
-// ===== Types and Interfaces =====
 export interface iTestimonial {
   id?: string; // ID отзыва для навигации
   name: string;
@@ -58,7 +57,6 @@ interface iCarouselProps {
   initialScroll?: number;
 }
 
-// ===== Custom Hooks =====
 const useOutsideClick = (
   ref: React.RefObject<HTMLDivElement | null>,
   onOutsideClick: () => void,
@@ -81,7 +79,6 @@ const useOutsideClick = (
   }, [ref, onOutsideClick]);
 };
 
-// ===== Components =====
 const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
@@ -100,16 +97,12 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
       setCanScrollLeft(scrollLeft > 0);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
       
-      // Определяем, прокручивает ли пользователь вручную
-      // Проверяем только если пользователь взаимодействовал с элементом
       if (isUserInteractingRef.current && Math.abs(scrollLeft - lastScrollLeftRef.current) > 5 && !autoScrollCheckRef.current) {
         isUserScrollingRef.current = true;
-        // Останавливаем авто-листание при ручной прокрутке
         if (autoScrollIntervalRef.current) {
           clearInterval(autoScrollIntervalRef.current);
           autoScrollIntervalRef.current = null;
         }
-        // Перезапускаем авто-листание через 8 секунд после ручной прокрутки
         if (userScrollTimeoutRef.current) {
           clearTimeout(userScrollTimeoutRef.current);
         }
@@ -152,7 +145,6 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
   };
 
   const startAutoScroll = React.useCallback(() => {
-    // Очищаем предыдущий интервал, если есть
     if (autoScrollIntervalRef.current) {
       clearInterval(autoScrollIntervalRef.current);
       autoScrollIntervalRef.current = null;
@@ -169,23 +161,19 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
 
         setAutoScrollDirection(currentDirection => {
           if (currentDirection === 'right') {
-            // Листаем вправо
             if (scrollLeft < scrollWidth - clientWidth - 10) {
               autoScrollCheckRef.current = true;
               carouselRef.current?.scrollBy({left: scrollStep, behavior: "smooth"});
               return 'right';
             } else {
-              // Достигли конца, меняем направление на влево
               return 'left';
             }
           } else {
-            // Листаем влево
             if (scrollLeft > 10) {
               autoScrollCheckRef.current = true;
               carouselRef.current?.scrollBy({left: -scrollStep, behavior: "smooth"});
               return 'left';
             } else {
-              // Достигли начала, меняем направление на вправо
               return 'right';
             }
           }
@@ -202,7 +190,6 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
     }
   }, [initialScroll]);
 
-  // Запускаем автоматическое листание
   useEffect(() => {
     if (items.length > 1) {
       startAutoScroll();
@@ -301,7 +288,6 @@ const TestimonialCard = ({
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   
-  // Получаем переведенный текст комментария
   const getTranslatedDescription = () => {
     if (testimonial.translations && testimonial.translations[currentLanguage]) {
       return testimonial.translations[currentLanguage];
@@ -328,11 +314,9 @@ const TestimonialCard = ({
   const videoDragX = useRef(0);
 
   const handleExpand = () => {
-    // На мобильных устройствах и когда есть ID - переходим на отдельную страницу
     if (testimonial.id) {
       router.push(`/reviews/${testimonial.id}`);
     } else {
-      // Если нет ID, открываем модальное окно (для обратной совместимости)
       setIsExpanded(true);
     }
   };
@@ -342,7 +326,6 @@ const TestimonialCard = ({
     setShowVideos(false);
     setSelectedPhotoIndex(null);
     setSelectedVideoIndex(null);
-    // Небольшая задержка для плавного закрытия перед вызовом onCardClose
     setTimeout(() => {
     onCardClose();
     }, 100);
@@ -474,22 +457,18 @@ const TestimonialCard = ({
     }
   }, [isExpanded, testimonial.photos, testimonial.videos]);
 
-  // Фиксируем CSS переменные панели, чтобы предотвратить скачки при hover
   useEffect(() => {
     if (!isExpanded || !panelRef.current) return;
     
     const panel = panelRef.current;
     
-    // Функция для фиксации переменных
     const fixVariables = () => {
       if (panel) {
-        // Принудительно устанавливаем переменные через setProperty
         panel.style.setProperty('--pos-x', '50%');
         panel.style.setProperty('--pos-y', '50%');
         panel.style.setProperty('--spread-x', '100%');
         panel.style.setProperty('--spread-y', '100%');
         
-        // Добавляем inline стили с !important через setAttribute
         const currentStyle = panel.getAttribute('style') || '';
         if (!currentStyle.includes('--pos-x')) {
           panel.setAttribute('style', 
@@ -500,10 +479,8 @@ const TestimonialCard = ({
       }
     };
     
-    // Устанавливаем начальные значения
     fixVariables();
     
-    // Используем requestAnimationFrame для постоянной фиксации
     let rafId: number;
     const keepFixed = () => {
       fixVariables();
@@ -511,7 +488,6 @@ const TestimonialCard = ({
     };
     rafId = requestAnimationFrame(keepFixed);
     
-    // Также слушаем события мыши для немедленной фиксации
     const handleMouseEvent = (e: Event) => {
       e.stopPropagation();
       fixVariables();
@@ -520,7 +496,6 @@ const TestimonialCard = ({
     panel.addEventListener('mouseleave', handleMouseEvent, true);
     panel.addEventListener('mousemove', handleMouseEvent, true);
     
-    // Переопределяем hover через CSS класс
     panel.classList.add('no-hover-effects');
     
     return () => {
@@ -594,7 +569,6 @@ const TestimonialCard = ({
               paddingBottom: '2rem'
             }}
           >
-            {/* Основной контент */}
             <div 
               ref={containerRef} 
               className="flex-1 max-w-5xl mx-auto w-full px-4 md:px-8 py-8 relative"
@@ -615,7 +589,6 @@ const TestimonialCard = ({
               onMouseEnter={() => {}}
               onMouseLeave={() => {}}
             >
-              {/* Кнопка закрытия в правом верхнем углу контента - скрыта при просмотре фото/видео */}
               {!showPhotos && !showVideos && (
                 <button
                   className="absolute top-8 right-4 h-10 w-10 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors z-20"
@@ -637,7 +610,6 @@ const TestimonialCard = ({
                 </button>
               )}
               
-              {/* Просмотр фото внутри панели */}
               {showPhotos && selectedPhotoIndex !== null && testimonial.photos ? (
                 <div
                   ref={panelRef}
@@ -656,7 +628,6 @@ const TestimonialCard = ({
                     '--border-angle': index % 2 === 0 ? '200deg' : '200deg',
                   } as React.CSSProperties}
                 >
-                  {/* Верхняя панель с индикаторами */}
                   <div className="w-full mb-4 relative">
                     <div className="flex gap-2 mb-4">
                       {testimonial.photos.map((_, idx) => (
@@ -669,7 +640,6 @@ const TestimonialCard = ({
                         />
                       ))}
                     </div>
-                    {/* Кнопка закрытия - крестик */}
                     <button
                       onClick={() => {
                         setShowPhotos(false);
@@ -700,9 +670,7 @@ const TestimonialCard = ({
                     </button>
                   </div>
 
-                  {/* Фото в формате сторис */}
                   <div className="flex-1 flex items-center justify-center relative overflow-hidden" style={{ minHeight: '500px' }}>
-                    {/* Стрелка влево */}
                     {selectedPhotoIndex > 0 && (
                       <button
                         onClick={() => {
@@ -715,7 +683,6 @@ const TestimonialCard = ({
                       </button>
                     )}
                     
-                    {/* Стрелка вправо */}
                     {testimonial.photos && selectedPhotoIndex < testimonial.photos.length - 1 && (
                       <button
                         onClick={() => {
@@ -780,7 +747,6 @@ const TestimonialCard = ({
                       </motion.div>
                     </AnimatePresence>
 
-                    {/* Индикатор */}
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 bg-black/60 px-4 py-2 rounded-lg">
                       <p className="text-white text-center text-sm">
                         {selectedPhotoIndex + 1} / {testimonial.photos.length}
@@ -789,7 +755,6 @@ const TestimonialCard = ({
                   </div>
                 </div>
               ) : showVideos && selectedVideoIndex !== null && testimonial.videos ? (
-                /* Просмотр видео внутри панели */
                 <div
                   ref={panelRef}
                   className={`gradient-button ${index % 2 === 0 ? '' : 'gradient-button-variant'} p-6 md:p-10 rounded-3xl relative`}
@@ -807,7 +772,6 @@ const TestimonialCard = ({
                     '--border-angle': index % 2 === 0 ? '200deg' : '200deg',
                   } as React.CSSProperties}
                 >
-                  {/* Верхняя панель с индикаторами */}
                   <div className="w-full mb-4 relative">
                     <div className="flex gap-2 mb-4">
                       {testimonial.videos.map((_, idx) => (
@@ -820,7 +784,6 @@ const TestimonialCard = ({
                         />
                       ))}
                     </div>
-                    {/* Кнопка закрытия - крестик */}
                     <button
                       onClick={() => {
                         setShowVideos(false);
@@ -851,9 +814,7 @@ const TestimonialCard = ({
                     </button>
                   </div>
 
-                  {/* Видео в формате сторис */}
                   <div className="flex-1 flex items-center justify-center relative overflow-hidden" style={{ minHeight: '500px' }}>
-                    {/* Стрелка влево */}
                     {selectedVideoIndex > 0 && (
                       <button
                         onClick={() => {
@@ -866,7 +827,6 @@ const TestimonialCard = ({
                       </button>
                     )}
                     
-                    {/* Стрелка вправо */}
                     {testimonial.videos && selectedVideoIndex < testimonial.videos.length - 1 && (
                       <button
                         onClick={() => {
@@ -934,7 +894,6 @@ const TestimonialCard = ({
                       </motion.div>
                     </AnimatePresence>
 
-                    {/* Индикатор */}
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 bg-black/60 px-4 py-2 rounded-lg">
                       <p className="text-white text-center text-sm">
                         {selectedVideoIndex + 1} / {testimonial.videos.length}
@@ -943,7 +902,6 @@ const TestimonialCard = ({
                   </div>
                 </div>
               ) : (
-                /* Обычный контент отзыва */
                 <div
                   ref={panelRef}
                   className={`gradient-button ${index % 2 === 0 ? '' : 'gradient-button-variant'} p-5 md:p-6 rounded-2xl relative`}
@@ -970,7 +928,6 @@ const TestimonialCard = ({
                   onMouseEnter={() => {}}
                   onMouseLeave={() => {}}
                 >
-                  {/* Заголовок с именем */}
                   <div className="mb-3 pb-3 border-b border-white/10">
                     <p
                       className="text-xl md:text-2xl font-bold text-white mb-1.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9),0_1px_4px_rgba(0,0,0,0.8)]"
@@ -1022,7 +979,6 @@ const TestimonialCard = ({
                     </div>
                   </div>
 
-                  {/* Рейтинг */}
                   {testimonial.rating && (
                     <div 
                       className="mb-3"
@@ -1038,7 +994,6 @@ const TestimonialCard = ({
                     </div>
                   )}
 
-                  {/* Текст отзыва */}
                   <div 
                     className="text-white text-sm md:text-base leading-relaxed flex-1"
                     style={{
@@ -1060,7 +1015,6 @@ const TestimonialCard = ({
                     </div>
                   </div>
 
-                  {/* Кнопки для просмотра фото и видео */}
                   <div 
                     className="pt-3 border-t border-white/10"
                     style={{
@@ -1114,7 +1068,6 @@ const TestimonialCard = ({
               )}
             </div>
             
-            {/* Футер внизу */}
             <div style={{ width: '100%', marginTop: 'auto' }}>
               <Footer />
             </div>
@@ -1193,7 +1146,6 @@ const TestimonialCard = ({
               >
                 {getTranslatedDescription()}
               </motion.p>
-              {/* Кнопки для просмотра фото и видео */}
               {testimonial.id && ((testimonial.photos && testimonial.photos.length > 0) || (testimonial.videos && testimonial.videos.length > 0)) && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -1232,7 +1184,6 @@ const TestimonialCard = ({
 const ProfileImage = ({src, alt, useLogo, ...rest}: ImageProps & { useLogo?: boolean }) => {
   const [isLoading, setLoading] = useState(true);
 
-  // Проверяем, нужно ли показывать логотип
   const shouldShowLogo = useLogo || !src || src === '/vk-bouwmaster-logo.svg' || (typeof src === 'string' && src.trim() === '');
 
   if (shouldShowLogo) {
@@ -1268,7 +1219,6 @@ const ProfileImage = ({src, alt, useLogo, ...rest}: ImageProps & { useLogo?: boo
   );
 };
 
-// Export the components
 export {Carousel, TestimonialCard, ProfileImage};
 
 

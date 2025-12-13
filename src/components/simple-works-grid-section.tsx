@@ -57,12 +57,9 @@ export function SimpleWorksGridSection() {
       }
     }
     
-    // Загружаем сразу
     fetchWorks()
     
-    // Автообновление при фокусе окна
     const onFocus = () => fetchWorks()
-    // Автообновление при изменении видимости
     const onVisible = () => {
       if (document.visibilityState === 'visible') fetchWorks()
     }
@@ -70,7 +67,6 @@ export function SimpleWorksGridSection() {
     window.addEventListener('focus', onFocus)
     document.addEventListener('visibilitychange', onVisible)
     
-    // Автообновление каждые 15 секунд
     const interval = setInterval(fetchWorks, 15000)
     
     return () => {
@@ -80,7 +76,6 @@ export function SimpleWorksGridSection() {
     }
   }, [])
 
-  // Показываем только валидные работы, фильтруем пустые изображения
   const validWorks = works.filter(w => 
     w && 
     w.id && 
@@ -115,7 +110,6 @@ export function SimpleWorksGridSection() {
           </div>
         ) : (
           <div className="relative">
-            {/* Left button - with offset from images */}
             <button
               type="button"
               aria-label="Прокрутить влево"
@@ -125,7 +119,6 @@ export function SimpleWorksGridSection() {
               <svg className="w-3 h-3 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
 
-            {/* Track */}
             <div
               ref={trackRef}
               className="flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory hide-scrollbar px-2 sm:px-4"
@@ -151,7 +144,6 @@ export function SimpleWorksGridSection() {
               })}
             </div>
 
-            {/* Right button - with offset from images */}
             <button
               type="button"
               aria-label="Прокрутить вправо"

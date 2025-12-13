@@ -36,7 +36,6 @@ function writeComments(list: Comment[]) {
   writeFileSync(COMMENTS_FILE, JSON.stringify(list, null, 2), 'utf-8');
 }
 
-// POST /api/comments/translate - принудительный перевод всех комментариев
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -46,7 +45,6 @@ export async function POST(request: NextRequest) {
     const comments = readComments();
     
     if (commentId) {
-      // Переводим только один комментарий
       const index = comments.findIndex(c => c.id === commentId);
       if (index === -1) {
         return NextResponse.json(
@@ -95,7 +93,6 @@ export async function POST(request: NextRequest) {
         );
       }
     } else {
-      // Переводим все комментарии
       let translatedCount = 0;
       let errorCount = 0;
       
@@ -104,7 +101,6 @@ export async function POST(request: NextRequest) {
       for (let i = 0; i < comments.length; i++) {
         const comment = comments[i];
         
-        // Если force=false, пропускаем комментарии с полными переводами
         if (!force && comment.translations && Object.keys(comment.translations).length >= 5) {
           console.log(`[Translate Comments API] ⏭️ Skipping comment ${comment.id} (already translated)`);
           continue;

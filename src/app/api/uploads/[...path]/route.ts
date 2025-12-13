@@ -3,7 +3,6 @@ import { stat, readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync, createReadStream } from 'fs';
 
-// API route для отдачи файлов из /uploads (Render Disk) или public/uploads
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ path: string[] }> }
@@ -12,27 +11,22 @@ export async function GET(
     const params = await context.params;
     const filePath = params.path.join('/');
     
-    // Проверяем наличие Render Disk
     const renderDiskPath = '/uploads';
     const hasRenderDisk = existsSync(renderDiskPath);
     
     let fullPath: string;
     if (hasRenderDisk) {
-      // Используем Render Disk
       fullPath = join(renderDiskPath, filePath);
     } else {
-      // Используем локальное хранилище
       fullPath = join(process.cwd(), 'public', 'uploads', filePath);
     }
 
-    // Проверяем, что файл существует
     if (!existsSync(fullPath)) {
       return NextResponse.json({ error: 'Файл не найден' }, { status: 404 });
     }
 
     const fileStat = await stat(fullPath);
 
-    // Определяем MIME тип
     const ext = filePath.split('.').pop()?.toLowerCase();
     const mimeTypes: Record<string, string> = {
       jpg: 'image/jpeg',
@@ -48,7 +42,6 @@ export async function GET(
 
     const contentType = mimeTypes[ext || ''] || 'application/octet-stream';
 
-    // Поддержка Range для видео
     const range = request.headers.get('range');
     if (range && (ext === 'mp4' || ext === 'mov' || ext === 'avi' || ext === 'webm')) {
       const CHUNK_SIZE = 1 * 1024 * 1024; // 1MB
@@ -73,7 +66,6 @@ export async function GET(
       }
     }
 
-    // Без Range — отдаем целиком (подойдёт для изображений)
     const fileBuffer = await readFile(fullPath);
     return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {

@@ -64,7 +64,6 @@ export default function PricingPage() {
 
   return (
     <div className="unified-gradient-bg">
-      {/* Hero Section */}
       <section className="text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
@@ -74,7 +73,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Stats Block (ultra-minimized) */}
       <div className="flex flex-wrap justify-center gap-x-0.5 gap-y-0.5 my-0.5 leading-none">
         <div className="flex flex-col items-center">
           <span className="flex items-center gap-0 text-[8px] font-semibold">
@@ -106,7 +104,6 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Pricing Packages */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -169,7 +166,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Service Pricing */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -209,7 +205,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Factors Affecting Price */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -299,7 +294,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Free Quote CTA */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">

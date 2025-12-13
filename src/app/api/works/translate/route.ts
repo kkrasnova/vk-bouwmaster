@@ -3,7 +3,6 @@ import { translateWork } from '@/lib/translate';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-// Путь к persistent-хранилищу
 const RENDER_DISK_PATH = '/uploads';
 const LOCAL_UPLOADS_PATH = join(process.cwd(), 'public', 'uploads');
 const FALLBACK_REPO_FILE = join(process.cwd(), 'src', 'lib', 'works-data.json');
@@ -69,7 +68,6 @@ async function writeWorksData(data: PortfolioWork[]): Promise<void> {
   }
 }
 
-// POST /api/works/translate - принудительный перевод всех работ или конкретной работы
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -79,7 +77,6 @@ export async function POST(request: NextRequest) {
     const works = await readWorksData();
     
     if (workId) {
-      // Переводим только одну работу
       const index = works.findIndex(w => w.id === workId);
       if (index === -1) {
         return NextResponse.json(
@@ -116,7 +113,6 @@ export async function POST(request: NextRequest) {
         );
       }
     } else {
-      // Переводим все работы
       let translatedCount = 0;
       let errorCount = 0;
       
@@ -125,7 +121,6 @@ export async function POST(request: NextRequest) {
       for (let i = 0; i < works.length; i++) {
         const work = works[i];
         
-        // Если force=false, пропускаем работы с полными переводами
         if (!force && work.translations && Object.keys(work.translations).length >= 5) {
           const hasAllFields = Object.values(work.translations).every(
             t => t && t.title && t.description && t.category
@@ -148,7 +143,6 @@ export async function POST(request: NextRequest) {
           works[i] = { ...work, translations };
           translatedCount++;
           
-          // Задержка между переводами
           await new Promise(resolve => setTimeout(resolve, 100));
         } catch (error: any) {
           console.error(`[Translate API] ❌ Error translating work ${work.id}:`, error.message || error);
@@ -178,7 +172,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET /api/works/translate - получить статус переводов
 export async function GET(request: NextRequest) {
   try {
     const works = await readWorksData();

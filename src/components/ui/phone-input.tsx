@@ -57,7 +57,6 @@ interface PhoneInputProps {
 export function PhoneInput({ value, onChange, placeholder, className = '', defaultCountry = 'NL' }: PhoneInputProps) {
   const [isOpen, setIsOpen] = useState(false)
   
-  // Parse initial value to determine country and phone number
   const parseInitialValue = (val: string) => {
     if (!val) {
       const defaultCountryObj = countries.find(c => c.code === defaultCountry) || countries[0]
@@ -86,20 +85,16 @@ export function PhoneInput({ value, onChange, placeholder, className = '', defau
   const lastValueRef = useRef(value)
   const isMountedRef = useRef(false)
 
-  // Sync with external value changes (only if changed externally)
   useEffect(() => {
-    // Skip on initial mount - we already initialized from value
     if (!isMountedRef.current) {
       isMountedRef.current = true
       lastValueRef.current = value
       return
     }
 
-    // Only sync if value changed from outside
     if (value !== lastValueRef.current) {
       const currentFormatted = phoneNumber ? `${selectedCountry.dialCode} ${phoneNumber}` : ''
       
-      // If external value doesn't match our internal state, update from external
       if (value !== currentFormatted) {
         isInternalUpdateRef.current = true
         const parsed = parseInitialValue(value)
@@ -113,12 +108,10 @@ export function PhoneInput({ value, onChange, placeholder, className = '', defau
     }
   }, [value])
 
-  // Keep value ref updated
   useEffect(() => {
     lastValueRef.current = value
   }, [value])
 
-  // Update parent when internal state changes
   useEffect(() => {
     if (!isMountedRef.current || isInternalUpdateRef.current) {
       return
@@ -126,7 +119,6 @@ export function PhoneInput({ value, onChange, placeholder, className = '', defau
     
     const fullNumber = phoneNumber ? `${selectedCountry.dialCode} ${phoneNumber}` : ''
     
-    // Only call onChange if value actually changed and it's different from prop value
     if (fullNumber !== lastValueRef.current) {
       lastValueRef.current = fullNumber
       onChange(fullNumber)
@@ -169,7 +161,6 @@ export function PhoneInput({ value, onChange, placeholder, className = '', defau
   return (
     <div className={`relative ${className}`}>
       <div className="flex">
-        {/* Country Selector */}
         <div className="relative" ref={dropdownRef}>
           <button
             type="button"
@@ -190,7 +181,6 @@ export function PhoneInput({ value, onChange, placeholder, className = '', defau
                 aria-hidden="true"
               />
               <div className="absolute top-full left-0 mt-1 w-64 max-h-80 overflow-hidden bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 flex flex-col">
-                {/* Search Input */}
                 <div className="p-2 border-b border-gray-700">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -205,7 +195,6 @@ export function PhoneInput({ value, onChange, placeholder, className = '', defau
                   </div>
                 </div>
                 
-                {/* Countries List */}
                 <div className="overflow-y-auto flex-1 p-2">
                   {filteredCountries.length > 0 ? (
                     filteredCountries.map((country) => (
@@ -233,7 +222,6 @@ export function PhoneInput({ value, onChange, placeholder, className = '', defau
           )}
         </div>
 
-        {/* Phone Number Input */}
         <input
           type="tel"
           value={phoneNumber}

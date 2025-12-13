@@ -44,13 +44,10 @@ export async function GET(request: NextRequest) {
     
     const data = readTeamData();
     
-    // Если запрашивается исходный язык (определяем автоматически), возвращаем оригинальные данные
-    // Для всех остальных языков возвращаем переводы
     if (lang === 'RU' || lang === 'EN') {
     return NextResponse.json(data);
     }
     
-    // Для всех остальных языков возвращаем переводы
     const translated = data.map(member => {
       const translation = member.translations?.[lang];
       if (translation) {
@@ -86,7 +83,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Автоматически переводим на все языки
     let translations: Record<string, TeamMemberTranslations> | undefined;
     try {
       translations = await translateTeamMember({
@@ -98,7 +94,6 @@ export async function POST(request: NextRequest) {
       });
     } catch (translationError) {
       console.error('Translation error:', translationError);
-      // Продолжаем без переводов, если произошла ошибка
     }
 
     const data = readTeamData();
@@ -142,7 +137,6 @@ export async function PUT(request: NextRequest) {
     }
 
     const existingMember = data[index];
-    // Если изменились текстовые поля, обновляем переводы автоматически
     const needsRetranslation = 
       item.position !== existingMember.position ||
       item.bio !== existingMember.bio ||

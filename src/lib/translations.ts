@@ -1,4 +1,3 @@
-// Типы для переводов
 export type Language = 'EN' | 'NL' | 'DE' | 'FR' | 'ES' | 'IT' | 'PT' | 'PL' | 'CZ' | 'HU' | 'RO' | 'BG' | 'HR' | 'SK' | 'SL' | 'ET' | 'LV' | 'LT' | 'FI' | 'SV' | 'DA' | 'NO' | 'RU' | 'UA' | 'GR'
 
 export interface Translations {
@@ -1045,7 +1044,6 @@ export interface Translations {
   }
 }
 
-// Тип для языков с неполными переводами (только navigation и common)
 export interface PartialTranslations {
   navigation: {
     home: string
@@ -1149,7 +1147,6 @@ export interface PartialTranslations {
   }
 }
 
-// Переводы категорий проектов для всех языков
 export const categoryTranslations: Record<Language, Record<string, string>> = {
   RU: {
     'Укладка пола': 'Укладка пола',
@@ -1378,7 +1375,6 @@ export const categoryTranslations: Record<Language, Record<string, string>> = {
   }
 }
 
-// Функция для перевода категории проекта
 export interface WorkTranslations {
   title: string;
   description: string;
@@ -1392,7 +1388,6 @@ export function translateCategory(category: string, language: Language): string 
   return translations?.[category] || category
 }
 
-// Функция для получения переведенных значений работы портфолио
 export interface WorkTranslations {
   title: string;
   description: string;
@@ -1404,10 +1399,8 @@ export function getTranslatedWork(
   work: { title: string; description: string; category: string; city?: string; translations?: Record<string, WorkTranslations> },
   language: Language
 ): { title: string; description: string; category: string; city?: string } {
-  // Если есть переводы для текущего языка, используем их
   if (work.translations && work.translations[language]) {
     const translation = work.translations[language]
-    // Проверяем, что переводы не пустые
     if (translation.title && translation.description) {
       return {
         title: translation.title,
@@ -1418,8 +1411,6 @@ export function getTranslatedWork(
     }
   }
 
-  // Если переводов нет или они пустые, возвращаем оригинал
-  // В будущем здесь можно добавить fallback на перевод в реальном времени
     return {
       title: work.title,
       description: work.description,
@@ -1428,7 +1419,6 @@ export function getTranslatedWork(
   }
 }
 
-// Переводы для всех языков
 export const translations: Record<Language, Translations | PartialTranslations> = {
   EN: {
     navigation: {
@@ -23691,7 +23681,6 @@ export const translations: Record<Language, Translations | PartialTranslations> 
   } as unknown as Translations
 }
 
-// Функция для получения перевода
 export function getTranslation(language: Language, key: string): string {
   const keys = key.split('.')
   let value: unknown = translations[language]
@@ -23707,16 +23696,13 @@ export function getTranslation(language: Language, key: string): string {
   return typeof value === 'string' ? value : key
 }
 
-// Функция для получения всех переводов для языка
 export function getTranslations(language: Language): Translations {
   const base = translations.EN as Translations
   const langPack = translations[language]
 
-  // Полный пакет — вернуть как есть, но убедиться что contactThankYou, servicePages, privacy и terms есть
   if ('home' in langPack && 'about' in langPack && 'services' in langPack && 'contact' in langPack && 
       'blog' in langPack && 'faq' in langPack && 'portfolio' in langPack && 'pricing' in langPack && 'team' in langPack) {
     const fullPack = langPack as Translations
-    // Если contactThankYou, servicePages, privacy или terms отсутствуют, добавить из базового
     if (!fullPack.contactThankYou || !fullPack.servicePages || !fullPack.privacy || !fullPack.terms) {
       return {
         ...fullPack,
@@ -23729,39 +23715,30 @@ export function getTranslations(language: Language): Translations {
     return fullPack
   }
 
-  // Частичный пакет — аккуратно слить поверх EN (navigation и common)
   const partial = langPack as PartialTranslations
   const merged: Translations = {
     ...base,
     navigation: {
       ...base.navigation,
       ...(partial.navigation || {}),
-      // Гарантируем, что reviews всегда присутствует
       reviews: partial.navigation?.reviews || base.navigation.reviews,
     },
     common: {
       ...base.common,
       ...(partial.common || {}),
     },
-    // Включить дополнительные секции, если они есть
     ...(partial.home ? { home: partial.home } : {}),
     ...(partial.about ? { about: partial.about } : {}),
     ...(partial.services ? { services: partial.services } : {}),
     ...(partial.contact ? { contact: partial.contact } : {}),
     ...(partial.footer ? { footer: partial.footer } : {}),
     ...(partial.thankYou ? { thankYou: partial.thankYou } : {}),
-    // contactThankYou берется из partial, если есть, иначе из base
     contactThankYou: partial.contactThankYou || base.contactThankYou,
     ...(partial.reviews ? { reviews: partial.reviews } : {}),
-    // admin всегда берется из partial, если есть, иначе из base
     admin: partial.admin || base.admin,
-    // portfolio всегда берется из base, если его нет в partial
     portfolio: partial.portfolio || base.portfolio,
-    // servicePages всегда берется из partial, если есть, иначе из base
     servicePages: partial.servicePages || base.servicePages,
-    // privacy всегда берется из partial, если есть, иначе из base
     privacy: partial.privacy || base.privacy,
-    // terms всегда берется из partial, если есть, иначе из base
     terms: partial.terms || base.terms,
   }
 

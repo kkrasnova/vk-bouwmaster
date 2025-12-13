@@ -6,7 +6,6 @@ import Link from 'next/link'
 export default function TestStatsPage() {
   return (
     <div className="min-h-screen bg-black">
-      {/* Hero Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -23,10 +22,8 @@ export default function TestStatsPage() {
         </div>
       </section>
 
-      {/* Spacer to enable scroll animation */}
       <div className="h-96"></div>
 
-      {/* Stats Grid 1 - Small Cards */}
       <section className="py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
@@ -67,7 +64,6 @@ export default function TestStatsPage() {
 
       <div className="h-96"></div>
 
-      {/* Stats Grid 2 - Large Cards with Descriptions */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
@@ -115,7 +111,6 @@ export default function TestStatsPage() {
 
       <div className="h-96"></div>
 
-      {/* Different Gradient Examples */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
@@ -157,11 +152,9 @@ export default function TestStatsPage() {
         </div>
       </section>
 
-      {/* Instructions */}
       <section className="py-20">
         <div className="max-w-5xl mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Features */}
             <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-8 border border-gray-700">
               <h3 className="text-2xl font-bold text-white mb-6">✨ Анимации</h3>
               <ul className="text-left text-gray-300 space-y-4 text-sm">
@@ -203,7 +196,6 @@ export default function TestStatsPage() {
               </ul>
             </div>
 
-            {/* Hover Effects */}
             <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-8 border border-gray-700">
               <h3 className="text-2xl font-bold text-white mb-6">🎨 Hover эффекты</h3>
               <ul className="text-left text-gray-300 space-y-4 text-sm">
@@ -246,7 +238,6 @@ export default function TestStatsPage() {
             </div>
           </div>
 
-          {/* Technical Details */}
           <div className="mt-8 bg-gradient-to-r from-purple-900/30 via-pink-900/30 to-orange-900/30 backdrop-blur rounded-2xl p-8 border border-purple-500/30">
             <h3 className="text-2xl font-bold text-white mb-4 text-center">⚡ Технические детали</h3>
             <div className="grid md:grid-cols-3 gap-6 text-sm">

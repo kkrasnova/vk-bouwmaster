@@ -78,8 +78,6 @@ export function PortfolioGallerySection() {
     )
   }
 
-  // Всегда показываем реальные работы, если они есть
-  // Фильтруем только валидные работы (с title и mainImage)
   const validWorks = works.filter(work => 
     work && 
     work.id && 
@@ -114,7 +112,6 @@ export function PortfolioGallerySection() {
           </p>
         </div>
 
-        {/* Показываем все работы из админ-панели */}
         {displayWorks.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {cards}

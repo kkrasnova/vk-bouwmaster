@@ -17,14 +17,12 @@ export default function AdminLoginPage() {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const langMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  // Убрано автоматическое определение языка - теперь всегда NL по умолчанию при первом заходе
 
   const languages = ['RU','UA','EN','NL','DE','FR','ES','IT','PT','PL','CZ','HU','RO','BG','HR','SK','SL','ET','LV','LT','FI','SV','DA','NO','GR'] as const;
   const flagByLang: Record<string, string> = {
     RU: '🇷🇺', EN: '🇬🇧', NL: '🇳🇱', DE: '🇩🇪', FR: '🇫🇷', ES: '🇪🇸', IT: '🇮🇹', PT: '🇵🇹', PL: '🇵🇱', CZ: '🇨🇿', BG: '🇧🇬', RO: '🇷🇴', HU: '🇭🇺', UA: '🇺🇦', FI: '🇫🇮', SV: '🇸🇪', DA: '🇩🇰', NO: '🇳🇴', GR: '🇬🇷', HR: '🇭🇷', SK: '🇸🇰', SL: '🇸🇮', ET: '🇪🇪', LV: '🇱🇻', LT: '🇱🇹'
   };
 
-  // Закрытие меню языка при клике вне его
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
@@ -58,7 +56,6 @@ export default function AdminLoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Сохраняем токен в sessionStorage
         sessionStorage.setItem('adminAuth', 'true');
         router.push('/admin');
       } else {
@@ -73,7 +70,6 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black relative">
-      {/* Back to Home Button */}
       <div className="absolute top-4 left-4">
         <Link 
           href="/" 
@@ -84,7 +80,6 @@ export default function AdminLoginPage() {
         </Link>
       </div>
 
-      {/* Language Switcher */}
       <div className="absolute top-4 right-4" ref={langMenuRef}>
         <GradientButton
           aria-label={t.navigation?.switchLanguage || 'Switch language'}

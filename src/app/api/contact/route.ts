@@ -69,11 +69,9 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
     
     if (type === 'messages') {
-      // Возвращаем все сообщения
       const messages = readMessages();
       return NextResponse.json(messages);
     } else {
-      // Возвращаем контактные данные (старое поведение)
       const data = readContactData();
       return NextResponse.json(data);
     }
@@ -100,7 +98,6 @@ function writeMessages(messages: ContactMessage[]) {
 
 async function sendEmail(message: ContactMessage) {
   try {
-    // Формируем текст письма
     const emailBody = `
 Новое сообщение с сайта VK Bouwmaster
 
@@ -121,7 +118,6 @@ ${message.message}
 Дата отправки: ${new Date(message.createdAt).toLocaleString('ru-RU')}
 `;
 
-    // HTML версия письма
     const emailHtml = `
 <!DOCTYPE html>
 <html>
@@ -176,8 +172,6 @@ ${message.message}
 </html>
 `;
 
-    // Получаем настройки SMTP из переменных окружения
-    // Если не настроены, просто логируем и не отправляем
     const smtpHost = process.env.SMTP_HOST;
     const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587;
     const smtpUser = process.env.SMTP_USER;
@@ -191,7 +185,6 @@ ${message.message}
       return false;
     }
 
-    // Создаем транспортер
     const transporter = nodemailer.createTransport({
       host: smtpHost,
       port: smtpPort,
@@ -202,7 +195,6 @@ ${message.message}
       },
     });
 
-    // Отправляем письмо
     const info = await transporter.sendMail({
       from: `"VK Bouwmaster Website" <${smtpUser}>`,
       to: recipientEmail,
@@ -239,7 +231,6 @@ export async function POST(request: NextRequest) {
       read: false,
     };
 
-    // Валидация обязательных полей
     if (!message.name || !message.email || !message.street || !message.houseNumber || !message.postalCode || !message.message) {
       return NextResponse.json(
         { error: 'Все обязательные поля должны быть заполнены' },
@@ -251,7 +242,6 @@ export async function POST(request: NextRequest) {
     messages.unshift(message); // Добавляем новое сообщение в начало
     writeMessages(messages);
 
-    // Пытаемся отправить email (не блокируем ответ, если не получилось)
     sendEmail(message).catch(err => console.error('Email sending failed:', err));
 
     return NextResponse.json({ success: true, message });
@@ -271,7 +261,6 @@ export async function PUT(request: NextRequest) {
     const id = searchParams.get('id');
     
     if (type === 'messages' && id) {
-      // Обновление статуса сообщения
       const body = await request.json();
       const messages = readMessages();
       const index = messages.findIndex(m => m.id === id);
@@ -287,7 +276,6 @@ export async function PUT(request: NextRequest) {
       writeMessages(messages);
       return NextResponse.json({ success: true });
     } else {
-      // Обновление контактных данных (старое поведение)
       const data: ContactData = await request.json();
       writeContactData(data);
       return NextResponse.json({ success: true });
@@ -307,7 +295,6 @@ export async function DELETE(request: NextRequest) {
     const id = searchParams.get('id');
     
     if (type === 'messages' && id) {
-      // Удаление сообщения
       const messages = readMessages();
       const filtered = messages.filter(m => m.id !== id);
       writeMessages(filtered);

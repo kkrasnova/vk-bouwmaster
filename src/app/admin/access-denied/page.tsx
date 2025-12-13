@@ -16,9 +16,7 @@ export default function AdminAccessDeniedPage() {
     RU: '🇷🇺', EN: '🇬🇧', NL: '🇳🇱', DE: '🇩🇪', FR: '🇫🇷', ES: '🇪🇸', IT: '🇮🇹', PT: '🇵🇹', PL: '🇵🇱', CZ: '🇨🇿', BG: '🇧🇬', RO: '🇷🇴', HU: '🇭🇺', UA: '🇺🇦', FI: '🇫🇮', SV: '🇸🇪', DA: '🇩🇰', NO: '🇳🇴', GR: '🇬🇷', HR: '🇭🇷', SK: '🇸🇰', SL: '🇸🇮', ET: '🇪🇪', LV: '🇱🇻', LT: '🇱🇹'
   };
 
-  // Убрано автоматическое определение языка - теперь всегда NL по умолчанию при первом заходе
 
-  // Закрытие меню языка при клике вне его
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (langMenuRef.current && !langMenuRef.current.contains(event.target as Node)) {
@@ -37,7 +35,6 @@ export default function AdminAccessDeniedPage() {
   
   return (
     <div className="min-h-screen flex items-center justify-center bg-black relative">
-      {/* Language Switcher */}
       <div className="absolute top-4 right-4" ref={langMenuRef}>
         <GradientButton
           aria-label={t.navigation?.switchLanguage || 'Switch language'}

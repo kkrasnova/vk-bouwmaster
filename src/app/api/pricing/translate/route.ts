@@ -50,7 +50,6 @@ function writePricingData(data: PricingData) {
   writeFileSync(PRICING_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-// POST /api/pricing/translate - принудительный перевод данных о ценах
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

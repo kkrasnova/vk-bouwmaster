@@ -14,7 +14,6 @@ export default function FlooringInstallationPage() {
 
   return (
     <div className="unified-gradient-bg">
-      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient-bg pt-16 sm:pt-20 md:pt-24 pb-20">
         <div className="absolute inset-0 z-20 opacity-90 pointer-events-none">
           <ShaderAnimation />
@@ -39,7 +38,6 @@ export default function FlooringInstallationPage() {
         </Parallax>
       </section>
 
-      {/* Services Overview */}
       <section ref={sectionRef} className="bg-black scroll-fade-in py-8 sm:py-12 pb-0">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-start lg:items-center">

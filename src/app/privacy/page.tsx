@@ -40,7 +40,6 @@ export default function PrivacyPage() {
 
   return (
     <div className="unified-gradient-bg">
-      {/* Hero Section - Full Screen */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient-bg pt-20 pb-20">
         <div className="absolute inset-0 z-20 opacity-90 pointer-events-none">
           <ShaderAnimation />
@@ -73,7 +72,6 @@ export default function PrivacyPage() {
         </Parallax>
       </section>
 
-      {/* Introduction Section */}
       <section ref={sectionRef1} className="bg-black scroll-fade-in py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elegant-card p-8 md:p-10 relative">
@@ -95,7 +93,6 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* Data Collection Section */}
       <section ref={sectionRef2} className="bg-black scroll-fade-in py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8 text-center">
@@ -128,7 +125,6 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* Data Usage Section */}
       <section ref={sectionRef3} className="bg-black scroll-fade-in py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elegant-card p-8 md:p-10 relative">
@@ -158,7 +154,6 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* Data Protection Section */}
       <section ref={sectionRef4} className="bg-black scroll-fade-in py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elegant-card p-8 md:p-10 relative">
@@ -195,7 +190,6 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* Third Party Disclosure Section */}
       <section ref={sectionRef5} className="bg-black scroll-fade-in py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elegant-card p-8 md:p-10 relative">
@@ -217,7 +211,6 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* User Rights Section */}
       <section ref={sectionRef6} className="bg-black scroll-fade-in py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elegant-card p-8 md:p-10 relative">
@@ -247,7 +240,6 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* Contact Section */}
       <section ref={sectionRef7} className="bg-black scroll-fade-in py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elegant-card p-8 md:p-10 relative">
@@ -295,7 +287,6 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* Updates Section */}
       <section ref={sectionRef8} className="bg-black scroll-fade-in py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="elegant-card p-8 md:p-10 relative">
@@ -317,7 +308,6 @@ export default function PrivacyPage() {
         </div>
       </section>
 
-      {/* Footer Section */}
       <section className="bg-black py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center pt-8 border-t border-gray-800">

@@ -9,7 +9,6 @@ import {cn} from "@/lib/utils";
 import {getTranslatedWork, translateCategory, Language} from "@/lib/translations";
 import {useTranslations} from "@/hooks/useTranslations";
 
-// ===== Types and Interfaces =====
 export interface WorkTranslations {
   title: string;
   description: string;
@@ -41,7 +40,6 @@ interface iCarouselProps {
   initialScroll?: number;
 }
 
-// ===== Custom Hooks =====
 const useOutsideClick = (
   ref: React.RefObject<HTMLDivElement | null>,
   onOutsideClick: () => void,
@@ -64,7 +62,6 @@ const useOutsideClick = (
   }, [ref, onOutsideClick]);
 };
 
-// ===== Components =====
 const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
@@ -83,15 +80,12 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
       setCanScrollLeft(scrollLeft > 0);
       setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
       
-      // Определяем, прокручивает ли пользователь вручную
       if (isUserInteractingRef.current && Math.abs(scrollLeft - lastScrollLeftRef.current) > 5 && !autoScrollCheckRef.current) {
         isUserScrollingRef.current = true;
-        // Останавливаем авто-листание при ручной прокрутке
         if (autoScrollIntervalRef.current) {
           clearInterval(autoScrollIntervalRef.current);
           autoScrollIntervalRef.current = null;
         }
-        // Перезапускаем авто-листание через 8 секунд после ручной прокрутки
         if (userScrollTimeoutRef.current) {
           clearTimeout(userScrollTimeoutRef.current);
         }
@@ -134,7 +128,6 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
   };
 
   const startAutoScroll = React.useCallback(() => {
-    // Очищаем предыдущий интервал, если есть
     if (autoScrollIntervalRef.current) {
       clearInterval(autoScrollIntervalRef.current);
       autoScrollIntervalRef.current = null;
@@ -151,23 +144,19 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
 
         setAutoScrollDirection(currentDirection => {
           if (currentDirection === 'right') {
-            // Листаем вправо
             if (scrollLeft < scrollWidth - clientWidth - 10) {
               autoScrollCheckRef.current = true;
               carouselRef.current?.scrollBy({left: scrollStep, behavior: "smooth"});
               return 'right';
             } else {
-              // Достигли конца, меняем направление на влево
               return 'left';
             }
           } else {
-            // Листаем влево
             if (scrollLeft > 10) {
               autoScrollCheckRef.current = true;
               carouselRef.current?.scrollBy({left: -scrollStep, behavior: "smooth"});
               return 'left';
             } else {
-              // Достигли начала, меняем направление на вправо
               return 'right';
             }
           }
@@ -184,7 +173,6 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
     }
   }, [initialScroll]);
 
-  // Запускаем автоматическое листание
   useEffect(() => {
     if (items.length > 1) {
       startAutoScroll();
@@ -204,7 +192,6 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
 
   return (
     <div className="relative w-full mt-10">
-      {/* Стрелка влево - большая и видимая */}
       {canScrollLeft && (
         <button
           onClick={handleScrollLeft}
@@ -217,7 +204,6 @@ const Carousel = ({items, initialScroll = 0}: iCarouselProps) => {
         </button>
       )}
 
-      {/* Стрелка вправо - большая и видимая */}
       {canScrollRight && (
         <button
           onClick={handleScrollRight}
@@ -481,6 +467,5 @@ const PortfolioCard = ({
   );
 };
 
-// Export the components
 export {Carousel, PortfolioCard};
 

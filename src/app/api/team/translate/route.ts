@@ -35,7 +35,6 @@ function writeTeamData(data: TeamMember[]) {
   writeFileSync(TEAM_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
-// POST /api/team/translate - принудительный перевод всех членов команды
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

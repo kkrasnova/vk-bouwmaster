@@ -93,12 +93,10 @@ export default function PortfolioDetailPage() {
     fetchWorks()
     fetchComments()
     
-    // Автообновление работ каждые 5 секунд для быстрого отображения новых работ
     const interval = setInterval(() => {
       fetchWorks()
     }, 5000)
     
-    // Автообновление при фокусе окна
     const onFocus = () => {
       fetchWorks()
     }
@@ -119,15 +117,11 @@ export default function PortfolioDetailPage() {
         setAllWorks(data)
         
         if (projectId) {
-          // Фильтруем по projectId или по id (если projectId пустой)
           const project = data.filter((work: iPortfolioWork) => 
             work.projectId === projectId || work.id === projectId
           )
           
-          // Если нашли работы по projectId, показываем все работы этого проекта
-          // Если нашли только одну работу по id (без projectId), показываем только её
           if (project.length > 0) {
-            // Если у найденной работы есть projectId, показываем все работы с этим projectId
             const foundProjectId = project[0].projectId
             if (foundProjectId) {
               const allProjectWorks = data.filter((work: iPortfolioWork) => 
@@ -135,7 +129,6 @@ export default function PortfolioDetailPage() {
               )
               setProjectWorks(allProjectWorks)
             } else {
-              // Если projectId пустой, показываем только эту одну работу
               setProjectWorks(project)
             }
             setViewMode('project')
@@ -144,7 +137,6 @@ export default function PortfolioDetailPage() {
             setViewMode('project')
           }
         } else {
-          // Группируем по проектам
           const grouped = groupByProject(data)
           setProjectWorks(grouped)
           setViewMode('all')
@@ -175,7 +167,6 @@ export default function PortfolioDetailPage() {
     
     source.forEach(work => {
       const translated = getTranslatedWork(work, currentLanguage)
-      // Добавляем только дополнительные фото (без основного фото)
       if (work.images && Array.isArray(work.images) && work.images.length > 0) {
         work.images.forEach(img => {
           if (img) { // Проверяем, что URL не пустой
@@ -189,7 +180,6 @@ export default function PortfolioDetailPage() {
         })
       }
       
-      // Добавляем видео
       if (work.videos && Array.isArray(work.videos) && work.videos.length > 0) {
         work.videos.forEach(video => {
           if (video) { // Проверяем, что URL не пустой
@@ -209,8 +199,6 @@ export default function PortfolioDetailPage() {
 
   const allMedia = getAllMedia()
   
-  // Получаем информацию о проекте (берем из первой работы проекта)
-  // Объединяем описания всех работ, если их несколько
   const projectInfo = projectWorks.length > 0 ? (() => {
     const firstWork = projectWorks[0]
     const translated = getTranslatedWork(firstWork, currentLanguage)
@@ -327,7 +315,6 @@ export default function PortfolioDetailPage() {
     )
   }
 
-  // Группировка работ по проектам для режима "all"
   const groupedByProject: Record<string, iPortfolioWork[]> = {}
   if (viewMode === 'all') {
     allWorks.forEach(work => {
@@ -341,7 +328,6 @@ export default function PortfolioDetailPage() {
 
   return (
     <div className="unified-gradient-bg">
-      {/* Hero Section */}
       <section className="text-white py-12 pt-28 sm:pt-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -359,14 +345,12 @@ export default function PortfolioDetailPage() {
           </motion.div>
           {viewMode === 'project' && projectInfo && (
             <div className="mb-16">
-              {/* Центрированная hero секция */}
               <motion.div 
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 className="text-center mb-12"
               >
-                {/* Бейдж "Одна из работ" */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -378,7 +362,6 @@ export default function PortfolioDetailPage() {
                   </span>
                 </motion.div>
 
-                {/* Заголовок проекта */}
                 <motion.h1 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -390,7 +373,6 @@ export default function PortfolioDetailPage() {
                   </span>
                 </motion.h1>
 
-                {/* Категория с анимацией */}
                 {projectInfo.category && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -404,7 +386,6 @@ export default function PortfolioDetailPage() {
                   </motion.div>
                 )}
 
-                {/* Описание проекта */}
                 {projectInfo.description && (
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -416,14 +397,12 @@ export default function PortfolioDetailPage() {
                   </motion.div>
                 )}
 
-                {/* Информационные метрики в ряд */}
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8, duration: 0.6 }}
                   className="flex flex-wrap items-center justify-center gap-6 md:gap-12 mb-8"
                 >
-                  {/* Дата */}
                   {projectInfo.workDate && (
                     <motion.div 
                       className="flex items-center gap-3 group"
@@ -450,7 +429,6 @@ export default function PortfolioDetailPage() {
                     </motion.div>
                   )}
 
-                  {/* Город */}
                   {projectInfo.city && (
                     <motion.div 
                       className="flex items-center gap-3 group"
@@ -472,7 +450,6 @@ export default function PortfolioDetailPage() {
                     </motion.div>
                   )}
 
-                  {/* Фото */}
                   <motion.div 
                     className="flex items-center gap-3 group"
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -498,7 +475,6 @@ export default function PortfolioDetailPage() {
                     </div>
                   </motion.div>
 
-                  {/* Видео */}
                   <motion.div 
                     className="flex items-center gap-3 group"
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -530,7 +506,6 @@ export default function PortfolioDetailPage() {
         </div>
       </section>
 
-      {/* Gallery Section */}
       {viewMode === 'project' && (
         <section className="bg-black py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -600,11 +575,9 @@ export default function PortfolioDetailPage() {
         </section>
       )}
 
-      {/* Fallback for 'all' mode */}
       {viewMode === 'all' && (
         <section ref={sectionRef} className="bg-black scroll-fade-in py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Показываем все проекты, сгруппированные */}
             <div className="space-y-12">
               {Object.entries(groupedByProject).map(([projectKey, works], projectIdx) => (
                 <motion.div
@@ -657,7 +630,6 @@ export default function PortfolioDetailPage() {
         </section>
       )}
 
-      {/* Comments Section */}
       {viewMode === 'project' && (
         <section className="py-16">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -818,7 +790,6 @@ export default function PortfolioDetailPage() {
                 <p className="text-xs text-gray-400 mt-1">{t.portfolio?.detail?.charactersLeft || 'Characters left:'} {2000 - form.message.length}</p>
               </div>
               
-              {/* Photo Upload */}
               <div className="bg-gradient-to-br from-blue-900/20 via-cyan-900/20 to-blue-900/20 border border-blue-700/30 rounded-xl p-4">
                 <label className="block text-sm font-medium mb-3 text-white">
                   {t.portfolio?.detail?.addPhotosLabel || '📷 Add photos'} <span className="text-gray-400 text-xs">({t.portfolio?.detail?.addPhotosOptional || 'optional'})</span>
@@ -889,7 +860,6 @@ export default function PortfolioDetailPage() {
         </section>
       )}
 
-      {/* Full Screen Image Modal */}
       <AnimatePresence>
         {selectedImageIndex !== null && (
           <motion.div

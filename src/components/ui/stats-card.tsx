@@ -30,7 +30,6 @@ export function StatsCard({
   const [meshVisible, setMeshVisible] = React.useState(true)
   const cardRef = React.useRef<HTMLDivElement>(null)
 
-  // Extract number from value for animation
   const numericValue = React.useMemo(() => {
     const match = value.match(/\d+/)
     return match ? parseInt(match[0]) : 0
@@ -40,12 +39,10 @@ export function StatsCard({
     return value.replace(/\d+/, "")
   }, [value])
 
-  // Если в value есть "/" или value не начинается с цифры, не используем анимацию
   const isSpecialValue = React.useMemo(() => {
     return value.includes("/") || !/^\d/.test(value);
   }, [value]);
 
-  // Intersection Observer for scroll animation
   React.useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -70,7 +67,6 @@ export function StatsCard({
     }
   }, [delay])
 
-  // Counter animation
   React.useEffect(() => {
     if (!isVisible) return
 
@@ -122,7 +118,6 @@ export function StatsCard({
         iconText: "text-base xs:text-lg sm:text-xl md:text-2xl",
       }
     }
-    // md (default)
     return {
       padding: "p-2 sm:p-3 md:p-5",
       valueText: "text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl",
@@ -150,12 +145,10 @@ export function StatsCard({
         animation: isVisible ? 'cardPulse 3s ease-in-out infinite' : 'none'
       }}
     >
-      {/* Inner card: только цифра, подпись и описание */}
       <div className={cn(
         "relative h-full rounded-xl overflow-hidden flex flex-col items-center justify-center z-10",
         sizeClasses.padding
       )}>
-        {/* Icon with subtle animation */}
         {icon && (
           <div className="mb-0.5 sm:mb-1 group-hover:scale-105 transition-transform duration-500">
             {isValidElement(icon)
@@ -180,7 +173,6 @@ export function StatsCard({
           </div>
         )}
         
-        {/* Value with enhanced visibility */}
         <div className={cn("mb-0.5 sm:mb-1 font-extrabold text-transparent tiffany-gradient-text flex items-baseline justify-center select-none group-hover:scale-110 transition-transform duration-300", sizeClasses.valueText)} 
           style={{
             textShadow: '0 0 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.7), 0 0 30px rgba(100,200,255,0.5), 0 2px 4px rgba(0,0,0,1)',
@@ -190,7 +182,6 @@ export function StatsCard({
           <span className="relative z-20">{isSpecialValue ? value : count + suffix}</span>
         </div>
         
-        {/* Label with enhanced visibility */}
         <div className={cn("font-bold text-transparent tiffany-gradient-text mb-1 text-center break-words max-w-full relative z-20 group-hover:scale-105 transition-transform duration-300", sizeClasses.labelText)}
           style={{
             textShadow: '0 0 8px rgba(0,0,0,0.9), 0 0 15px rgba(0,0,0,0.7), 0 2px 4px rgba(0,0,0,1), 0 0 20px rgba(100,200,255,0.4)',
@@ -200,7 +191,6 @@ export function StatsCard({
           {label}
         </div>
         
-        {/* Description with enhanced visibility */}
         {description && (
           <div className={cn("text-transparent tiffany-gradient-text text-center break-words max-w-full relative z-20", sizeClasses.descText)}
             style={{
@@ -213,8 +203,6 @@ export function StatsCard({
         )}
       </div>
 
-      {/* Градиенты, overlay и декоративные элементы (НЕ внутри предыдущего div) */}
-      {/* Base static gradient background (no color animation) */}
       <div
         className={cn(
           "absolute inset-0",
@@ -222,29 +210,24 @@ export function StatsCard({
           "opacity-95"
         )}
       />
-      {/* Blue overlay layer */}
       <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/20 via-cyan-900/10 to-transparent opacity-60" />
-      {/* Colored gradient overlay with animation */}
       <div className={cn(
         "absolute inset-0 bg-gradient-to-br",
         gradientClasses[variant],
         "opacity-[0.08] group-hover:opacity-[0.15]",
         "transition-opacity duration-700"
       )} />
-      {/* Secondary gradient layer with blue tint */}
       <div className={cn(
         "absolute inset-0 bg-gradient-to-tl from-cyan-950/40 via-blue-950/20 to-transparent",
         "opacity-50 group-hover:opacity-70",
         "transition-opacity duration-700"
       )} />
-      {/* Animated radial glow effect */}
       <div className={cn(
         "absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-700",
         "bg-radial-gradient bg-gradient-to-r",
         gradientClasses[variant],
         "blur-3xl"
       )} />
-      {/* Decorative gradient orbs, softened */}
       <div className={cn(
         "absolute -top-6 -right-6 w-20 h-20", // Меньше декоративные "пузырьки"
         "bg-gradient-to-br",
@@ -263,7 +246,6 @@ export function StatsCard({
         "group-hover:opacity-20 group-hover:scale-105",
         "transition-all duration-700"
       )} style={{ transitionDelay: '0.2s' }} />
-      {/* Soft center glow */}
       <div className={cn(
         "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12",
         "bg-gradient-to-r",
@@ -273,7 +255,6 @@ export function StatsCard({
         "group-hover:opacity-15 group-hover:scale-105",
         "transition-all duration-700"
       )} style={{ transitionDelay: '0.1s' }} />
-      {/* Animated particles */}
       <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
         {[...Array(3)].map((_, i) => (
           <div

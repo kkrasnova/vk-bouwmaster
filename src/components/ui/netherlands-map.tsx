@@ -27,13 +27,11 @@ const dutchCities: City[] = [
 export function NetherlandsMap({ selectedCity, onCitySelect }: { selectedCity?: string, onCitySelect?: (city: string) => void }) {
   const [hoveredCity, setHoveredCity] = useState<string | null>(null)
 
-  // Центр Нидерландов для карты
   const mapCenter = { lat: 52.1326, lng: 5.2913 }
   const mapZoom = 7
 
   return (
     <div className="w-full">
-      {/* Кнопки городов */}
       <div className="flex flex-wrap gap-3 mb-6 justify-center">
         {dutchCities.map((city) => (
           <button
@@ -66,7 +64,6 @@ export function NetherlandsMap({ selectedCity, onCitySelect }: { selectedCity?: 
         ))}
       </div>
 
-      {/* Карта Нидерландов через Google Maps Embed */}
       <div className="relative w-full h-[400px] rounded-xl overflow-hidden border-2 border-gray-700 shadow-2xl">
         <iframe
           width="100%"
@@ -78,7 +75,6 @@ export function NetherlandsMap({ selectedCity, onCitySelect }: { selectedCity?: 
           src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dS6a4ZZU7Du8eU&q=Netherlands&zoom=${mapZoom}&language=nl`}
         />
         
-        {/* Overlay с информацией */}
         <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm rounded-lg p-4 border border-gray-700">
           <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
             <MapPin className="w-5 h-5 text-orange-400" />
@@ -90,7 +86,6 @@ export function NetherlandsMap({ selectedCity, onCitySelect }: { selectedCity?: 
         </div>
       </div>
 
-      {/* Информация о выбранном городе */}
       {selectedCity && (
         <div className="mt-6 p-4 bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-orange-500/30">
           <h4 className="text-white font-semibold mb-2 flex items-center gap-2">

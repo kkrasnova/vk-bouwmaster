@@ -46,7 +46,6 @@ export async function GET(request: NextRequest) {
     if (projectId) list = list.filter(c => c.projectId === projectId)
     if (!includeUnapproved) list = list.filter(c => c.approved)
 
-    // Sort newest first
     list.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     return NextResponse.json(list)
   } catch (e) {
@@ -71,27 +70,22 @@ export async function POST(request: NextRequest) {
     const rating = body.rating !== undefined ? Math.max(1, Math.min(5, Number(body.rating))) : undefined
     const profileImage = String(body.profileImage || '').trim()
     
-    // Автоматически переводим сообщение на все языки
-    // Определяем исходный язык автоматически
     let translations: Record<string, string> | undefined
     try {
       const sourceLang = detectSourceLanguage(message)
       console.log(`[Comments API] Detected source language: ${sourceLang} for comment message`)
       
-      // Определяем код языка для сохранения оригинала
       const sourceLangCode = sourceLang === 'ru' ? 'RU' : sourceLang === 'nl' ? 'NL' : sourceLang === 'en' ? 'EN' : 'RU'
       const languages: Language[] = ['RU', 'EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA']
       
       translations = { [sourceLangCode]: message } // Сохраняем оригинал
       
-      // Переводим на все языки, кроме исходного
       for (const lang of languages) {
         if (lang === sourceLangCode) continue // Пропускаем исходный язык
         
         try {
           const translated = await translateText(message, lang, sourceLang)
           translations[lang] = translated
-          // Небольшая задержка между запросами
           await new Promise(resolve => setTimeout(resolve, 50))
         } catch (error) {
           console.error(`Error translating comment to ${lang}:`, error)
@@ -100,7 +94,6 @@ export async function POST(request: NextRequest) {
       }
     } catch (translationError) {
       console.error('Translation error:', translationError)
-      // Продолжаем без переводов, если произошла ошибка
     }
     
     const comment: Comment = {
@@ -135,7 +128,6 @@ export async function PUT(request: NextRequest) {
     const list = readComments()
     const idx = list.findIndex(c => c.id === id)
     if (idx === -1) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    // Если изменилось сообщение, обновляем переводы
     let translations = body.translations || list[idx].translations
     if (body.message !== undefined && body.message !== list[idx].message) {
       try {

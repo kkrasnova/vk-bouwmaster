@@ -56,16 +56,13 @@ export function getTranslatedService(
     items: string[];
   };
 } {
-  // Если есть переводы для текущего языка, используем их
   if (service.translations && service.translations[language]) {
     const translation = service.translations[language];
-    // Проверяем, что переводы не пустые
     if (translation.hero && translation.hero.title && translation.hero.subtitle) {
       return translation;
     }
   }
 
-  // Если переводов нет или они пустые, возвращаем оригинал
   return {
     hero: service.hero,
     solutions: service.solutions,

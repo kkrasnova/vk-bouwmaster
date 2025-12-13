@@ -1,18 +1,14 @@
-// Импорт OpenAI для AI-переводов
 import OpenAI from 'openai';
 
-// Инициализация OpenAI клиента (если API ключ установлен)
 const getOpenAIClient = () => {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return null;
   return new OpenAI({ apiKey });
 };
 
-// Функция для перевода текста через AI или бесплатный API
 export async function translateText(text: string, targetLang: string, sourceLang?: string): Promise<string> {
   if (!text || text.trim() === '') return text;
   
-  // Если уже целевой язык - не переводим
   const langMap: Record<string, string> = {
     'RU': 'ru',
     'EN': 'en',
@@ -42,16 +38,12 @@ export async function translateText(text: string, targetLang: string, sourceLang
   };
 
   const targetCode = langMap[targetLang] || 'en';
-  // Определяем исходный язык: если явно указан, используем его, иначе определяем автоматически
   const sourceCode = sourceLang || detectSourceLanguage(text);
   
-  // Если исходный и целевой языки совпадают, возвращаем оригинал
   if (sourceCode === targetCode) {
     return text;
   }
 
-  // Если OpenAI доступен, можем переводить длинные тексты целиком
-  // Иначе ограничиваем длину для бесплатных API (500 символов за раз)
   const hasOpenAI = !!process.env.OPENAI_API_KEY;
   const maxLength = hasOpenAI ? 4000 : 500; // OpenAI может обрабатывать до 128k токенов, но для безопасности используем 4000 символов
   
@@ -59,11 +51,9 @@ export async function translateText(text: string, targetLang: string, sourceLang
     return await translateChunk(text, targetCode, sourceCode);
   }
 
-  // Разбиваем длинный текст на части
   const chunks: string[] = [];
   let currentChunk = '';
   
-  // Разбиваем по предложениям, если возможно
   const sentences = text.split(/(?<=[.!?]\s)/);
   
   for (const sentence of sentences) {
@@ -74,7 +64,6 @@ export async function translateText(text: string, targetLang: string, sourceLang
       if (sentence.length <= maxLength) {
         currentChunk = sentence;
       } else {
-        // Если предложение слишком длинное, разбиваем по словам
         const words = sentence.split(' ');
         for (const word of words) {
           if ((currentChunk + word + ' ').length <= maxLength) {
@@ -90,12 +79,10 @@ export async function translateText(text: string, targetLang: string, sourceLang
   
   if (currentChunk) chunks.push(currentChunk.trim());
 
-  // Переводим каждый чанк с небольшой задержкой
   const translatedChunks: string[] = [];
   for (let i = 0; i < chunks.length; i++) {
     const translated = await translateChunk(chunks[i], targetCode, sourceCode);
     translatedChunks.push(translated);
-    // Небольшая задержка между запросами (100ms)
     if (i < chunks.length - 1) {
       await new Promise(resolve => setTimeout(resolve, 100));
     }
@@ -104,43 +91,32 @@ export async function translateText(text: string, targetLang: string, sourceLang
   return translatedChunks.join(' ');
 }
 
-// Определяем исходный язык текста (улучшенная эвристика)
 export function detectSourceLanguage(text: string): string {
   if (!text || text.trim() === '') return 'nl';
   
   const lowerText = text.toLowerCase();
   
-  // Проверяем наличие характерных слов/символов для разных языков
-  // Нидерландский: характерные слова и буквосочетания
   const nlWords = /\b(van|de|het|een|is|op|voor|met|aan|in|dat|die|wat|zijn|worden|hebben|kunnen|moeten|willen|doen|gaan|komen|zien|weten|denken|zeggen|geven|nemen|maken|vinden|krijgen|staan|liggen|zitten|blijven|beginnen|eindigen|proberen|helpen|werken|leven|groot|klein|goed|slecht|nieuw|oud|jong|lang|kort|hoog|laag|warm|koud|mooi|lelijk|rijk|arm|sterk|zwak|snel|langzaam|makkelijk|moeilijk|belangrijk|nodig|mogelijk|onmogelijk|waarschijnlijk|zeker|onzeker|open|dicht|vol|leeg|schoon|vuil|licht|donker|zacht|hard|zoet|zuur|bitter|zout|heet|nat|droog|recht|krom|rond|vierkant|driehoekig|breed|smal|dik|dun|zwaar|professioneel|leg|tegels|klinker|onder|grond|afwatering|verwijder|bereid|zorgvuldig|oppervlak|vlak|stevig|duurzaam|geschikt|tuin|paden|terrassen|opritten|bestrate)\b/i;
   const nlPatterns = /(ij|oe|eu|aa|ee|uu|sch|cht)/i; // Характерные нидерландские буквосочетания
   
-  // Русский: кириллица
   const ruIndicators = /[а-яё]/i;
   
-  // Английский: характерные слова
   const enIndicators = /\b(the|and|is|are|was|were|been|have|has|had|do|does|did|will|would|should|could|can|may|might|must|shall|this|that|these|those|what|which|who|whom|whose|where|when|why|how|all|each|every|some|any|no|not|only|just|also|too|very|much|many|more|most|less|least|few|little|enough|so|such|as|like|than|from|to|in|on|at|by|for|with|about|into|onto|upon|over|under|above|below|between|among|through|during|before|after|while|since|until|till|because|although|though|however|therefore|thus|hence|moreover|furthermore|besides|instead|otherwise|nevertheless|nonetheless|meanwhile|finally|first|second|third|last|next|then|now|here|there)\b/i;
   
-  // Подсчитываем совпадения
   const nlScore = (nlWords.test(text) ? 2 : 0) + (nlPatterns.test(text) ? 1 : 0);
   const ruScore = ruIndicators.test(text) ? 3 : 0;
   const enScore = enIndicators.test(text) ? 2 : 0;
   
-  // Определяем язык по наибольшему количеству совпадений
   if (ruScore > 0) return 'ru';
   if (nlScore > enScore) return 'nl';
   if (enScore > 0) return 'en';
   
-  // По умолчанию предполагаем нидерландский (так как работы на голландском)
   return 'nl';
 }
 
-// Пробуем несколько API подряд с fallback
 async function translateChunk(text: string, targetCode: string, sourceLang?: string): Promise<string> {
-  // Определяем исходный язык, если не указан
   const sourceCode = sourceLang || detectSourceLanguage(text);
   
-  // Если исходный и целевой языки совпадают, возвращаем оригинал
   if (sourceCode === targetCode) {
     console.log(`[Translate] Skipping translation: source (${sourceCode}) = target (${targetCode})`);
     return text;
@@ -148,9 +124,7 @@ async function translateChunk(text: string, targetCode: string, sourceLang?: str
   
   console.log(`[Translate] Translating from ${sourceCode} to ${targetCode}: "${text.substring(0, 50)}..."`);
   
-  // Пробуем несколько API подряд с таймаутами
   const apis = [
-    // API 0: OpenAI (AI-перевод) - приоритетный вариант
     async () => {
       const client = getOpenAIClient();
       if (!client) {
@@ -159,7 +133,6 @@ async function translateChunk(text: string, targetCode: string, sourceLang?: str
       }
       
       try {
-        // Маппинг языковых кодов для OpenAI
         const languageNames: Record<string, string> = {
           'ru': 'Russian',
           'en': 'English',
@@ -228,7 +201,6 @@ async function translateChunk(text: string, targetCode: string, sourceLang?: str
       return null;
     },
     
-    // API 1: Google Translate через разные endpoints
     async () => {
       const endpoints = [
         `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceCode}&tl=${targetCode}&dt=t&q=${encodeURIComponent(text)}`,
@@ -252,7 +224,6 @@ async function translateChunk(text: string, targetCode: string, sourceLang?: str
             const data = await response.json();
             let translated = '';
             
-            // Разные форматы ответа Google Translate
             if (Array.isArray(data) && data[0] && Array.isArray(data[0])) {
               translated = data[0].map((item: any[]) => item?.[0] || '').filter(Boolean).join('');
             } else if (typeof data === 'string') {
@@ -275,7 +246,6 @@ async function translateChunk(text: string, targetCode: string, sourceLang?: str
       return null;
     },
     
-    // API 2: MyMemory (резерв)
     async () => {
       try {
         const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceCode}|${targetCode}`;
@@ -303,10 +273,8 @@ async function translateChunk(text: string, targetCode: string, sourceLang?: str
       return null;
     },
     
-    // API 3: DeepL через публичный прокси (если доступен)
     async () => {
       try {
-        // Пробуем через публичный прокси DeepL (может не работать)
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000);
         
@@ -338,22 +306,17 @@ async function translateChunk(text: string, targetCode: string, sourceLang?: str
         }
       } catch (e: any) {
         if (e.name !== 'AbortError') {
-          // DeepL обычно требует API ключ, поэтому ошибка ожидаема
         }
       }
       return null;
     },
     
-    // API 4: Простой fallback - возвращаем текст с пометкой (последний резерв)
     async () => {
-      // Если все API не сработали, возвращаем оригинал
-      // Но логируем это как предупреждение
       console.warn(`[Translate] ⚠️ All APIs failed, using original text for ${sourceCode}->${targetCode}`);
       return null; // Вернём null, чтобы попробовать другие варианты
     }
   ];
   
-  // Пробуем каждый API по очереди
   for (const api of apis) {
     try {
       const result = await api();
@@ -366,12 +329,10 @@ async function translateChunk(text: string, targetCode: string, sourceLang?: str
     }
   }
   
-  // Если все API не сработали, возвращаем оригинал
   console.error(`[Translate] ❌ All translation APIs failed for ${sourceCode}->${targetCode}`);
   return text;
 }
 
-// Функция для перевода всех полей поста на все языки
 export async function translateBlogPost(post: {
   title: string;
   excerpt: string;
@@ -399,7 +360,6 @@ export async function translateBlogPost(post: {
     }
   };
 
-  // Переводим последовательно, чтобы не перегружать API (с задержкой между языками)
   for (const lang of languages) {
     try {
       const [title, excerpt, content, category] = await Promise.all([
@@ -416,11 +376,9 @@ export async function translateBlogPost(post: {
         category: category || post.category
       };
       
-      // Небольшая задержка между языками (50ms)
       await new Promise(resolve => setTimeout(resolve, 50));
     } catch (error) {
       console.error(`Error translating to ${lang}:`, error);
-      // В случае ошибки используем оригинальный текст
       translations[lang] = {
         title: post.title,
         excerpt: post.excerpt,
@@ -433,7 +391,6 @@ export async function translateBlogPost(post: {
   return translations;
 }
 
-// Функция для перевода FAQ категории на все языки
 export async function translateFAQCategory(category: {
   title: string;
   questions: Array<{
@@ -462,7 +419,6 @@ export async function translateFAQCategory(category: {
     }
   };
 
-  // Переводим последовательно, чтобы не перегружать API
   for (const lang of languages) {
     try {
       const translatedTitle = await translateText(category.title, lang);
@@ -478,11 +434,9 @@ export async function translateFAQCategory(category: {
         questions: translatedQuestions
       };
       
-      // Небольшая задержка между языками (50ms)
       await new Promise(resolve => setTimeout(resolve, 50));
     } catch (error) {
       console.error(`Error translating FAQ category to ${lang}:`, error);
-      // В случае ошибки используем оригинал
       translations[lang] = {
         title: category.title,
         questions: category.questions
@@ -493,7 +447,6 @@ export async function translateFAQCategory(category: {
   return translations;
 }
 
-// Функция для перевода члена команды на все языки
 export async function translateTeamMember(member: {
   name: string;
   position: string;
@@ -507,9 +460,7 @@ export async function translateTeamMember(member: {
   specialties: string[];
   experience: string;
 }>> {
-  // Определяем исходный язык (обычно английский для команды, но проверяем автоматически)
   const detectedLang = detectSourceLanguage(member.position + ' ' + member.bio);
-  // Если определили как нидерландский, но это может быть английский, проверяем более точно
   const sourceLang = detectedLang === 'nl' && /[a-zA-Z]/.test(member.position) && !/[а-яё]/i.test(member.position) ? 'en' : detectedLang;
   console.log(`[TranslateTeamMember] Using source language: ${sourceLang} for member: "${member.name}"`);
   
@@ -543,18 +494,15 @@ export async function translateTeamMember(member: {
       
       console.log(`[TranslateTeamMember] Translating to ${lang} (${sourceLang}->${langCode})...`);
       
-      // Переводим position, bio и specialties
       const [position, bio] = await Promise.all([
         translateText(member.position, lang, sourceLang),
         translateText(member.bio, lang, sourceLang)
       ]);
       
-      // Переводим массив specialties
       const specialties = await Promise.all(
         member.specialties.map(specialty => translateText(specialty, lang, sourceLang))
       );
       
-      // Experience обычно не переводим (например, "15+ years")
       translations[lang] = {
         name: member.name, // Имя обычно не переводится
         position: (position && position !== member.position) ? position : member.position,
@@ -581,7 +529,6 @@ export async function translateTeamMember(member: {
   return translations;
 }
 
-// Функция для перевода данных о ценах на все языки
 export async function translatePricingData(pricing: {
   packages: Array<{
     name: string;
@@ -609,10 +556,8 @@ export async function translatePricingData(pricing: {
     includes: string[];
   }>;
 }>> {
-  // Определяем исходный язык (обычно английский для цен, но проверяем автоматически)
   const sampleText = pricing.packages[0]?.name || pricing.services[0]?.service || '';
   const detectedLang = detectSourceLanguage(sampleText);
-  // Если определили как нидерландский, но это может быть английский, проверяем более точно
   const sourceLang = detectedLang === 'nl' && /[a-zA-Z]/.test(sampleText) && !/[а-яё]/i.test(sampleText) ? 'en' : detectedLang;
   console.log(`[TranslatePricing] Using source language: ${sourceLang}`);
   
@@ -650,7 +595,6 @@ export async function translatePricingData(pricing: {
       
       console.log(`[TranslatePricing] Translating to ${lang} (${sourceLang}->${langCode})...`);
       
-      // Переводим packages
       const translatedPackages = await Promise.all(
         pricing.packages.map(async (pkg) => {
           const [name, description] = await Promise.all([
@@ -669,7 +613,6 @@ export async function translatePricingData(pricing: {
         })
       );
       
-      // Переводим services
       const translatedServices = await Promise.all(
         pricing.services.map(async (service) => {
           const [serviceName, description] = await Promise.all([
@@ -708,7 +651,6 @@ export async function translatePricingData(pricing: {
   return translations;
 }
 
-// Функция для перевода работы портфолио на все языки
 export async function translateWork(work: {
   title: string;
   description: string;
@@ -720,12 +662,9 @@ export async function translateWork(work: {
   category: string;
   city?: string;
 }>> {
-  // Явно указываем исходный язык как нидерландский (nl) для всех работ портфолио
-  // Это гарантирует правильный перевод с нидерландского на все языки
   const sourceLang = 'nl';
   console.log(`[TranslateWork] Using source language: ${sourceLang} (Dutch) for work: "${work.title.substring(0, 30)}..."`);
   
-  // Все языки для перевода (включая RU)
   const languages = ['RU', 'EN', 'NL', 'DE', 'FR', 'ES', 'IT', 'PT', 'PL', 'CZ', 'HU', 'RO', 'BG', 'HR', 'SK', 'SL', 'ET', 'LV', 'LT', 'FI', 'SV', 'DA', 'NO', 'GR', 'UA'];
   
   const translations: Record<string, {
@@ -737,14 +676,11 @@ export async function translateWork(work: {
 
   console.log(`[TranslateWork] Starting translation for work: "${work.title.substring(0, 30)}..." to ${languages.length} languages`);
   
-  // Переводим последовательно, чтобы не перегружать API (с задержкой между языками)
   for (const lang of languages) {
     try {
-      // Если целевой язык совпадает с исходным, используем оригинал
       const langCode = lang === 'RU' ? 'ru' : lang === 'EN' ? 'en' : lang === 'NL' ? 'nl' : lang === 'DE' ? 'de' : lang === 'FR' ? 'fr' : lang === 'ES' ? 'es' : lang === 'IT' ? 'it' : lang === 'PT' ? 'pt' : lang === 'PL' ? 'pl' : lang === 'CZ' ? 'cs' : lang === 'HU' ? 'hu' : lang === 'RO' ? 'ro' : lang === 'BG' ? 'bg' : lang === 'HR' ? 'hr' : lang === 'SK' ? 'sk' : lang === 'SL' ? 'sl' : lang === 'ET' ? 'et' : lang === 'LV' ? 'lv' : lang === 'LT' ? 'lt' : lang === 'FI' ? 'fi' : lang === 'SV' ? 'sv' : lang === 'DA' ? 'da' : lang === 'NO' ? 'no' : lang === 'GR' ? 'el' : lang === 'UA' ? 'uk' : 'en';
       
       if (sourceLang === langCode) {
-        // Если исходный язык совпадает с целевым, используем оригинал
         translations[lang] = {
           title: work.title,
           description: work.description,
@@ -756,12 +692,9 @@ export async function translateWork(work: {
       }
       
       console.log(`[TranslateWork] Translating to ${lang} (${sourceLang}->${langCode})...`);
-      // Явно передаем исходный язык как 'nl' для title и description
-      // Для category и city определяем язык автоматически, так как они могут быть на разных языках
       const categorySourceLang = work.category ? detectSourceLanguage(work.category) : sourceLang;
       const citySourceLang = work.city ? detectSourceLanguage(work.city) : sourceLang;
       
-      // Не переводим категорию и город, если они уже на целевом языке
       const shouldTranslateCategory = work.category && categorySourceLang !== langCode;
       const shouldTranslateCity = work.city && citySourceLang !== langCode;
       
@@ -772,7 +705,6 @@ export async function translateWork(work: {
         shouldTranslateCity && work.city ? translateText(work.city, lang, citySourceLang) : Promise.resolve(work.city)
       ]);
 
-      // Проверяем, что переводы действительно отличаются от оригинала
       translations[lang] = {
         title: (title && title !== work.title) ? title : work.title,
         description: (description && description !== work.description) ? description : work.description,
@@ -782,11 +714,9 @@ export async function translateWork(work: {
       
       console.log(`[TranslateWork] ✅ Completed translation to ${lang}: "${translations[lang].title.substring(0, 30)}..."`);
       
-      // Небольшая задержка между языками (50ms)
       await new Promise(resolve => setTimeout(resolve, 50));
     } catch (error: any) {
       console.error(`[TranslateWork] ❌ Error translating work to ${lang}:`, error.message || error);
-      // В случае ошибки используем оригинальный текст
       translations[lang] = {
         title: work.title,
         description: work.description,
@@ -801,7 +731,6 @@ export async function translateWork(work: {
   return translations;
 }
 
-// Функция для перевода страницы услуги на все языки
 export async function translateServicePage(service: {
   id: string;
   hero: {
@@ -836,7 +765,6 @@ export async function translateServicePage(service: {
     items: string[];
   };
 }>> {
-  // Автоматически определяем исходный язык на основе первого текста
   const detectedSourceLang = detectSourceLanguage(service.hero.title || service.hero.subtitle || '');
   const sourceLang = detectedSourceLang || 'nl'; // По умолчанию нидерландский
   console.log(`[TranslateServicePage] Detected source language: ${sourceLang} for service: ${service.id}`);
@@ -875,7 +803,6 @@ export async function translateServicePage(service: {
       
       console.log(`[TranslateServicePage] Translating to ${lang} (${sourceLang}->${langCode})...`);
       
-      // Переводим все поля
       const [heroTitle, heroSubtitle, solutionsTitle, solutionsDesc1, solutionsDesc2, projectsCompleted, yearsExperience, servicesTitle, ...serviceItems] = await Promise.all([
         translateText(service.hero.title, lang, sourceLang),
         translateText(service.hero.subtitle, lang, sourceLang),

@@ -3,8 +3,6 @@ export default function AdminLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Этот layout переопределяет корневой layout для админ-панели
-  // Не включаем Navigation и Footer
   return (
     <>
       {children}

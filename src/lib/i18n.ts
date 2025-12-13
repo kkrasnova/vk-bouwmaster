@@ -1,12 +1,10 @@
 import { type Language } from './translations'
 
-// Маппинг Next.js локалей на наши коды языков
 export const localeToLanguageMap: Record<string, Language> = {
   'ru': 'RU',
   'uk': 'UA',
 }
 
-// Маппинг наших кодов языков на Next.js локали
 export const languageToLocaleMap: Record<Language, string> = {
   'RU': 'ru',
   'UA': 'uk',
@@ -35,7 +33,6 @@ export const languageToLocaleMap: Record<Language, string> = {
   'GR': 'el',
 }
 
-// Поддерживаемые локали
 export const supportedLocales = ['ru', 'uk']
 
 /**
@@ -45,7 +42,6 @@ export const supportedLocales = ['ru', 'uk']
  * @returns локализованный URL (например, "/ru/about")
  */
 export function createLocalizedUrl(href: string, currentPathname: string): string {
-  // Определяем текущую локаль из пути или используем нидерландскую по умолчанию
   const locale = getLocaleFromPath(currentPathname) || 'nl'
   return `/${locale}${href}`
 }

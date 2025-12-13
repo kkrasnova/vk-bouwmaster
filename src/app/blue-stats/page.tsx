@@ -6,7 +6,6 @@ import Link from 'next/link'
 export default function BlueStatsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-blue-950 to-slate-950">
-      {/* Hero Section */}
       <section className="py-12 sm:py-10 xs:py-8">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 cq-container">
           <div className="text-center mb-6 sm:mb-8">
@@ -23,7 +22,6 @@ export default function BlueStatsPage() {
         </div>
       </section>
 
-      {/* Color Palette */}
       <section className="py-8 sm:py-6 xs:py-4">
         <div className="max-w-6xl mx-auto px-2 sm:px-4">
           <h2 className="text-lg sm:text-xl font-bold text-transparent bg-clip-text tiffany-gradient-text text-center mb-4 sm:mb-6">
@@ -59,7 +57,6 @@ export default function BlueStatsPage() {
         </div>
       </section>
 
-      {/* Main Stats Grid */}
       <section className="pt-0 pb-8 sm:pb-10 md:pb-12">
         <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-transparent bg-clip-text tiffany-gradient-text text-center mb-4 sm:mb-6 md:mb-8">
@@ -106,7 +103,6 @@ export default function BlueStatsPage() {
         </div>
       </section>
 
-      {/* Feature Breakdown */}
       <section className="py-10 sm:py-12 md:py-14">
         <div className="max-w-5xl mx-auto px-2 sm:px-4">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-transparent bg-clip-text tiffany-gradient-text text-center mb-4 sm:mb-6 md:mb-8">
@@ -161,7 +157,6 @@ export default function BlueStatsPage() {
         </div>
       </section>
 
-      {/* Large Examples */}
       <section className="py-8 sm:py-10 md:py-12">
         <div className="max-w-4xl mx-auto px-2 sm:px-4">
           <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-transparent bg-clip-text tiffany-gradient-text text-center mb-4 sm:mb-6 md:mb-8">
@@ -210,7 +205,6 @@ export default function BlueStatsPage() {
         </div>
       </section>
 
-      {/* Comparison */}
       <section className="py-8 sm:py-10 md:py-12">
         <div className="max-w-4xl mx-auto px-2 sm:px-4">
           <div className="bg-gradient-to-r from-blue-900/30 via-cyan-900/30 to-blue-900/30 backdrop-blur rounded-xl p-3 sm:p-4 md:p-6 border border-cyan-500/40">

@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import React, { useState, useEffect } from "react";
 
-// Детерминированная функция для генерации "случайных" значений на основе индекса
 function seededRandom(seed: number) {
   const x = Math.sin(seed) * 10000;
   return x - Math.floor(x);
@@ -22,8 +21,6 @@ export const Meteors = ({
 
   const meteors = new Array(number || 20).fill(true);
   
-  // Если компонент еще не смонтирован на клиенте, возвращаем пустой контент
-  // чтобы избежать несоответствия гидратации
   if (!mounted) {
     return null;
   }
@@ -31,8 +28,6 @@ export const Meteors = ({
   return (
     <>
       {meteors.map((el, idx) => {
-        // Используем детерминированную генерацию на основе индекса
-        // для обеспечения одинаковых значений на сервере и клиенте
         const seed = idx * 7919; // Простое число для лучшего распределения
         const leftValue = Math.floor(seededRandom(seed) * (400 - -400) + -400);
         const delayValue = seededRandom(seed + 1) * (0.8 - 0.2) + 0.2;

@@ -59,12 +59,10 @@ export async function GET(request: NextRequest) {
     
     const data = readPricingData();
     
-    // Если запрашивается исходный язык, возвращаем оригинальные данные
     if (lang === 'RU' || lang === 'EN') {
       return NextResponse.json(data);
     }
     
-    // Для всех остальных языков возвращаем переводы
     const translation = data.translations?.[lang];
     if (translation) {
       return NextResponse.json({
@@ -97,7 +95,6 @@ export async function PUT(request: NextRequest) {
   try {
     const data: PricingData = await request.json();
     
-    // Автоматически переводим на все языки, если переводов еще нет
     if (!data.translations) {
       try {
         const translations = await translatePricingData({
@@ -117,7 +114,6 @@ export async function PUT(request: NextRequest) {
         data.translations = translations;
       } catch (translationError) {
         console.error('Translation error:', translationError);
-        // Продолжаем без переводов, если произошла ошибка
       }
     }
     

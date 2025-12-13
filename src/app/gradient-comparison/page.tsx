@@ -6,7 +6,6 @@ import Link from 'next/link'
 export default function GradientComparisonPage() {
   return (
     <div className="min-h-screen bg-black">
-      {/* Hero Section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -23,7 +22,6 @@ export default function GradientComparisonPage() {
         </div>
       </section>
 
-      {/* All 4 Gradient Variants */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-white text-center mb-4">
@@ -69,7 +67,6 @@ export default function GradientComparisonPage() {
         </div>
       </section>
 
-      {/* Feature Highlights */}
       <section className="py-20">
         <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
@@ -104,7 +101,6 @@ export default function GradientComparisonPage() {
         </div>
       </section>
 
-      {/* Effects List */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4">
           <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-8 border border-gray-700">
@@ -180,7 +176,6 @@ export default function GradientComparisonPage() {
         </div>
       </section>
 
-      {/* Large Example */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-12">

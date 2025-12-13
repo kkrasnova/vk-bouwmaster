@@ -5,13 +5,11 @@ export default function TestBlue() {
     <div className="min-h-screen bg-black p-20">
       <h1 className="text-white text-4xl mb-10 text-center">Тест синего градиента</h1>
       
-      {/* Простой синий градиент */}
       <div className="mb-8 p-8 rounded-2xl bg-gradient-to-br from-black via-blue-950 to-slate-950">
         <h2 className="text-2xl text-white mb-2">Синий градиент №1</h2>
         <p className="text-cyan-300">Black → Blue-950 → Slate-950</p>
       </div>
 
-      {/* С оверлеями */}
       <div className="relative mb-8 p-8 rounded-2xl overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-blue-950 to-slate-950"></div>
         <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/20 via-cyan-900/10 to-transparent opacity-60"></div>
@@ -21,7 +19,6 @@ export default function TestBlue() {
         </div>
       </div>
 
-      {/* Цветовая палитра */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         <div className="h-32 bg-black rounded-lg border border-cyan-500 flex items-center justify-center">
           <span className="text-white">Black</span>

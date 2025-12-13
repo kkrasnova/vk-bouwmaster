@@ -57,7 +57,6 @@ export default function ReviewMediaPage() {
   const fetchReview = async () => {
     try {
       setLoading(true)
-      // Пытаемся сначала получить все отзывы (включая неодобренные) для детального просмотра
       const response = await fetch('/api/comments?includeUnapproved=1')
       if (response.ok) {
         const data = await response.json()
@@ -65,7 +64,6 @@ export default function ReviewMediaPage() {
         if (foundReview) {
           setReview(foundReview)
         } else {
-          // Если не нашли, попробуем без includeUnapproved
           const response2 = await fetch('/api/comments')
           if (response2.ok) {
             const data2 = await response2.json()
@@ -165,7 +163,6 @@ export default function ReviewMediaPage() {
             <span>{t.reviews?.detail?.backToReviews || 'Back to reviews'}</span>
           </Link>
           
-          {/* Информация об отзыве */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -233,7 +230,6 @@ export default function ReviewMediaPage() {
   return (
     <div className="unified-gradient-bg min-h-screen pt-16 sm:pt-20 pb-8" style={{ overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
       <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8" style={{ minHeight: 'calc(100vh - 4rem)' }}>
-        {/* Навигация назад */}
         <Link
           href="/reviews"
           className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 mb-4 sm:mb-6 md:mb-8 transition-colors group text-sm sm:text-base"
@@ -242,7 +238,6 @@ export default function ReviewMediaPage() {
           <span>{t.reviews?.detail?.backToReviews || 'Back to reviews'}</span>
         </Link>
 
-        {/* Информация об отзыве */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -303,7 +298,6 @@ export default function ReviewMediaPage() {
           </div>
         </motion.div>
 
-        {/* Заголовок галереи */}
         {allMedia.length > 0 && (
           <>
         <motion.h2
@@ -317,7 +311,6 @@ export default function ReviewMediaPage() {
           </span>
         </motion.h2>
 
-        {/* Галерея */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
           {allMedia.map((media, idx) => (
             <motion.div
@@ -356,7 +349,6 @@ export default function ReviewMediaPage() {
         )}
       </div>
 
-      {/* Модальное окно для просмотра медиа */}
       <AnimatePresence>
         {selectedMediaIndex !== null && (
           <motion.div

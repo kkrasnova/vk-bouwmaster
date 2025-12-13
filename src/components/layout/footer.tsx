@@ -12,7 +12,6 @@ export function Footer() {
       <div className="absolute inset-0 bg-black/50"></div>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8">
-          {/* Company Info */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-2">
             <VKBouwmasterLogo />
             <p className="mt-4 text-sm sm:text-base text-gray-200 max-w-md leading-relaxed">
@@ -40,7 +39,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">{t.footer?.quickLinks?.title || 'Быстрые ссылки'}</span>
@@ -52,7 +50,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Services */}
           <div>
             <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">{t.footer?.services?.title || 'Услуги'}</span>
@@ -71,7 +68,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Shot / Additional Links */}
           <div>
             <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">{t.footer?.shot?.title || 'Shot'}</span>

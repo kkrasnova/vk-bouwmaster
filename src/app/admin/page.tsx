@@ -104,7 +104,6 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('works');
 
-  // Portfolio state
   const [portfolioItems, setPortfolioItems] = useState<Record<string, PortfolioItem[]>>({});
   const [selectedService, setSelectedService] = useState('flooring-installation');
   const [portfolioFormData, setPortfolioFormData] = useState({
@@ -115,7 +114,6 @@ export default function AdminPage() {
   });
   const [dragActive, setDragActive] = useState(false);
 
-  // Blog state
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
   const [dragActiveBlogImage, setDragActiveBlogImage] = useState(false);
@@ -129,7 +127,6 @@ export default function AdminPage() {
     content: '',
   });
 
-  // Team state
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [teamFormData, setTeamFormData] = useState({
     name: '',
@@ -140,13 +137,10 @@ export default function AdminPage() {
     experience: '',
   });
 
-  // FAQ state
   const [faqCategories, setFaqCategories] = useState<FAQCategory[]>([]);
 
-  // Pricing state
   const [pricingData, setPricingData] = useState<PricingData>({ packages: [], services: [] });
 
-  // Contact state
   const [contactData, setContactData] = useState<ContactData>({
     phone: { number1: '', number2: '' },
     email: { address1: '', address2: '' },
@@ -155,7 +149,6 @@ export default function AdminPage() {
     emergency: { phone: '' }
   });
 
-  // Messages state
   const [messages, setMessages] = useState<ContactMessage[]>([]);
 
   const [uploading, setUploading] = useState(false);
@@ -163,7 +156,6 @@ export default function AdminPage() {
   const [dragActiveWorks, setDragActiveWorks] = useState(false);
   const [dragActiveAdditionalImages, setDragActiveAdditionalImages] = useState(false);
 
-  // Works Gallery state
   interface WorkTranslations {
     title: string;
     description: string;
@@ -201,7 +193,6 @@ export default function AdminPage() {
   const [editingWork, setEditingWork] = useState<WorkData | null>(null);
   const [expandedTranslationLang, setExpandedTranslationLang] = useState<string | null>(null);
 
-  // Reviews state
   interface ReviewData {
     id: string;
     projectId: string;
@@ -308,8 +299,6 @@ export default function AdminPage() {
     if (!editingReview) return;
     setUploading(true);
     try {
-      // Подготовка данных для отправки
-      // Отправляем пустые массивы для удаления всех фото, если они были удалены
       const dataToSave = {
         name: reviewFormData.name,
         surname: reviewFormData.surname || undefined,
@@ -524,7 +513,6 @@ export default function AdminPage() {
     router.push('/admin/login');
   };
 
-  // Portfolio handlers
   const handleFileUpload = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -588,7 +576,6 @@ export default function AdminPage() {
         setUploading(true);
         const url = await handleFileUpload(file);
         if (url) {
-          // Автоматически добавляем работу сразу при загрузке
           await handlePortfolioSubmitAuto(url, portfolioFormData.title || 'Без названия');
         }
         setUploading(false);
@@ -604,7 +591,6 @@ export default function AdminPage() {
       setUploading(true);
       const url = await handleFileUpload(file);
       if (url) {
-        // Автоматически добавляем работу сразу при загрузке
         await handlePortfolioSubmitAuto(url, portfolioFormData.title || 'Без названия');
       }
       setUploading(false);
@@ -629,7 +615,6 @@ export default function AdminPage() {
       
       if (response.ok) {
         loadPortfolio();
-        // Не очищаем форму, чтобы можно было добавить ещё работы с теми же данными
         setPortfolioFormData({ ...portfolioFormData, image: '' });
       }
     } catch {
@@ -677,7 +662,6 @@ export default function AdminPage() {
     }
   };
 
-  // Blog handlers
   const handleBlogImageUpload = async (file: File) => {
     setUploading(true);
     try {
@@ -777,7 +761,6 @@ export default function AdminPage() {
     }
   };
 
-  // Team handlers
   const handleTeamSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
@@ -813,7 +796,6 @@ export default function AdminPage() {
     }
   };
 
-  // FAQ handlers
   const handleFAQSave = async () => {
     setUploading(true);
     try {
@@ -832,7 +814,6 @@ export default function AdminPage() {
     }
   };
 
-  // Pricing handlers
   const handlePricingSave = async () => {
     setUploading(true);
     try {
@@ -851,7 +832,6 @@ export default function AdminPage() {
     }
   };
 
-  // Works handlers
   const handleWorkMainImageUpload = async (file: File) => {
     setUploading(true);
     setUploadProgress({ current: 0, total: 1, fileName: file.name });
@@ -974,24 +954,19 @@ export default function AdminPage() {
       const url = editingWork ? `/api/works?id=${editingWork.id}` : '/api/works';
       const method = editingWork ? 'PUT' : 'POST';
       
-      // При создании и редактировании не передаем переводы - API создаст/обновит их автоматически
-      // API автоматически определит, нужно ли обновлять переводы (если изменились title, description, category или city)
       const dataToSend = editingWork 
         ? { 
             ...editingWork, 
             ...worksFormData,
             videos: [], // отключаем отправку видео
-            // Не передаем переводы - API обновит их автоматически при изменении текстовых полей
             translations: undefined
           }
         : {
             ...worksFormData,
             videos: [], // отключаем отправку видео
-            // Убираем пустые переводы при создании - API автоматически создаст переводы на все языки
             translations: undefined
           };
       
-      // Логируем данные для отладки
       console.log('Отправка работы:', {
         isEditing: !!editingWork,
         workId: editingWork?.id,
@@ -1099,7 +1074,6 @@ export default function AdminPage() {
     });
   };
 
-  // Contact handlers
   const handleContactSave = async () => {
     setUploading(true);
     try {
@@ -1148,7 +1122,6 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-black text-white w-full">
       <div className="w-full px-4 py-6 sm:px-6 md:px-8 lg:px-12 xl:px-16 lg:py-8">
-        {/* Header */}
         <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
           <div className="flex items-center gap-4 min-w-0 flex-1">
             <Link href="/">
@@ -1170,7 +1143,6 @@ export default function AdminPage() {
           </GradientButton>
         </div>
 
-        {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-8 pb-4 border-b border-gray-700">
           {tabs.map((tab) => (
             <GradientButton
@@ -1184,11 +1156,9 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Tab Content */}
         <div className="mt-8">
           {activeTab === 'reviews' && (
             <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8">
-              {/* Edit Form */}
               {editingReview && (
                 <div className="elegant-card p-8">
                   <h2 className="text-2xl font-bold elegant-title mb-6">Редактировать отзыв</h2>
@@ -1292,7 +1262,6 @@ export default function AdminPage() {
                       <StarRating rating={reviewFormData.rating} onRatingChange={(rating) => setReviewFormData({ ...reviewFormData, rating })} />
                     </div>
                     
-                    {/* Фото */}
                     <div>
                       <label className="block text-sm font-medium mb-2">Фото</label>
                       <div className="mb-3">
@@ -1341,7 +1310,6 @@ export default function AdminPage() {
                       )}
                     </div>
 
-                    {/* Видео */}
                     <div>
                       <label className="block text-sm font-medium mb-2">Видео</label>
                       <div className="mb-3">
@@ -1413,7 +1381,6 @@ export default function AdminPage() {
                 </div>
               )}
               
-              {/* Reviews List */}
               <div className="elegant-card p-8">
                 <h2 className="text-2xl font-bold elegant-title mb-6">
                   Отзывы ({reviews.length})
@@ -1567,7 +1534,6 @@ export default function AdminPage() {
                       )}
                     </label>
                     
-                    {/* Прогресс загрузки основного фото */}
                     {uploadProgress && uploadProgress.total === 1 && (
                       <div className="mb-3 p-4 bg-gray-900 rounded-lg border border-blue-500">
                         <div className="flex items-center justify-between mb-2">
@@ -1678,7 +1644,6 @@ export default function AdminPage() {
                       )}
                     </label>
                     
-                    {/* Прогресс загрузки */}
                     {uploadProgress && (
                       <div className="mb-4 p-4 bg-gray-900 rounded-lg border border-blue-500">
                         <div className="flex items-center justify-between mb-2">
@@ -1794,7 +1759,6 @@ export default function AdminPage() {
                     />
                   </div>
                   
-                  {/* Translations Section */}
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       Переводы на другие языки
@@ -1957,7 +1921,6 @@ export default function AdminPage() {
                             <p className="text-sm text-blue-400 mb-2">{work.category}</p>
                             <p className="text-sm text-gray-300 line-clamp-2 mb-3">{work.description}</p>
                             
-                            {/* Информация о файлах */}
                             <div className="flex flex-wrap gap-2 mb-3 text-xs">
                             {work.projectId && (
                                 <span className="px-2 py-1 bg-gray-800 rounded text-gray-300">
@@ -1986,7 +1949,6 @@ export default function AdminPage() {
                               )}
                             </div>
                             
-                            {/* Миниатюры дополнительных файлов */}
                             {(work.images && work.images.length > 0) || (work.videos && work.videos.length > 0) ? (
                               <div className="mb-3">
                                 <div className="flex gap-2 overflow-x-auto pb-2">
