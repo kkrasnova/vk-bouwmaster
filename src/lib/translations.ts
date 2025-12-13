@@ -1867,7 +1867,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Services'
       },
       shot: {
-        title: 'Shot'
+        title: 'Links'
       },
       copyright: '© 2025 VK Bouwmaster. All rights reserved.',
       privacy: 'Privacy Policy',
@@ -2935,7 +2935,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Diensten'
       },
       shot: {
-        title: 'Shot'
+        title: 'Links'
       },
       copyright: '© 2025 VK Bouwmaster. Alle rechten voorbehouden.',
       privacy: 'Privacybeleid',
@@ -3880,7 +3880,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Dienstleistungen'
       },
       shot: {
-        title: 'Shot'
+        title: 'Links'
       },
       copyright: '© 2025 VK Bouwmaster. Alle Rechte vorbehalten.',
       privacy: 'Datenschutzrichtlinie',
@@ -4825,7 +4825,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Services'
       },
       shot: {
-        title: 'Shot'
+        title: 'Liens'
       },
       copyright: '© 2025 VK Bouwmaster. Tous droits réservés.',
       privacy: 'Politique de Confidentialité',
@@ -5770,7 +5770,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Servicios'
       },
       shot: {
-        title: 'Shot'
+        title: 'Enlaces'
       },
       copyright: '© 2025 VK Bouwmaster. Todos los derechos reservados.',
       privacy: 'Política de Privacidad',
@@ -6715,7 +6715,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Servizi'
       },
       shot: {
-        title: 'Shot'
+        title: 'Link'
       },
       copyright: '© 2025 VK Bouwmaster. Tutti i diritti riservati.',
       privacy: 'Informativa sulla Privacy',
@@ -7601,7 +7601,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Serviços'
       },
       shot: {
-        title: 'Shot'
+        title: 'Links'
       },
       copyright: '© 2025 VK Bouwmaster. Todos os direitos reservados.',
       privacy: 'Política de Privacidade',
@@ -8427,7 +8427,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Usługi'
       },
       shot: {
-        title: 'Shot'
+        title: 'Linki'
       },
       copyright: '© 2025 VK Bouwmaster. Wszelkie prawa zastrzeżone.',
       privacy: 'Polityka Prywatności',
@@ -9336,7 +9336,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Služby'
       },
       shot: {
-        title: 'Shot'
+        title: 'Odkazy'
       },
       copyright: '© 2025 VK Bouwmaster. Všechna práva vyhrazena.',
       privacy: 'Zásady Ochrany Osobních Údajů',
@@ -10234,7 +10234,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Szolgáltatások'
       },
       shot: {
-        title: 'Shot'
+        title: 'Linkek'
       },
       copyright: '© 2025 VK Bouwmaster. Minden jog fenntartva.',
       privacy: 'Adatvédelmi Irányelvek',
@@ -11132,7 +11132,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Servicii'
       },
       shot: {
-        title: 'Shot'
+        title: 'Linkuri'
       },
       copyright: '© 2025 VK Bouwmaster. Toate drepturile rezervate.',
       privacy: 'Politica de Confidențialitate',
@@ -12030,7 +12030,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Услуги'
       },
       shot: {
-        title: 'Shot'
+        title: 'Връзки'
       },
       copyright: '© 2025 VK Bouwmaster. Всички права запазени.',
       privacy: 'Политика за Поверителност',
@@ -12928,7 +12928,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Usluge'
       },
       shot: {
-        title: 'Shot'
+        title: 'Linkovi'
       },
       copyright: '© 2025 VK Bouwmaster. Sva prava pridržana.',
       privacy: 'Politika Privatnosti',
@@ -13986,7 +13986,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Služby'
       },
       shot: {
-        title: 'Shot'
+        title: 'Odkazy'
       },
       copyright: '© 2025 VK Bouwmaster. Všetky práva vyhradené.',
       privacy: 'Zásady Ochrany Osobnych Údajov',
@@ -14885,7 +14885,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Storitve'
       },
       shot: {
-        title: 'Shot'
+        title: 'Povezave'
       },
       copyright: '© 2025 VK Bouwmaster. Vse pravice pridržane.',
       privacy: 'Pravilnik o Zasebnosti',
@@ -15687,7 +15687,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Teenused'
       },
       shot: {
-        title: 'Shot'
+        title: 'Lingid'
       },
       copyright: '© 2025 VK Bouwmaster. Kõik õigused kaitstud.',
       privacy: 'Privaatsuspoliitika',
@@ -16371,7 +16371,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Pakalpojumi'
       },
       shot: {
-        title: 'Shot'
+        title: 'Saites'
       },
       copyright: '© 2025 VK Bouwmaster. Visas tiesības aizsargātas.',
       privacy: 'Privātuma Politika',
@@ -17295,7 +17295,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Paslaugos'
       },
       shot: {
-        title: 'Shot'
+        title: 'Nuorodos'
       },
       copyright: '© 2025 VK Bouwmaster. Visos teisės saugomos.',
       privacy: 'Privatumo Politika',
@@ -18097,7 +18097,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Palvelut'
       },
       shot: {
-        title: 'Shot'
+        title: 'Linkit'
       },
       copyright: '© 2025 VK Bouwmaster. Kaikki oikeudet pidätetään.',
       privacy: 'Tietosuojakäytäntö',
@@ -18923,7 +18923,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Tjänster'
       },
       shot: {
-        title: 'Shot'
+        title: 'Länkar'
       },
       copyright: '© 2025 VK Bouwmaster. Alla rättigheter förbehållna.',
       privacy: 'Integritetspolicy',
@@ -20166,7 +20166,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Tjenester'
       },
       shot: {
-        title: 'Shot'
+        title: 'Links'
       },
       copyright: '© 2025 VK Bouwmaster. Alle rettigheder forbeholdes.',
       privacy: 'Fortrolighedspolitik',
@@ -21326,7 +21326,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Услуги'
       },
       shot: {
-        title: 'Shot'
+        title: 'Ссылки'
       },
       copyright: '© 2025 VK Bouwmaster. All rights reserved.',
       privacy: 'Privacy Policy',
@@ -22526,7 +22526,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Послуги'
       },
       shot: {
-        title: 'Shot'
+        title: 'Посилання'
       },
       copyright: '© 2025 VK Bouwmaster. Всі права захищені.',
       privacy: 'Політика конфіденційності',
@@ -23272,7 +23272,7 @@ export const translations: Record<Language, Translations | PartialTranslations> 
         title: 'Υπηρεσίες'
       },
       shot: {
-        title: 'Shot'
+        title: 'Σύνδεσμοι'
       },
       copyright: '© 2025 VK Bouwmaster. Όλα τα δικαιώματα διατηρούνται.',
       privacy: 'Πολιτική Απορρήτου',
