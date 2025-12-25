@@ -192,6 +192,7 @@ export default function AdminPage() {
   });
   const [editingWork, setEditingWork] = useState<WorkData | null>(null);
   const [expandedTranslationLang, setExpandedTranslationLang] = useState<string | null>(null);
+  const [isCustomCategory, setIsCustomCategory] = useState(false);
 
   interface ReviewData {
     id: string;
@@ -1023,6 +1024,7 @@ export default function AdminPage() {
           translations: {},
         });
         setEditingWork(null);
+        setIsCustomCategory(false);
         loadWorks();
       } else {
         const errorData = await response.json().catch(() => ({ error: 'Неизвестная ошибка' }));
@@ -1060,6 +1062,9 @@ export default function AdminPage() {
 
   const handleWorkEdit = (work: WorkData) => {
     setEditingWork(work);
+    const predefinedCategories = ['Укладка пола', 'Покраска', 'Сантехника', 'Крыша', 'Сад', 'Плитка', 'Общие работы'];
+    const isCustom = !!(work.category && !predefinedCategories.includes(work.category));
+    setIsCustomCategory(isCustom);
     setWorksFormData({
       title: work.title,
       description: work.description,
@@ -1121,47 +1126,48 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-black text-white w-full">
-      <div className="w-full px-4 py-6 sm:px-6 md:px-8 lg:px-12 xl:px-16 lg:py-8">
-        <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
-          <div className="flex items-center gap-4 min-w-0 flex-1">
-            <Link href="/">
-              <GradientButton className="px-4 py-2 flex items-center gap-2 whitespace-nowrap flex-shrink-0">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="w-full px-3 py-4 sm:px-4 sm:py-5 md:px-6 md:py-6 lg:px-8 lg:py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 w-full sm:w-auto">
+            <Link href="/" className="flex-shrink-0">
+              <GradientButton className="px-3 py-1.5 sm:px-4 sm:py-2 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base whitespace-nowrap">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                На главную
+                <span className="hidden xs:inline">На главную</span>
+                <span className="xs:hidden">←</span>
               </GradientButton>
             </Link>
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold truncate">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">
                 Панель Администратора
               </span>
             </h1>
           </div>
-          <GradientButton onClick={handleLogout} className="px-6 py-2 whitespace-nowrap flex-shrink-0">
+          <GradientButton onClick={handleLogout} className="px-4 py-1.5 sm:px-6 sm:py-2 text-sm sm:text-base whitespace-nowrap flex-shrink-0 w-full sm:w-auto">
             Выйти
           </GradientButton>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-8 pb-4 border-b border-gray-700">
+        <div className="flex gap-2 mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-gray-700 overflow-x-auto scrollbar-hide -mx-3 sm:-mx-0 px-3 sm:px-0">
           {tabs.map((tab) => (
             <GradientButton
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               variant={activeTab === tab.id ? undefined : 'variant'}
-              className="px-6 py-3 font-semibold"
+              className="px-3 py-2 sm:px-4 sm:py-2.5 md:px-6 md:py-3 text-xs sm:text-sm md:text-base font-semibold whitespace-nowrap flex-shrink-0"
             >
               {tab.label}
             </GradientButton>
           ))}
         </div>
 
-        <div className="mt-8">
+        <div className="mt-4 sm:mt-6 lg:mt-8">
           {activeTab === 'reviews' && (
-            <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,420px)_1fr] gap-4 sm:gap-6 lg:gap-8">
               {editingReview && (
-                <div className="elegant-card p-8">
-                  <h2 className="text-2xl font-bold elegant-title mb-6">Редактировать отзыв</h2>
+                <div className="elegant-card p-4 sm:p-6 lg:p-8">
+                  <h2 className="text-xl sm:text-2xl font-bold elegant-title mb-4 sm:mb-6">Редактировать отзыв</h2>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium mb-2">Имя</label>
@@ -1381,8 +1387,8 @@ export default function AdminPage() {
                 </div>
               )}
               
-              <div className="elegant-card p-8">
-                <h2 className="text-2xl font-bold elegant-title mb-6">
+              <div className="elegant-card p-4 sm:p-6 lg:p-8">
+                <h2 className="text-xl sm:text-2xl font-bold elegant-title mb-4 sm:mb-6">
                   Отзывы ({reviews.length})
                 </h2>
                 <div className="space-y-4 max-h-[800px] overflow-y-auto">
@@ -1396,12 +1402,12 @@ export default function AdminPage() {
                           review.approved ? 'border-green-600' : 'border-yellow-600'
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <div className="text-white font-bold text-lg">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="text-white font-bold text-base sm:text-lg break-words">
                               {review.name} {review.surname || ''}
                             </div>
-                            <div className="text-gray-400 text-sm">
+                            <div className="text-gray-400 text-xs sm:text-sm break-words">
                               Проект: {review.projectId} • {new Date(review.createdAt).toLocaleDateString()}
                               {review.city && <span> • {review.city}</span>}
                             </div>
@@ -1421,11 +1427,11 @@ export default function AdminPage() {
                             <StarRating rating={review.rating} readOnly />
                           </div>
                         )}
-                        <div className="text-gray-300 mb-4 whitespace-pre-wrap">{review.message}</div>
+                        <div className="text-gray-300 mb-3 sm:mb-4 whitespace-pre-wrap text-sm sm:text-base break-words">{review.message}</div>
                         {(review.photos && review.photos.length > 0) || (review.videos && review.videos.length > 0) ? (
-                          <div className="mb-4">
+                          <div className="mb-3 sm:mb-4">
                             {review.photos && review.photos.length > 0 && (
-                              <div className="grid grid-cols-3 gap-2 mb-2">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 sm:gap-2 mb-2">
                                 {review.photos.map((photo, idx) => (
                                   <div key={idx} className="relative aspect-square rounded overflow-hidden">
                                     <Image src={photo} alt={`Photo ${idx + 1}`} fill className="object-cover" />
@@ -1442,24 +1448,24 @@ export default function AdminPage() {
                             )}
                           </div>
                         ) : null}
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           {!review.approved && (
                             <button
                               onClick={() => handleReviewApprove(review.id)}
-                              className="px-3 py-1.5 bg-green-600 hover:bg-green-700 rounded text-sm text-white"
+                              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-green-600 hover:bg-green-700 rounded text-xs sm:text-sm text-white flex-1 sm:flex-none"
                             >
                               Одобрить
                             </button>
                           )}
                           <button
                             onClick={() => handleReviewEdit(review)}
-                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-sm text-white"
+                            className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 rounded text-xs sm:text-sm text-white flex-1 sm:flex-none"
                           >
                             Редактировать
                           </button>
                           <button
                             onClick={() => handleReviewReject(review.id)}
-                            className="px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-sm text-white"
+                            className="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 rounded text-xs sm:text-sm text-white flex-1 sm:flex-none"
                           >
                             Удалить
                           </button>
@@ -1473,10 +1479,10 @@ export default function AdminPage() {
           )}
 
           {activeTab === 'works' && (
-            <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8">
-              <div className="elegant-card p-8">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold elegant-title">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(300px,420px)_1fr] gap-4 sm:gap-6 lg:gap-8">
+              <div className="elegant-card p-4 sm:p-6 lg:p-8">
+                <div className="mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-2xl font-bold elegant-title">
                     {editingWork ? '✏️ Редактировать работу' : '➕ Добавить работу'}
                 </h2>
                   {editingWork && (
@@ -1507,14 +1513,22 @@ export default function AdminPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Категория *</label>
+                    <label className="block text-sm font-medium mb-1.5 sm:mb-2">Категория *</label>
                     <select
-                      value={worksFormData.category}
-                      onChange={(e) => setWorksFormData({ ...worksFormData, category: e.target.value })}
-                      className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white"
-                      required
+                      value={isCustomCategory ? 'custom' : (worksFormData.category || '')}
+                      onChange={(e) => {
+                        if (e.target.value === 'custom') {
+                          setIsCustomCategory(true);
+                          setWorksFormData({ ...worksFormData, category: '' });
+                        } else if (e.target.value !== '') {
+                          setIsCustomCategory(false);
+                          setWorksFormData({ ...worksFormData, category: e.target.value });
+                        }
+                      }}
+                      className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-gray-900 border border-gray-700 rounded-lg text-white mb-2"
+                      required={!isCustomCategory}
                     >
-                      <option value="">Выберите категорию</option>
+                      <option value="" disabled>Выберите категорию</option>
                       <option value="Укладка пола">Укладка пола</option>
                       <option value="Покраска">Покраска</option>
                       <option value="Сантехника">Сантехника</option>
@@ -1522,7 +1536,24 @@ export default function AdminPage() {
                       <option value="Сад">Сад</option>
                       <option value="Плитка">Плитка</option>
                       <option value="Общие работы">Общие работы</option>
+                      <option value="custom">✏️ Ввести свою категорию</option>
                     </select>
+                    {isCustomCategory && (
+                      <div className="mt-2">
+                        <input
+                          type="text"
+                          value={worksFormData.category}
+                          onChange={(e) => setWorksFormData({ ...worksFormData, category: e.target.value })}
+                          className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base bg-gray-900 border border-gray-700 rounded-lg text-white"
+                          placeholder="Введите название категории"
+                          required
+                          autoFocus
+                        />
+                        <p className="text-xs text-gray-400 mt-1">
+                          Введите название категории, которое будет сохранено для этой работы
+                        </p>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">
@@ -1864,6 +1895,7 @@ export default function AdminPage() {
                       type="button"
                       onClick={() => {
                         setEditingWork(null);
+                        setIsCustomCategory(false);
                         setWorksFormData({
                           title: '',
                           description: '',
@@ -1888,17 +1920,17 @@ export default function AdminPage() {
                 </form>
               </div>
 
-              <div className="elegant-card p-8">
-                <h2 className="text-2xl font-bold elegant-title mb-6">Работы ({works.length})</h2>
-                <div className="space-y-4 max-h-[800px] overflow-y-auto">
+              <div className="elegant-card p-4 sm:p-6 lg:p-8">
+                <h2 className="text-xl sm:text-2xl font-bold elegant-title mb-4 sm:mb-6">Работы ({works.length})</h2>
+                <div className="space-y-3 sm:space-y-4 max-h-[600px] sm:max-h-[800px] overflow-y-auto">
                   {works.length === 0 ? (
-                    <p className="text-gray-400 text-center py-8">Нет работ. Добавьте первую работу.</p>
+                    <p className="text-gray-400 text-center py-6 sm:py-8 text-sm sm:text-base">Нет работ. Добавьте первую работу.</p>
                   ) : (
                     works.map((work) => (
-                      <div key={work.id} className="bg-gray-900 p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
-                        <div className="flex items-start gap-4">
+                      <div key={work.id} className="bg-gray-900 p-3 sm:p-4 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+                        <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                           {work.mainImage && (
-                            <div className="relative w-24 h-24 flex-shrink-0 rounded overflow-hidden bg-gray-800 border border-gray-700">
+                            <div className="relative w-full sm:w-20 md:w-24 h-40 sm:h-20 md:h-24 flex-shrink-0 rounded overflow-hidden bg-gray-800 border border-gray-700">
                               <Image
                                 src={work.mainImage}
                                 alt={work.title}
@@ -1916,12 +1948,12 @@ export default function AdminPage() {
                               />
                             </div>
                           )}
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-bold text-white mb-1">{work.title}</h3>
-                            <p className="text-sm text-blue-400 mb-2">{work.category}</p>
-                            <p className="text-sm text-gray-300 line-clamp-2 mb-3">{work.description}</p>
+                          <div className="flex-1 min-w-0 w-full sm:w-auto">
+                            <h3 className="text-base sm:text-lg font-bold text-white mb-1 break-words">{work.title}</h3>
+                            <p className="text-xs sm:text-sm text-blue-400 mb-2">{work.category}</p>
+                            <p className="text-xs sm:text-sm text-gray-300 line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-3 break-words">{work.description}</p>
                             
-                            <div className="flex flex-wrap gap-2 mb-3 text-xs">
+                            <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2 sm:mb-3 text-[10px] sm:text-xs">
                             {work.projectId && (
                                 <span className="px-2 py-1 bg-gray-800 rounded text-gray-300">
                                   📁 {work.projectId}
@@ -1950,10 +1982,10 @@ export default function AdminPage() {
                             </div>
                             
                             {(work.images && work.images.length > 0) || (work.videos && work.videos.length > 0) ? (
-                              <div className="mb-3">
-                                <div className="flex gap-2 overflow-x-auto pb-2">
+                              <div className="mb-2 sm:mb-3">
+                                <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 scrollbar-hide">
                                   {work.images?.slice(0, 5).map((img, idx) => (
-                                    <div key={idx} className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden border border-gray-700 bg-gray-800">
+                                    <div key={idx} className="relative w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 flex-shrink-0 rounded overflow-hidden border border-gray-700 bg-gray-800">
                                       <Image
                                         src={img}
                                         alt={`Фото ${idx + 1}`}
@@ -2007,16 +2039,16 @@ export default function AdminPage() {
                               </div>
                             ) : null}
                             
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0">
                               <button
                                 onClick={() => handleWorkEdit(work)}
-                                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded text-sm text-white transition-colors"
+                                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 rounded text-xs sm:text-sm text-white transition-colors flex-1 sm:flex-none"
                               >
                                 ✏️ Редактировать
                               </button>
                               <button
                                 onClick={() => handleWorkDelete(work.id)}
-                                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-sm text-white transition-colors"
+                                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600 hover:bg-red-700 rounded text-xs sm:text-sm text-white transition-colors flex-1 sm:flex-none"
                               >
                                 🗑️ Удалить
                               </button>
@@ -2032,7 +2064,7 @@ export default function AdminPage() {
           )}
 
           {activeTab === 'messages' && (
-            <div className="elegant-card p-8">
+            <div className="elegant-card p-4 sm:p-6 lg:p-8">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold elegant-title">
                   Сообщения с формы обратной связи ({messages.length})

@@ -255,6 +255,13 @@
   }
   .hide-scrollbar::-webkit-scrollbar { display: none; }
   
+  /* Scrollbar hide utility (same as hide-scrollbar but with different name) */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  
   /* Custom scrollbar for testimonial cards */
   .scrollbar-thin {
     scrollbar-width: thin;
