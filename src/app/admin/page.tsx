@@ -1922,9 +1922,9 @@ export default function AdminPage() {
                             </div>
                           )}
                           <div className="flex-1 min-w-0 w-full sm:w-auto">
-                            <h3 className="text-base sm:text-lg font-bold text-white mb-1 break-words">{work.title}</h3>
-                            <p className="text-xs sm:text-sm text-blue-400 mb-2">{work.category}</p>
-                            <p className="text-xs sm:text-sm text-gray-300 line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-3 break-words">{work.description}</p>
+                            <h3 className="text-sm sm:text-base font-semibold text-white mb-1 break-words leading-snug">{work.title}</h3>
+                            <p className="text-[11px] sm:text-xs text-blue-400 mb-1.5">{work.category}</p>
+                            <p className="text-[11px] sm:text-xs text-gray-300 mb-2 whitespace-nowrap overflow-hidden text-ellipsis">{work.description}</p>
                             
                             <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2 sm:mb-3 text-[10px] sm:text-xs">
                             {work.projectId && (
