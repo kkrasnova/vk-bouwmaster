@@ -152,6 +152,8 @@ export default function AdminPage() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
 
   const [uploading, setUploading] = useState(false);
+  const [dragActiveReviewPhotos, setDragActiveReviewPhotos] = useState(false);
+  const [dragActiveReviewVideos, setDragActiveReviewVideos] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number; fileName: string } | null>(null);
   const [dragActiveWorks, setDragActiveWorks] = useState(false);
   const [dragActiveAdditionalImages, setDragActiveAdditionalImages] = useState(false);
@@ -359,6 +361,21 @@ export default function AdminPage() {
     }
   };
 
+  const handleReviewPhotoDrop = async (files: File[]) => {
+    if (files.length === 0) return;
+    setUploading(true);
+    try {
+      const imageFiles = files.filter(f => f.type.startsWith('image/'));
+      const uploadPromises = imageFiles.map(file => handleFileUpload(file));
+      const urls = (await Promise.all(uploadPromises)).filter(Boolean) as string[];
+      if (urls.length > 0) {
+        setReviewFormData(prev => ({ ...prev, photos: [...prev.photos, ...urls] }));
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleReviewVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     setUploading(true);
@@ -372,6 +389,21 @@ export default function AdminPage() {
     } finally {
       setUploading(false);
       e.target.value = '';
+    }
+  };
+
+  const handleReviewVideoDrop = async (files: File[]) => {
+    if (files.length === 0) return;
+    setUploading(true);
+    try {
+      const videoFiles = files.filter(f => f.type.startsWith('video/'));
+      const uploadPromises = videoFiles.map(file => handleFileUpload(file));
+      const urls = (await Promise.all(uploadPromises)).filter(Boolean) as string[];
+      if (urls.length > 0) {
+        setReviewFormData(prev => ({ ...prev, videos: [...prev.videos, ...urls] }));
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -1270,7 +1302,20 @@ export default function AdminPage() {
                     
                     <div>
                       <label className="block text-sm font-medium mb-2">Фото</label>
-                      <div className="mb-3">
+                      <div
+                        onDragOver={(e) => { e.preventDefault(); if (!uploading) setDragActiveReviewPhotos(true); }}
+                        onDragLeave={() => setDragActiveReviewPhotos(false)}
+                        onDrop={async (e) => {
+                          e.preventDefault();
+                          setDragActiveReviewPhotos(false);
+                          if (uploading) return;
+                          const dropped = Array.from(e.dataTransfer.files || []);
+                          await handleReviewPhotoDrop(dropped);
+                        }}
+                        className={`mb-3 border-2 border-dashed rounded-lg p-4 transition-colors ${
+                          dragActiveReviewPhotos ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700 bg-gray-900/30'
+                        } ${uploading ? 'opacity-60 cursor-not-allowed' : 'hover:border-gray-600'}`}
+                      >
                         <input
                           type="file"
                           accept="image/*"
@@ -1288,6 +1333,9 @@ export default function AdminPage() {
                         >
                           {uploading ? 'Загрузка...' : 'Добавить фото'}
                         </GradientButton>
+                        <p className="text-xs text-gray-400 mt-2">
+                          Можно перетащить много фото сюда или выбрать файлы кнопкой
+                        </p>
                       </div>
                       {reviewFormData.photos.length > 0 && (
                         <div className="grid grid-cols-3 gap-3 mb-3">
@@ -1318,7 +1366,20 @@ export default function AdminPage() {
 
                     <div>
                       <label className="block text-sm font-medium mb-2">Видео</label>
-                      <div className="mb-3">
+                      <div
+                        onDragOver={(e) => { e.preventDefault(); if (!uploading) setDragActiveReviewVideos(true); }}
+                        onDragLeave={() => setDragActiveReviewVideos(false)}
+                        onDrop={async (e) => {
+                          e.preventDefault();
+                          setDragActiveReviewVideos(false);
+                          if (uploading) return;
+                          const dropped = Array.from(e.dataTransfer.files || []);
+                          await handleReviewVideoDrop(dropped);
+                        }}
+                        className={`mb-3 border-2 border-dashed rounded-lg p-4 transition-colors ${
+                          dragActiveReviewVideos ? 'border-purple-500 bg-purple-900/15' : 'border-gray-700 bg-gray-900/30'
+                        } ${uploading ? 'opacity-60 cursor-not-allowed' : 'hover:border-gray-600'}`}
+                      >
                         <input
                           type="file"
                           accept="video/*"
@@ -1337,6 +1398,9 @@ export default function AdminPage() {
                         >
                           {uploading ? 'Загрузка...' : 'Добавить видео'}
                         </GradientButton>
+                        <p className="text-xs text-gray-400 mt-2">
+                          Можно перетащить много видео сюда или выбрать файлы кнопкой
+                        </p>
                       </div>
                       {reviewFormData.videos.length > 0 && (
                         <div className="grid grid-cols-2 gap-3 mb-3">

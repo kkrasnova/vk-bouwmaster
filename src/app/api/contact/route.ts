@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from 'fs';
+import { join, dirname } from 'path';
 import nodemailer from 'nodemailer';
 
-const CONTACT_FILE = join(process.cwd(), 'src/lib/contact-data.json');
-const MESSAGES_FILE = join(process.cwd(), 'src/lib/contact-messages.json');
+// Source JSON files can be read-only in production (e.g. Vercel).
+// Keep editable runtime data in /data (or via env override) so it persists.
+const SEED_CONTACT_FILE = join(process.cwd(), 'src/lib/contact-data.json');
+const SEED_MESSAGES_FILE = join(process.cwd(), 'src/lib/contact-messages.json');
+
+const RUNTIME_CONTACT_FILE =
+  process.env.CONTACT_FILE_PATH && process.env.CONTACT_FILE_PATH.trim()
+    ? process.env.CONTACT_FILE_PATH.trim()
+    : join(process.cwd(), 'data', 'contact-data.json');
+
+const RUNTIME_MESSAGES_FILE =
+  process.env.CONTACT_MESSAGES_FILE_PATH && process.env.CONTACT_MESSAGES_FILE_PATH.trim()
+    ? process.env.CONTACT_MESSAGES_FILE_PATH.trim()
+    : join(process.cwd(), 'data', 'contact-messages.json');
 
 interface ContactData {
   phone: {
@@ -44,9 +56,61 @@ interface ContactMessage {
   read: boolean;
 }
 
+function ensureRuntimeFile(runtimePath: string, seedPath: string, fallbackContents: string) {
+  try {
+    mkdirSync(dirname(runtimePath), { recursive: true });
+  } catch {
+    // ignore
+  }
+
+  if (existsSync(runtimePath)) return;
+
+  try {
+    if (existsSync(seedPath)) {
+      copyFileSync(seedPath, runtimePath);
+      return;
+    }
+  } catch {
+    // ignore
+  }
+
+  try {
+    writeFileSync(runtimePath, fallbackContents, 'utf-8');
+  } catch {
+    // ignore
+  }
+}
+
 function readContactData(): ContactData {
   try {
-    const data = readFileSync(CONTACT_FILE, 'utf-8');
+    ensureRuntimeFile(
+      RUNTIME_CONTACT_FILE,
+      SEED_CONTACT_FILE,
+      JSON.stringify(
+        {
+          phone: { number1: '', number2: '' },
+          email: { address1: '', address2: '' },
+          address: { street: '', city: '' },
+          hours: { weekdays: '', saturday: '', sunday: '' },
+          emergency: { phone: '' },
+        },
+        null,
+        2
+      )
+    );
+
+    const fileToRead = existsSync(RUNTIME_CONTACT_FILE) ? RUNTIME_CONTACT_FILE : SEED_CONTACT_FILE;
+    if (!existsSync(fileToRead)) {
+      return {
+        phone: { number1: '', number2: '' },
+        email: { address1: '', address2: '' },
+        address: { street: '', city: '' },
+        hours: { weekdays: '', saturday: '', sunday: '' },
+        emergency: { phone: '' },
+      };
+    }
+
+    const data = readFileSync(fileToRead, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
     return {
@@ -60,7 +124,22 @@ function readContactData(): ContactData {
 }
 
 function writeContactData(data: ContactData) {
-  writeFileSync(CONTACT_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  ensureRuntimeFile(
+    RUNTIME_CONTACT_FILE,
+    SEED_CONTACT_FILE,
+    JSON.stringify(
+      {
+        phone: { number1: '', number2: '' },
+        email: { address1: '', address2: '' },
+        address: { street: '', city: '' },
+        hours: { weekdays: '', saturday: '', sunday: '' },
+        emergency: { phone: '' },
+      },
+      null,
+      2
+    )
+  );
+  writeFileSync(RUNTIME_CONTACT_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 export async function GET(request: NextRequest) {
@@ -85,15 +164,88 @@ export async function GET(request: NextRequest) {
 
 function readMessages(): ContactMessage[] {
   try {
-    const data = readFileSync(MESSAGES_FILE, 'utf-8');
-    return JSON.parse(data);
+    ensureRuntimeFile(RUNTIME_MESSAGES_FILE, SEED_MESSAGES_FILE, '[]');
+    const fileToRead = existsSync(RUNTIME_MESSAGES_FILE) ? RUNTIME_MESSAGES_FILE : SEED_MESSAGES_FILE;
+    if (!existsSync(fileToRead)) return [];
+    const data = readFileSync(fileToRead, 'utf-8');
+    const parsed = JSON.parse(data);
+    return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
     return [];
   }
 }
 
 function writeMessages(messages: ContactMessage[]) {
-  writeFileSync(MESSAGES_FILE, JSON.stringify(messages, null, 2), 'utf-8');
+  ensureRuntimeFile(RUNTIME_MESSAGES_FILE, SEED_MESSAGES_FILE, '[]');
+  writeFileSync(RUNTIME_MESSAGES_FILE, JSON.stringify(messages, null, 2), 'utf-8');
+}
+
+function escapeHtml(text: string) {
+  return text
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
+}
+
+async function sendTelegram(message: ContactMessage, requestUrl?: string) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  if (!token || !chatId) {
+    console.log('Telegram настройки не заданы. Уведомление в Telegram не будет отправлено.');
+    console.log('Для настройки задайте переменные окружения: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID');
+    return false;
+  }
+
+  const created = new Date(message.createdAt);
+  const lines: string[] = [];
+  lines.push('<b>📩 Новая анкета с сайта VK Bouwmaster</b>');
+  lines.push('');
+  lines.push(`<b>Имя:</b> ${escapeHtml(message.name)}`);
+  lines.push(`<b>Email:</b> ${escapeHtml(message.email)}`);
+  if (message.phone) lines.push(`<b>Телефон:</b> ${escapeHtml(message.phone)}`);
+  lines.push('');
+  lines.push('<b>Адрес:</b>');
+  lines.push(`${escapeHtml(message.street)} ${escapeHtml(message.houseNumber)}`);
+  lines.push(`${escapeHtml(message.postalCode)}${message.city ? `, ${escapeHtml(message.city)}` : ''}`);
+  if (message.service) {
+    lines.push('');
+    lines.push(`<b>Услуга:</b> ${escapeHtml(message.service)}`);
+  }
+  lines.push('');
+  lines.push('<b>Сообщение:</b>');
+  lines.push(escapeHtml(message.message));
+  lines.push('');
+  lines.push(`<b>ID:</b> ${escapeHtml(message.id)}`);
+  lines.push(`<b>Дата:</b> ${escapeHtml(created.toLocaleString('ru-RU'))}`);
+  if (requestUrl) lines.push(`<b>Источник:</b> ${escapeHtml(requestUrl)}`);
+
+  const text = lines.join('\n');
+
+  try {
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text().catch(() => '');
+      console.error('Telegram sendMessage failed:', res.status, err);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Telegram sendMessage error:', error);
+    return false;
+  }
 }
 
 async function sendEmail(message: ContactMessage) {
@@ -176,12 +328,12 @@ ${message.message}
     const smtpPort = process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 587;
     const smtpUser = process.env.SMTP_USER;
     const smtpPass = process.env.SMTP_PASS;
-    const recipientEmail = process.env.RECIPIENT_EMAIL || 'vkbouwmaster@gmail.com';
+    const recipientEmail = process.env.RECIPIENT_EMAIL || process.env.EMAIL_TO || 'vkbouwmaster@gmail.com';
 
     if (!smtpHost || !smtpUser || !smtpPass) {
       console.log('SMTP настройки не заданы. Email не будет отправлен.');
       console.log('Для настройки отправки email задайте переменные окружения:');
-      console.log('SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, RECIPIENT_EMAIL');
+      console.log('SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, RECIPIENT_EMAIL (or EMAIL_TO)');
       return false;
     }
 
@@ -243,6 +395,7 @@ export async function POST(request: NextRequest) {
     writeMessages(messages);
 
     sendEmail(message).catch(err => console.error('Email sending failed:', err));
+    sendTelegram(message, request.url).catch(err => console.error('Telegram sending failed:', err));
 
     return NextResponse.json({ success: true, message });
   } catch (error) {
