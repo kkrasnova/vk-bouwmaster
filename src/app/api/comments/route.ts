@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { readFileSync, writeFileSync, existsSync } from 'fs'
-import { join } from 'path'
+import { readFileSync, writeFileSync, existsSync, mkdirSync, copyFileSync } from 'fs'
+import { join, dirname } from 'path'
 import { translateText, detectSourceLanguage } from '@/lib/translate'
 import { Language } from '@/lib/translations'
 
@@ -20,20 +20,61 @@ type Comment = {
   translations?: Record<string, string> // Переводы сообщения на разные языки
 }
 
-const COMMENTS_FILE = join(process.cwd(), 'src/lib/comments-data.json')
+// NOTE:
+// - `src/lib/comments-data.json` is part of the source tree and may be read-only in production.
+// - We store runtime data in `data/comments-data.json` (or via env override) so approvals persist.
+const SEED_COMMENTS_FILE = join(process.cwd(), 'src/lib/comments-data.json')
+const RUNTIME_COMMENTS_FILE =
+  process.env.COMMENTS_FILE_PATH && process.env.COMMENTS_FILE_PATH.trim()
+    ? process.env.COMMENTS_FILE_PATH.trim()
+    : join(process.cwd(), 'data', 'comments-data.json')
+
+function ensureRuntimeCommentsFile() {
+  const dir = dirname(RUNTIME_COMMENTS_FILE)
+  try {
+    mkdirSync(dir, { recursive: true })
+  } catch {
+    // ignore
+  }
+
+  if (existsSync(RUNTIME_COMMENTS_FILE)) return
+
+  // First run: copy seeded reviews if present, otherwise create empty list.
+  try {
+    if (existsSync(SEED_COMMENTS_FILE)) {
+      copyFileSync(SEED_COMMENTS_FILE, RUNTIME_COMMENTS_FILE)
+      return
+    }
+  } catch {
+    // ignore
+  }
+
+  try {
+    writeFileSync(RUNTIME_COMMENTS_FILE, '[]', 'utf-8')
+  } catch {
+    // ignore
+  }
+}
 
 function readComments(): Comment[] {
   try {
-    if (!existsSync(COMMENTS_FILE)) return []
-    const data = readFileSync(COMMENTS_FILE, 'utf-8')
-    return JSON.parse(data)
+    ensureRuntimeCommentsFile()
+    const fileToRead = existsSync(RUNTIME_COMMENTS_FILE)
+      ? RUNTIME_COMMENTS_FILE
+      : SEED_COMMENTS_FILE
+
+    if (!existsSync(fileToRead)) return []
+    const data = readFileSync(fileToRead, 'utf-8')
+    const parsed = JSON.parse(data)
+    return Array.isArray(parsed) ? parsed : []
   } catch {
     return []
   }
 }
 
 function writeComments(list: Comment[]) {
-  writeFileSync(COMMENTS_FILE, JSON.stringify(list, null, 2), 'utf-8')
+  ensureRuntimeCommentsFile()
+  writeFileSync(RUNTIME_COMMENTS_FILE, JSON.stringify(list, null, 2), 'utf-8')
 }
 
 export async function GET(request: NextRequest) {

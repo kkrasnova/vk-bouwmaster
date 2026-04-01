@@ -63,13 +63,24 @@ SMTP_HOST=your-smtp-host
 SMTP_PORT=587
 SMTP_USER=your-email
 SMTP_PASS=your-password
-EMAIL_TO=your-recipient-email
+RECIPIENT_EMAIL=your-recipient-email
+
+# Telegram уведомления (для контактной формы)
+# Создайте бота через @BotFather и получите token.
+# CHAT_ID: ваш id или id группы/канала (для групп обычно отрицательный).
+TELEGRAM_BOT_TOKEN=123456:ABCDEF-your-token
+TELEGRAM_CHAT_ID=123456789
 
 # OpenAI API (для переводов, опционально)
 OPENAI_API_KEY=your-openai-key
 
 # Vercel Blob (для загрузки файлов)
 BLOB_READ_WRITE_TOKEN=your-blob-token
+
+# (Опционально) Путь для хранения данных в runtime
+COMMENTS_FILE_PATH=data/comments-data.json
+CONTACT_FILE_PATH=data/contact-data.json
+CONTACT_MESSAGES_FILE_PATH=data/contact-messages.json
 ```
 
 ## 🚀 Запуск
