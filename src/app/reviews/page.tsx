@@ -37,6 +37,7 @@ export default function ReviewsPage() {
   const [comments, setComments] = useState<Comment[]>([])
   const [sending, setSending] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [dragActivePhotos, setDragActivePhotos] = useState(false)
   const [showThankYou, setShowThankYou] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', surname: '', message: '', rating: 5, city: '', profileImage: '' })
@@ -63,6 +64,19 @@ export default function ReviewsPage() {
     setFormPhotos([...formPhotos, ...urls])
     setUploading(false)
     e.target.value = ''
+  }
+
+  const handlePhotoDrop = async (files: File[]) => {
+    if (files.length === 0) return
+    setUploading(true)
+    try {
+      const imageFiles = files.filter(f => f.type.startsWith('image/'))
+      const uploadPromises = imageFiles.map(file => handleFileUpload(file))
+      const urls = (await Promise.all(uploadPromises)).filter(Boolean) as string[]
+      if (urls.length > 0) setFormPhotos(prev => [...prev, ...urls])
+    } finally {
+      setUploading(false)
+    }
   }
 
 
@@ -481,7 +495,23 @@ export default function ReviewsPage() {
                 <Camera className="h-4 w-4 text-blue-400" />
                 <span>{reviewsText.form?.addPhotosLabel || 'Add photos'} <span className="text-gray-400 text-xs">{reviewsText.form?.addPhotosOptional || '(optional)'}</span></span>
               </label>
-              <div className="relative">
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault()
+                  if (!uploading) setDragActivePhotos(true)
+                }}
+                onDragLeave={() => setDragActivePhotos(false)}
+                onDrop={async (e) => {
+                  e.preventDefault()
+                  setDragActivePhotos(false)
+                  if (uploading) return
+                  const dropped = Array.from(e.dataTransfer.files || [])
+                  await handlePhotoDrop(dropped)
+                }}
+                className={`relative border-2 border-dashed rounded-xl p-4 transition-colors ${
+                  dragActivePhotos ? 'border-blue-500 bg-blue-900/20' : 'border-gray-700/50 bg-black/30'
+                } ${uploading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer hover:border-blue-600/60'}`}
+              >
                 <input
                   type="file"
                   accept="image/*"
@@ -491,14 +521,19 @@ export default function ReviewsPage() {
                   id="photo-upload-reviews"
                   className="hidden"
                 />
-                <GradientButton
-                  type="button"
-                  onClick={() => document.getElementById('photo-upload-reviews')?.click()}
-                  disabled={uploading}
-                  className="w-full"
-                >
-                  {uploading ? (t.common?.loading || 'Loading...') : (reviewsText.form?.selectPhotos || '📷 Select photos')}
-                </GradientButton>
+                <div className="flex flex-col gap-3">
+                  <GradientButton
+                    type="button"
+                    onClick={() => document.getElementById('photo-upload-reviews')?.click()}
+                    disabled={uploading}
+                    className="w-full"
+                  >
+                    {uploading ? (t.common?.loading || 'Loading...') : (reviewsText.form?.selectPhotos || '📷 Select photos')}
+                  </GradientButton>
+                  <p className="text-xs text-gray-400 text-center">
+                    Перетащите фото сюда (можно много сразу) или выберите файлы кнопкой выше
+                  </p>
+                </div>
               </div>
               {formPhotos.length > 0 && (
                 <div className="mt-3">
