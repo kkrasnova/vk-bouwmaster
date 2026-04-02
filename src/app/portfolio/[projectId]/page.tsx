@@ -30,6 +30,7 @@ export default function PortfolioDetailPage() {
   const [formPhotos, setFormPhotos] = useState<string[]>([])
   const sectionRef = useScrollAnimation()
   const [failedMedia, setFailedMedia] = useState<Record<string, boolean>>({})
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
   const StarRating = ({ rating, onRatingChange, readOnly = false }: { rating: number; onRatingChange?: (rating: number) => void; readOnly?: boolean }) => {
     return (
@@ -366,7 +367,7 @@ export default function PortfolioDetailPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3, duration: 0.6 }}
-                  className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-extrabold mb-4 leading-tight line-clamp-2"
                 >
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 via-cyan-300 to-blue-200 animate-gradient bg-[length:200%_auto]">
                     {projectInfo.title || (t.portfolio?.detail?.project || 'Project')}
@@ -391,9 +392,26 @@ export default function PortfolioDetailPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6, duration: 0.6 }}
-                    className="max-w-3xl mx-auto text-lg md:text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed whitespace-pre-wrap"
+                    className="max-w-3xl mx-auto mb-8"
                   >
-                    {projectInfo.description}
+                    <div
+                      className={`text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed ${
+                        isDescriptionExpanded ? 'whitespace-pre-wrap' : 'line-clamp-5'
+                      }`}
+                    >
+                      {isDescriptionExpanded ? projectInfo.description : projectInfo.description.replace(/\n+/g, ' ')}
+                    </div>
+                    {projectInfo.description.trim().length > 220 && (
+                      <div className="mt-4 flex justify-center">
+                        <button
+                          type="button"
+                          onClick={() => setIsDescriptionExpanded(v => !v)}
+                          className="text-blue-300 hover:text-blue-200 text-sm font-semibold underline underline-offset-4"
+                        >
+                          {isDescriptionExpanded ? 'Свернуть' : 'Показать полностью'}
+                        </button>
+                      </div>
+                    )}
                   </motion.div>
                 )}
 
@@ -633,7 +651,7 @@ export default function PortfolioDetailPage() {
       {viewMode === 'project' && (
         <section className="py-16">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-blue-200 to-cyan-300">
                 {t.portfolio?.detail?.comments || 'Comments'}
               </span>
